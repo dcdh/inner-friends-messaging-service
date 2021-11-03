@@ -15,20 +15,14 @@ public class OwnerTest {
 
     @Test
     public void should_return_identifier() {
-        final ParticipantIdentifier identifier = mock(ParticipantIdentifier.class);
+        final ContactIdentifier identifier = mock(ContactIdentifier.class);
         assertThat(new Owner(identifier).identifier()).isEqualTo(identifier);
     }
 
     @Test
-    public void should_return_identifier_from_contact_identifier() {
-        final ParticipantIdentifier identifier = mock(ParticipantIdentifier.class);
-        assertThat(new Owner(new ContactIdentifier(identifier)).identifier()).isEqualTo(identifier);
-    }
-
-    @Test
     public void should_return_identifier_from_openedBy() {
-        final ParticipantIdentifier identifier = mock(ParticipantIdentifier.class);
-        assertThat(new Owner(new OpenedBy(identifier)).identifier()).isEqualTo(identifier);
+        final ParticipantIdentifier identifier = new ParticipantIdentifier("Mario");
+        assertThat(new Owner(new OpenedBy(identifier)).identifier()).isEqualTo(new ContactIdentifier("Mario"));
     }
 
 }

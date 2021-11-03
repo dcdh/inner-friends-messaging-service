@@ -4,21 +4,17 @@ import java.util.Objects;
 
 public final class Owner {
 
-    private final ParticipantIdentifier identifier;
-
-    public Owner(final OpenedBy openedBy) {
-        this(openedBy.identifier());
-    }
+    private final ContactIdentifier identifier;
 
     public Owner(final ContactIdentifier contactIdentifier) {
-        this(contactIdentifier.identifier());
+        this.identifier = Objects.requireNonNull(contactIdentifier);
     }
 
-    public Owner(final ParticipantIdentifier identifier) {
-        this.identifier = Objects.requireNonNull(identifier);
+    public Owner(final OpenedBy openedBy) {
+        this(new ContactIdentifier(openedBy.identifier().identifier()));
     }
 
-    public ParticipantIdentifier identifier() {
+    public ContactIdentifier identifier() {
         return identifier;
     }
 

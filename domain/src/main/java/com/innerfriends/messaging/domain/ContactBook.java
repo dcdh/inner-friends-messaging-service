@@ -38,7 +38,7 @@ public final class ContactBook extends Aggregate {
 
     public List<ContactIdentifier> allContacts() {
         return contacts.stream()
-                .sorted(Comparator.comparing(e -> e.contactIdentifier().identifier().identifier()))
+                .sorted(Comparator.comparing(e -> e.contactIdentifier().identifier()))
                 .map(Contact::contactIdentifier)
                 .collect(Collectors.toUnmodifiableList());
     }

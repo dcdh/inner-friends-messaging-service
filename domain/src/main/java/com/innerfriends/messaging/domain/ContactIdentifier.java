@@ -4,17 +4,17 @@ import java.util.Objects;
 
 public final class ContactIdentifier {
 
-    private final ParticipantIdentifier identifier;
+    private final String identifier;
 
-    public ContactIdentifier(final ParticipantIdentifier identifier) {
+    public ContactIdentifier(final String identifier) {
         this.identifier = Objects.requireNonNull(identifier);
     }
 
     public boolean isEqualTo(final ParticipantIdentifier participantIdentifier) {
-        return this.identifier.equals(participantIdentifier);
+        return this.identifier.equals(participantIdentifier.identifier());
     }
 
-    public ParticipantIdentifier identifier() {
+    public String identifier() {
         return identifier;
     }
 

@@ -33,10 +33,10 @@ public class OpenANewConversationUseCaseTest {
     @Test
     public void should_open_a_new_conversation() {
         // Given
-        final Owner owner = new Owner(new ParticipantIdentifier("Mario"));
+        final Owner owner = new Owner(new ContactIdentifier("Mario"));
         final ContactBook contactBook = new ContactBook(owner, List.of(
-                new Contact(new ContactIdentifier(new ParticipantIdentifier("Peach")), new AddedAt(ZonedDateTime.now())),
-                new Contact(new ContactIdentifier(new ParticipantIdentifier("Luigi")), new AddedAt(ZonedDateTime.now()))),
+                new Contact(new ContactIdentifier("Peach"), new AddedAt(ZonedDateTime.now())),
+                new Contact(new ContactIdentifier("Luigi"), new AddedAt(ZonedDateTime.now()))),
                 2l);
 
         final OpenANewConversationCommand openANewConversationCommand = new OpenANewConversationCommand(
@@ -63,7 +63,7 @@ public class OpenANewConversationUseCaseTest {
     @Test
     public void should_fail_when_not_in_contact_book() {
         // Given
-        final Owner owner = new Owner(new ParticipantIdentifier("Mario"));
+        final Owner owner = new Owner(new ContactIdentifier("Mario"));
         final ContactBook contactBook = new ContactBook(owner);
         doReturn(contactBook).when(contactBookRepository).getByOwner(owner);
 

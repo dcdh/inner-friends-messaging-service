@@ -1,6 +1,9 @@
 package com.innerfriends.messaging.domain.usecase;
 
-import com.innerfriends.messaging.domain.*;
+import com.innerfriends.messaging.domain.ContactBook;
+import com.innerfriends.messaging.domain.ContactBookRepository;
+import com.innerfriends.messaging.domain.ContactIdentifier;
+import com.innerfriends.messaging.domain.Owner;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -15,7 +18,7 @@ public class CreateContactBookUseCaseTest {
     public void should_create_contact_book() {
         // Given
         final ContactBookRepository contactBookRepository = mock(ContactBookRepository.class);
-        final ContactIdentifier contactIdentifier = new ContactIdentifier(new ParticipantIdentifier("Mario"));
+        final ContactIdentifier contactIdentifier = new ContactIdentifier("Mario");
         final CreateContactBookCommand createContactBookCommand = new CreateContactBookCommand(contactIdentifier);
         final CreateContactBookUseCase createContactBookUseCase = new CreateContactBookUseCase(contactBookRepository);
 
@@ -23,12 +26,10 @@ public class CreateContactBookUseCaseTest {
         assertThat(createContactBookUseCase.execute(createContactBookCommand))
                 .isEqualTo(new ContactBook(
                         new Owner(
-                                new ContactIdentifier(
-                                        new ParticipantIdentifier("Mario")))));
+                                new ContactIdentifier("Mario"))));
         verify(contactBookRepository, times(1)).save(new ContactBook(
                 new Owner(
-                        new ContactIdentifier(
-                                new ParticipantIdentifier("Mario")))));
+                        new ContactIdentifier("Mario"))));
     }
 
 }

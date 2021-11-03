@@ -22,9 +22,9 @@ public class ListRecentContactsUseCaseTest {
     @BeforeEach
     public void setup() {
         contacts = List.of(
-                new Contact(new ContactIdentifier(new ParticipantIdentifier("Peach")), buildAddedAt(1)),
-                new Contact(new ContactIdentifier(new ParticipantIdentifier("Mario")), buildAddedAt(3)),
-                new Contact(new ContactIdentifier(new ParticipantIdentifier("Luigi")), buildAddedAt(2))
+                new Contact(new ContactIdentifier("Peach"), buildAddedAt(1)),
+                new Contact(new ContactIdentifier("Mario"), buildAddedAt(3)),
+                new Contact(new ContactIdentifier("Luigi"), buildAddedAt(2))
         );
     }
 
@@ -41,9 +41,9 @@ public class ListRecentContactsUseCaseTest {
         // When && Then
         assertThat(listRecentContactsUseCase.execute(listRecentContactsCommand))
                 .containsExactly(
-                        new ContactIdentifier(new ParticipantIdentifier("Mario")),
-                        new ContactIdentifier(new ParticipantIdentifier("Luigi")),
-                        new ContactIdentifier(new ParticipantIdentifier("Peach")));
+                        new ContactIdentifier("Mario"),
+                        new ContactIdentifier("Luigi"),
+                        new ContactIdentifier("Peach"));
     }
 
     @Test
@@ -59,8 +59,8 @@ public class ListRecentContactsUseCaseTest {
         // When && Then
         assertThat(listRecentContactsUseCase.execute(listRecentContactsCommand))
                 .containsExactly(
-                        new ContactIdentifier(new ParticipantIdentifier("Mario")),
-                        new ContactIdentifier(new ParticipantIdentifier("Luigi")));
+                        new ContactIdentifier("Mario"),
+                        new ContactIdentifier("Luigi"));
     }
 
     private AddedAt buildAddedAt(final Integer day) {

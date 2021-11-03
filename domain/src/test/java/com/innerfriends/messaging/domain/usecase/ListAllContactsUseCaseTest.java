@@ -20,9 +20,9 @@ public class ListAllContactsUseCaseTest {
     public void should_list_all_contacts() {
         // Given
         final List<Contact> contacts = List.of(
-                new Contact(new ContactIdentifier(new ParticipantIdentifier("Mario")), buildAddedAt(3)),
-                new Contact(new ContactIdentifier(new ParticipantIdentifier("Luigi")), buildAddedAt(2)),
-                new Contact(new ContactIdentifier(new ParticipantIdentifier("Peach")), buildAddedAt(1))
+                new Contact(new ContactIdentifier("Mario"), buildAddedAt(3)),
+                new Contact(new ContactIdentifier("Luigi"), buildAddedAt(2)),
+                new Contact(new ContactIdentifier("Peach"), buildAddedAt(1))
         );
         final Owner owner = mock(Owner.class);
         final ContactBook contactBook = new ContactBook(owner, contacts, 1l);
@@ -34,9 +34,9 @@ public class ListAllContactsUseCaseTest {
         // When && Then
         assertThat(listAllContactsUseCase.execute(listAllContactsCommand))
                 .containsExactly(
-                        new ContactIdentifier(new ParticipantIdentifier("Luigi")),
-                        new ContactIdentifier(new ParticipantIdentifier("Mario")),
-                        new ContactIdentifier(new ParticipantIdentifier("Peach")));
+                        new ContactIdentifier("Luigi"),
+                        new ContactIdentifier("Mario"),
+                        new ContactIdentifier("Peach"));
     }
 
     private AddedAt buildAddedAt(final Integer day) {
