@@ -19,9 +19,9 @@ public class AddContactIntoContactBookUseCaseTest {
         // Given
         final ContactBookRepository contactBookRepository = mock(ContactBookRepository.class);
         final AddedAtProvider addedAtProvider = mock(AddedAtProvider.class);
-        final Owner owner = new Owner(new TestParticipantIdentifier("Mario"));
+        final Owner owner = new Owner(new ParticipantIdentifier("Mario"));
         final ContactBook contactBook = new ContactBook(owner);
-        final ContactIdentifier contactIdentifier = new ContactIdentifier(new TestParticipantIdentifier("Peach"));
+        final ContactIdentifier contactIdentifier = new ContactIdentifier(new ParticipantIdentifier("Peach"));
         doReturn(contactBook).when(contactBookRepository).getByOwner(owner);
         final AddContactIntoContactBookCommand addContactIntoContactBookCommand = new AddContactIntoContactBookCommand(owner, contactIdentifier);
         final AddedAt addedAt = new AddedAt(ZonedDateTime.now());

@@ -9,16 +9,16 @@ public final class Conversation {
 
     private final ConversationIdentifier conversationIdentifier;
     private final List<Message> messages;
-    private final List<ParticipantIdentifier> participants;
+    private final List<ParticipantIdentifier> participantsIdentifier;
 
     public Conversation(final ConversationIdentifier conversationIdentifier,
                         final List<Message> messages,
-                        final List<ParticipantIdentifier> participants) {
+                        final List<ParticipantIdentifier> participantsIdentifier) {
         this.conversationIdentifier = Objects.requireNonNull(conversationIdentifier);
         this.messages = messages.stream()
                 .sorted(Comparator.comparing(e -> e.postedAt().at()))
                 .collect(Collectors.toList());
-        this.participants = Objects.requireNonNull(participants);
+        this.participantsIdentifier = Objects.requireNonNull(participantsIdentifier);
     }
 
     public Message post(final From from, final PostedAt postedAt, final Content content) {
@@ -42,7 +42,7 @@ public final class Conversation {
     }
 
     public List<ParticipantIdentifier> participants() {
-        return participants;
+        return participantsIdentifier;
     }
 
     public LastInteractionAt lastInteractionAt() {
@@ -54,21 +54,30 @@ public final class Conversation {
     }
 
     public boolean hasParticipant(final ParticipantIdentifier participantIdentifier) {
-        return this.participants.contains(participantIdentifier);
+        return this.participantsIdentifier.contains(participantIdentifier);
     }
 
     @Override
-    public boolean equals(Object o) {
+    public boolean equals(final Object o) {
         if (this == o) return true;
         if (!(o instanceof Conversation)) return false;
-        Conversation that = (Conversation) o;
+        final Conversation that = (Conversation) o;
         return Objects.equals(conversationIdentifier, that.conversationIdentifier) &&
                 Objects.equals(messages, that.messages) &&
-                Objects.equals(participants, that.participants);
+                Objects.equals(participantsIdentifier, that.participantsIdentifier);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(conversationIdentifier, messages, participants);
+        return Objects.hash(conversationIdentifier, messages, participantsIdentifier);
+    }
+
+    @Override
+    public String toString() {
+        return "Conversation{" +
+                "conversationIdentifier=" + conversationIdentifier +
+                ", messages=" + messages +
+                ", participantsIdentifier=" + participantsIdentifier +
+                '}';
     }
 }

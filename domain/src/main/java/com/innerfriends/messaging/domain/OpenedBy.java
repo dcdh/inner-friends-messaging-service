@@ -2,24 +2,24 @@ package com.innerfriends.messaging.domain;
 
 import java.util.Objects;
 
-public final class ParticipantIdentifier {
+public final class OpenedBy {
 
-    private final String identifier;
+    private final ParticipantIdentifier identifier;
 
-    public ParticipantIdentifier(final String identifier) {
+    public OpenedBy(final ParticipantIdentifier identifier) {
         this.identifier = Objects.requireNonNull(identifier);
     }
 
-    public String identifier() {
+    public ParticipantIdentifier identifier() {
         return identifier;
     }
 
     @Override
     public boolean equals(final Object o) {
         if (this == o) return true;
-        if (!(o instanceof ParticipantIdentifier)) return false;
-        final ParticipantIdentifier that = (ParticipantIdentifier) o;
-        return Objects.equals(identifier, that.identifier);
+        if (!(o instanceof OpenedBy)) return false;
+        final OpenedBy openedBy = (OpenedBy) o;
+        return Objects.equals(identifier, openedBy.identifier);
     }
 
     @Override

@@ -18,7 +18,9 @@ public class PostResponseToConversationUseCase implements UseCase<Message, PostR
     @Override
     public Message execute(final PostResponseToConversationCommand command) {
         final Conversation conversation = this.conversationRepository.getConversation(command.conversationIdentifier());
-        return conversation.post(command.from(), command.postedAt(), command.content());
+        final Message messagePosted = conversation.post(command.from(), command.postedAt(), command.content());
+        this.conversationRepository.createConversation(messagePosted);
+        return messagePosted;
     }
 
 }

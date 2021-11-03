@@ -6,8 +6,10 @@ public interface ConversationRepository {
 
     Conversation getConversation(ConversationIdentifier conversationIdentifier);
 
-    void save(Conversation conversation);
+    void createConversation(Conversation conversation);
 
     List<Conversation> getConversationsForParticipant(ParticipantIdentifier participantIdentifier);
+
+    void createConversation(Message message);
 
 }

@@ -3,11 +3,11 @@ package com.innerfriends.messaging.domain;
 import java.time.ZonedDateTime;
 import java.util.Objects;
 
-public final class StartedAt {
+public final class OpenedAt {
 
     private final ZonedDateTime at;
 
-    public StartedAt(final ZonedDateTime at) {
+    public OpenedAt(final ZonedDateTime at) {
         this.at = at;
     }
 
@@ -18,9 +18,9 @@ public final class StartedAt {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof StartedAt)) return false;
-        StartedAt startedAt = (StartedAt) o;
-        return Objects.equals(at, startedAt.at);
+        if (!(o instanceof OpenedAt)) return false;
+        OpenedAt openedAt = (OpenedAt) o;
+        return Objects.equals(at, openedAt.at);
     }
 
     @Override

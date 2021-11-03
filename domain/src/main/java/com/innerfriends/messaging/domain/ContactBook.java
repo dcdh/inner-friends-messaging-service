@@ -39,9 +39,13 @@ public final class ContactBook {
                 .collect(Collectors.toUnmodifiableList());
     }
 
-    public boolean hasContact(final To to) {
+    public boolean hasContact(final ParticipantIdentifier participantIdentifier) {
         return contacts.stream()
-                .anyMatch(contact -> contact.contactIdentifier().isEqualTo(to));
+                .anyMatch(contact -> contact.contactIdentifier().isEqualTo(participantIdentifier));
+    }
+
+    public Owner owner() {
+        return owner;
     }
 
     @Override

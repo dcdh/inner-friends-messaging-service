@@ -26,9 +26,9 @@ public class OwnerTest {
     }
 
     @Test
-    public void should_return_identifier_from_from() {
+    public void should_return_identifier_from_openedBy() {
         final ParticipantIdentifier identifier = mock(ParticipantIdentifier.class);
-        assertThat(new Owner(new From(identifier)).identifier()).isEqualTo(identifier);
+        assertThat(new Owner(new OpenedBy(identifier)).identifier()).isEqualTo(identifier);
     }
 
 }

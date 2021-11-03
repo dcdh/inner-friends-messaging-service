@@ -22,9 +22,9 @@ public class ListRecentContactsUseCaseTest {
     @BeforeEach
     public void setup() {
         contacts = List.of(
-                new Contact(new ContactIdentifier(new TestParticipantIdentifier("Peach")), buildAddedAt(1)),
-                new Contact(new ContactIdentifier(new TestParticipantIdentifier("Mario")), buildAddedAt(3)),
-                new Contact(new ContactIdentifier(new TestParticipantIdentifier("Luigi")), buildAddedAt(2))
+                new Contact(new ContactIdentifier(new ParticipantIdentifier("Peach")), buildAddedAt(1)),
+                new Contact(new ContactIdentifier(new ParticipantIdentifier("Mario")), buildAddedAt(3)),
+                new Contact(new ContactIdentifier(new ParticipantIdentifier("Luigi")), buildAddedAt(2))
 
         );
     }
@@ -42,9 +42,9 @@ public class ListRecentContactsUseCaseTest {
         // When && Then
         assertThat(listRecentContactsUseCase.execute(listRecentContactsCommand))
                 .containsExactly(
-                        new ContactIdentifier(new TestParticipantIdentifier("Mario")),
-                        new ContactIdentifier(new TestParticipantIdentifier("Luigi")),
-                        new ContactIdentifier(new TestParticipantIdentifier("Peach")));
+                        new ContactIdentifier(new ParticipantIdentifier("Mario")),
+                        new ContactIdentifier(new ParticipantIdentifier("Luigi")),
+                        new ContactIdentifier(new ParticipantIdentifier("Peach")));
     }
 
     @Test
@@ -60,8 +60,8 @@ public class ListRecentContactsUseCaseTest {
         // When && Then
         assertThat(listRecentContactsUseCase.execute(listRecentContactsCommand))
                 .containsExactly(
-                        new ContactIdentifier(new TestParticipantIdentifier("Mario")),
-                        new ContactIdentifier(new TestParticipantIdentifier("Luigi")));
+                        new ContactIdentifier(new ParticipantIdentifier("Mario")),
+                        new ContactIdentifier(new ParticipantIdentifier("Luigi")));
     }
 
     private AddedAt buildAddedAt(final Integer day) {

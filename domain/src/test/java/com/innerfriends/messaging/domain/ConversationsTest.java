@@ -1,6 +1,5 @@
 package com.innerfriends.messaging.domain;
 
-import com.innerfriends.messaging.domain.usecase.TestParticipantIdentifier;
 import nl.jqno.equalsverifier.EqualsVerifier;
 import org.junit.jupiter.api.Test;
 
@@ -27,7 +26,7 @@ public class ConversationsTest {
                         Collections.emptyList()));
 
         // When && Then
-        assertThatThrownBy(() -> new Conversations(new TestParticipantIdentifier("Mario"), conversations))
+        assertThatThrownBy(() -> new Conversations(new ParticipantIdentifier("Mario"), conversations))
                 .isInstanceOf(IllegalStateException.class);
     }
 }

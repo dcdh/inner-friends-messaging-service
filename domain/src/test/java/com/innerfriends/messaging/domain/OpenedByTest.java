@@ -6,11 +6,11 @@ import org.junit.jupiter.api.Test;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 
-public class ToTest {
+public class OpenedByTest {
 
     @Test
     public void should_verify_equality() {
-        EqualsVerifier.forClass(To.class).verify();
+        EqualsVerifier.forClass(OpenedBy.class).verify();
     }
 
     @Test
@@ -19,6 +19,6 @@ public class ToTest {
         final ParticipantIdentifier participantIdentifier = mock(ParticipantIdentifier.class);
 
         // When && Then
-        assertThat(new To(participantIdentifier).identifier()).isEqualTo(participantIdentifier);
+        assertThat(new OpenedBy(participantIdentifier).identifier()).isEqualTo(participantIdentifier);
     }
 }

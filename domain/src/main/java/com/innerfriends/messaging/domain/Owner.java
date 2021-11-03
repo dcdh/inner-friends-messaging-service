@@ -6,8 +6,8 @@ public final class Owner {
 
     private final ParticipantIdentifier identifier;
 
-    public Owner(final From from) {
-        this(from.identifier());
+    public Owner(final OpenedBy openedBy) {
+        this(openedBy.identifier());
     }
 
     public Owner(final ContactIdentifier contactIdentifier) {

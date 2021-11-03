@@ -8,16 +8,16 @@ import java.time.ZonedDateTime;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class StartedAtTest {
+public class OpenedAtTest {
 
     @Test
     public void should_verify_equality() {
-        EqualsVerifier.forClass(StartedAt.class).verify();
+        EqualsVerifier.forClass(OpenedAt.class).verify();
     }
 
     @Test
     public void should_return_added_at() {
-        assertThat(new StartedAt(buildZonedDateTime()).at()).isEqualTo(buildZonedDateTime());
+        assertThat(new OpenedAt(buildZonedDateTime()).at()).isEqualTo(buildZonedDateTime());
     }
 
     private ZonedDateTime buildZonedDateTime() {

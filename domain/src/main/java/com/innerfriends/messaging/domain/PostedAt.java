@@ -7,8 +7,8 @@ public final class PostedAt {
 
     private final ZonedDateTime at;
 
-    public PostedAt(final StartedAt startedAt) {
-        this(startedAt.at());
+    public PostedAt(final OpenedAt openedAt) {
+        this(openedAt.at());
     }
 
     public PostedAt(final ZonedDateTime at) {

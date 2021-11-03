@@ -23,7 +23,7 @@ public class PostResponseToConversationUseCaseTest {
         final Conversation conversation = spy(new Conversation(
                 conversationIdentifier,
                 List.of(
-                        new Message(new From(new TestParticipantIdentifier("Peach")), buildPostedAt(2), new TestContent("I Mario How are you ?"))),
+                        new Message(new From(new ParticipantIdentifier("Peach")), buildPostedAt(2), new TestContent("I Mario How are you ?"))),
                 Collections.emptyList()
         ));
         final ConversationRepository conversationRepository = mock(ConversationRepository.class);
@@ -32,14 +32,15 @@ public class PostResponseToConversationUseCaseTest {
 
         // When && Then
         assertThat(postResponseToConversationUseCase.execute(new PostResponseToConversationCommand(
-                new From(new TestParticipantIdentifier("Mario")),
+                new From(new ParticipantIdentifier("Mario")),
                 conversationIdentifier,
                 new TestContent("I am fine thanks"),
-                buildPostedAt(3)))).isEqualTo(new Message(new From(new TestParticipantIdentifier("Mario")), buildPostedAt(3), new TestContent("I am fine thanks")));
-        verify(conversation, times(1)).post(new From(new TestParticipantIdentifier("Mario")), buildPostedAt(3), new TestContent("I am fine thanks"));
+                buildPostedAt(3)))).isEqualTo(new Message(new From(new ParticipantIdentifier("Mario")), buildPostedAt(3), new TestContent("I am fine thanks")));
+        verify(conversation, times(1)).post(new From(new ParticipantIdentifier("Mario")), buildPostedAt(3), new TestContent("I am fine thanks"));
         assertThat(conversation.messages()).containsExactly(
-                new Message(new From(new TestParticipantIdentifier("Peach")), buildPostedAt(2), new TestContent("I Mario How are you ?")),
-                new Message(new From(new TestParticipantIdentifier("Mario")), buildPostedAt(3), new TestContent("I am fine thanks")));
+                new Message(new From(new ParticipantIdentifier("Peach")), buildPostedAt(2), new TestContent("I Mario How are you ?")),
+                new Message(new From(new ParticipantIdentifier("Mario")), buildPostedAt(3), new TestContent("I am fine thanks")));
+        verify(conversationRepository, times(1)).createConversation(new Message(new From(new ParticipantIdentifier("Mario")), buildPostedAt(3), new TestContent("I am fine thanks")));
     }
 
     private PostedAt buildPostedAt(final Integer day) {

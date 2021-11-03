@@ -10,8 +10,8 @@ public final class ContactIdentifier {
         this.identifier = Objects.requireNonNull(identifier);
     }
 
-    public boolean isEqualTo(final To to) {
-        return this.identifier.equals(to.identifier());
+    public boolean isEqualTo(final ParticipantIdentifier participantIdentifier) {
+        return this.identifier.equals(participantIdentifier);
     }
 
     public ParticipantIdentifier identifier() {
