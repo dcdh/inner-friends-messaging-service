@@ -25,7 +25,6 @@ public class ListRecentContactsUseCaseTest {
                 new Contact(new ContactIdentifier(new ParticipantIdentifier("Peach")), buildAddedAt(1)),
                 new Contact(new ContactIdentifier(new ParticipantIdentifier("Mario")), buildAddedAt(3)),
                 new Contact(new ContactIdentifier(new ParticipantIdentifier("Luigi")), buildAddedAt(2))
-
         );
     }
 
@@ -33,7 +32,7 @@ public class ListRecentContactsUseCaseTest {
     public void should_list_recent_contacts() {
         // Given
         final Owner owner = mock(Owner.class);
-        final ContactBook contactBook = new ContactBook(owner, contacts);
+        final ContactBook contactBook = new ContactBook(owner, contacts, 3l);
         final ContactBookRepository contactBookRepository = mock(ContactBookRepository.class);
         final ListRecentContactsCommand listRecentContactsCommand = new ListRecentContactsCommand(owner, 5);
         doReturn(contactBook).when(contactBookRepository).getByOwner(owner);
@@ -51,7 +50,7 @@ public class ListRecentContactsUseCaseTest {
     public void should_return_expected_number_of_contacts() {
         // Given
         final Owner owner = mock(Owner.class);
-        final ContactBook contactBook = new ContactBook(owner, contacts);
+        final ContactBook contactBook = new ContactBook(owner, contacts, 3l);
         final ContactBookRepository contactBookRepository = mock(ContactBookRepository.class);
         final ListRecentContactsCommand listRecentContactsCommand = new ListRecentContactsCommand(owner, 2);
         doReturn(contactBook).when(contactBookRepository).getByOwner(owner);

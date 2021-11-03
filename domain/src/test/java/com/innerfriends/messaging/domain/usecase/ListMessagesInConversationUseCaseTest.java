@@ -28,7 +28,8 @@ public class ListMessagesInConversationUseCaseTest {
                 List.of(
                         new Message(new From(new ParticipantIdentifier("Mario")), buildPostedAt(3), new TestContent("I am fine thanks")),
                         new Message(new From(new ParticipantIdentifier("Peach")), buildPostedAt(2), new TestContent("I Mario How are you ?"))),
-                Collections.emptyList()
+                Collections.emptyList(),
+                1l
         );
         final ConversationIdentifier conversationIdentifier = mock(ConversationIdentifier.class);
         doReturn(conversation).when(conversationRepository).getConversation(conversationIdentifier);

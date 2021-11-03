@@ -2,12 +2,12 @@ package com.innerfriends.messaging.domain.usecase;
 
 import com.innerfriends.messaging.domain.Conversation;
 import com.innerfriends.messaging.domain.ConversationRepository;
-import com.innerfriends.messaging.domain.Message;
 import com.innerfriends.messaging.domain.UseCase;
+import com.innerfriends.messaging.domain.YouAreNotAParticipantException;
 
 import java.util.Objects;
 
-public class PostResponseToConversationUseCase implements UseCase<Message, PostResponseToConversationCommand> {
+public class PostResponseToConversationUseCase implements UseCase<Conversation, PostResponseToConversationCommand> {
 
     private final ConversationRepository conversationRepository;
 
@@ -16,11 +16,12 @@ public class PostResponseToConversationUseCase implements UseCase<Message, PostR
     }
 
     @Override
-    public Message execute(final PostResponseToConversationCommand command) {
-        final Conversation conversation = this.conversationRepository.getConversation(command.conversationIdentifier());
-        final Message messagePosted = conversation.post(command.from(), command.postedAt(), command.content());
-        this.conversationRepository.createConversation(messagePosted);
-        return messagePosted;
+    public Conversation execute(final PostResponseToConversationCommand command) {
+        final Conversation conversationToPostResponse = this.conversationRepository.getConversation(command.conversationIdentifier());
+        final Conversation conversationToSave = conversationToPostResponse
+                .post(command.from(), command.postedAt(), command.content());
+        this.conversationRepository.saveConversation(conversationToSave);
+        return conversationToSave;
     }
 
 }

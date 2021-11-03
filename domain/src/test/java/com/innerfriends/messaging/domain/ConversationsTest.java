@@ -22,7 +22,7 @@ public class ConversationsTest {
         final List<Conversation> conversations = List.of(
                 new Conversation(
                         mock(ConversationIdentifier.class),
-                        Collections.emptyList(),
+                        mock(Message.class),
                         Collections.emptyList()));
 
         // When && Then

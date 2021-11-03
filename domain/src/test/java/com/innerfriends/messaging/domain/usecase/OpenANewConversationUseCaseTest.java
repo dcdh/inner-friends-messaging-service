@@ -36,7 +36,8 @@ public class OpenANewConversationUseCaseTest {
         final Owner owner = new Owner(new ParticipantIdentifier("Mario"));
         final ContactBook contactBook = new ContactBook(owner, List.of(
                 new Contact(new ContactIdentifier(new ParticipantIdentifier("Peach")), new AddedAt(ZonedDateTime.now())),
-                new Contact(new ContactIdentifier(new ParticipantIdentifier("Luigi")), new AddedAt(ZonedDateTime.now()))));
+                new Contact(new ContactIdentifier(new ParticipantIdentifier("Luigi")), new AddedAt(ZonedDateTime.now()))),
+                2l);
 
         final OpenANewConversationCommand openANewConversationCommand = new OpenANewConversationCommand(
                 new OpenedBy(new ParticipantIdentifier("Mario")),
@@ -54,15 +55,16 @@ public class OpenANewConversationUseCaseTest {
                 .isEqualTo(new Conversation(
                         new TestConversationIdentifier("conversationIdentifier"),
                         List.of(new Message(new From(new ParticipantIdentifier("Mario")), new PostedAt(buildAt(2)), new TestContent("Hello Peach !"))),
-                        List.of(new ParticipantIdentifier("Mario"), new ParticipantIdentifier("Peach"), new ParticipantIdentifier("Luigi"))
+                        List.of(new ParticipantIdentifier("Mario"), new ParticipantIdentifier("Peach"), new ParticipantIdentifier("Luigi")),
+                        0l
                 ));
     }
 
     @Test
-    public void should_throw_to_is_not_in_contact_book_exception_when_not_in_contact_book() {
+    public void should_fail_when_not_in_contact_book() {
         // Given
         final Owner owner = new Owner(new ParticipantIdentifier("Mario"));
-        final ContactBook contactBook = new ContactBook(owner, Collections.emptyList());
+        final ContactBook contactBook = new ContactBook(owner);
         doReturn(contactBook).when(contactBookRepository).getByOwner(owner);
 
         final OpenANewConversationCommand openANewConversationCommand = new OpenANewConversationCommand(

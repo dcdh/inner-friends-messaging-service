@@ -37,10 +37,10 @@ public class OpenANewConversationUseCase implements UseCase<Conversation, OpenAN
                 command.participantsIdentifier().stream())
                 .distinct().collect(Collectors.toUnmodifiableList());
         final Conversation conversation = new Conversation(conversationIdentifier,
-                List.of(new Message(
+                new Message(
                         new From(command.openedBy()),
                         new PostedAt(command.startedAt()),
-                        command.content())),
+                        command.content()),
                 participantIdentifiers);
         this.conversationRepository.createConversation(conversation);
         return conversation;

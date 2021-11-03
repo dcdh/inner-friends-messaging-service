@@ -25,7 +25,7 @@ public class ListAllContactsUseCaseTest {
                 new Contact(new ContactIdentifier(new ParticipantIdentifier("Peach")), buildAddedAt(1))
         );
         final Owner owner = mock(Owner.class);
-        final ContactBook contactBook = new ContactBook(owner, contacts);
+        final ContactBook contactBook = new ContactBook(owner, contacts, 1l);
         final ContactBookRepository contactBookRepository = mock(ContactBookRepository.class);
         final ListAllContactsCommand listAllContactsCommand = new ListAllContactsCommand(owner);
         doReturn(contactBook).when(contactBookRepository).getByOwner(owner);

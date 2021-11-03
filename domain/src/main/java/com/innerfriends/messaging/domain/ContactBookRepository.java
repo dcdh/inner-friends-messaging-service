@@ -4,6 +4,6 @@ public interface ContactBookRepository {
 
     ContactBook getByOwner(Owner owner) throws NoContactBookFoundException;
 
-    void save(ContactBook contactBook) throws NoContactBookFoundException;
+    void save(ContactBook contactBook);
 
 }

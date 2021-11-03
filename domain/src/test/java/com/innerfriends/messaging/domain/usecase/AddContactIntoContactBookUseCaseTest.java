@@ -31,7 +31,7 @@ public class AddContactIntoContactBookUseCaseTest {
 
         // When && Then
         assertThat(addContactIntoContactBookUseCase.execute(addContactIntoContactBookCommand)).isEqualTo(
-                new ContactBook(owner, List.of(new Contact(contactIdentifier, addedAt))));
+                new ContactBook(owner, List.of(new Contact(contactIdentifier, addedAt)), 1l));
         verify(contactBookRepository, times(1)).save(contactBook);
     }
 
