@@ -1,0 +1,205 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema",
+  "$id": "http://example.com/example.json",
+  "type": "array",
+  "title": "The root schema",
+  "description": "The root schema comprises the entire JSON document.",
+  "default": [],
+  "examples": [
+    [
+      {
+        "conversationIdentifier": "Peach-azerty",
+        "participantsIdentifier": [
+          "Mario",
+          "Peach"
+        ],
+        "messages": [
+          {
+            "from": "Peach",
+            "postedAt": "2021-10-01T00:00:00+02:00",
+            "content": "Hi Mario How are you ?"
+          },
+          {
+            "from": "Mario",
+            "postedAt": "2021-10-02T00:00:00+02:00",
+            "content": "I am fine thanks"
+          }
+        ],
+        "version": 1
+      }
+    ]
+  ],
+  "additionalItems": true,
+  "items": {
+    "$id": "#/items",
+    "anyOf": [
+      {
+        "$id": "#/items/anyOf/0",
+        "type": "object",
+        "title": "The first anyOf schema",
+        "description": "An explanation about the purpose of this instance.",
+        "default": {},
+        "examples": [
+          {
+            "conversationIdentifier": "Peach-azerty",
+            "participantsIdentifier": [
+              "Mario",
+              "Peach"
+            ],
+            "messages": [
+              {
+                "from": "Peach",
+                "postedAt": "2021-10-01T00:00:00+02:00",
+                "content": "Hi Mario How are you ?"
+              },
+              {
+                "from": "Mario",
+                "postedAt": "2021-10-02T00:00:00+02:00",
+                "content": "I am fine thanks"
+              }
+            ],
+            "version": 1
+          }
+        ],
+        "required": [
+          "conversationIdentifier",
+          "participantsIdentifier",
+          "messages",
+          "version"
+        ],
+        "properties": {
+          "conversationIdentifier": {
+            "$id": "#/items/anyOf/0/properties/conversationIdentifier",
+            "type": "string",
+            "title": "The conversationIdentifier schema",
+            "description": "An explanation about the purpose of this instance.",
+            "default": "",
+            "examples": [
+              "Peach-azerty"
+            ]
+          },
+          "participantsIdentifier": {
+            "$id": "#/items/anyOf/0/properties/participantsIdentifier",
+            "type": "array",
+            "title": "The participantsIdentifier schema",
+            "description": "An explanation about the purpose of this instance.",
+            "default": [],
+            "examples": [
+              [
+                "Mario",
+                "Peach"
+              ]
+            ],
+            "additionalItems": true,
+            "items": {
+              "$id": "#/items/anyOf/0/properties/participantsIdentifier/items",
+              "anyOf": [
+                {
+                  "$id": "#/items/anyOf/0/properties/participantsIdentifier/items/anyOf/0",
+                  "type": "string",
+                  "title": "The first anyOf schema",
+                  "description": "An explanation about the purpose of this instance.",
+                  "default": "",
+                  "examples": [
+                    "Mario",
+                    "Peach"
+                  ]
+                }
+              ]
+            }
+          },
+          "messages": {
+            "$id": "#/items/anyOf/0/properties/messages",
+            "type": "array",
+            "title": "The messages schema",
+            "description": "An explanation about the purpose of this instance.",
+            "default": [],
+            "examples": [
+              [
+                {
+                  "from": "Peach",
+                  "postedAt": "2021-10-01T00:00:00+02:00",
+                  "content": "Hi Mario How are you ?"
+                },
+                {
+                  "from": "Mario",
+                  "postedAt": "2021-10-02T00:00:00+02:00",
+                  "content": "I am fine thanks"
+                }
+              ]
+            ],
+            "additionalItems": true,
+            "items": {
+              "$id": "#/items/anyOf/0/properties/messages/items",
+              "anyOf": [
+                {
+                  "$id": "#/items/anyOf/0/properties/messages/items/anyOf/0",
+                  "type": "object",
+                  "title": "The first anyOf schema",
+                  "description": "An explanation about the purpose of this instance.",
+                  "default": {},
+                  "examples": [
+                    {
+                      "from": "Peach",
+                      "postedAt": "2021-10-01T00:00:00+02:00",
+                      "content": "Hi Mario How are you ?"
+                    }
+                  ],
+                  "required": [
+                    "from",
+                    "postedAt",
+                    "content"
+                  ],
+                  "properties": {
+                    "from": {
+                      "$id": "#/items/anyOf/0/properties/messages/items/anyOf/0/properties/from",
+                      "type": "string",
+                      "title": "The from schema",
+                      "description": "An explanation about the purpose of this instance.",
+                      "default": "",
+                      "examples": [
+                        "Peach"
+                      ]
+                    },
+                    "postedAt": {
+                      "$id": "#/items/anyOf/0/properties/messages/items/anyOf/0/properties/postedAt",
+                      "type": "string",
+                      "title": "The postedAt schema",
+                      "description": "An explanation about the purpose of this instance.",
+                      "default": "",
+                      "examples": [
+                        "2021-10-01T00:00:00+02:00"
+                      ]
+                    },
+                    "content": {
+                      "$id": "#/items/anyOf/0/properties/messages/items/anyOf/0/properties/content",
+                      "type": "string",
+                      "title": "The content schema",
+                      "description": "An explanation about the purpose of this instance.",
+                      "default": "",
+                      "examples": [
+                        "Hi Mario How are you ?"
+                      ]
+                    }
+                  },
+                  "additionalProperties": false
+                }
+              ]
+            }
+          },
+          "version": {
+            "$id": "#/items/anyOf/0/properties/version",
+            "type": "integer",
+            "title": "The version schema",
+            "description": "An explanation about the purpose of this instance.",
+            "default": 0,
+            "examples": [
+              1
+            ]
+          }
+        },
+        "additionalProperties": false
+      }
+    ]
+  }
+}

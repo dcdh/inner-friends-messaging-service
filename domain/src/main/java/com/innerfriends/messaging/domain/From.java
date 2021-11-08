@@ -10,6 +10,10 @@ public final class From {
         this(openedBy.identifier());
     }
 
+    public From(final String identifier) {
+        this(new ParticipantIdentifier(identifier));
+    }
+
     public From(final ParticipantIdentifier identifier) {
         this.identifier = Objects.requireNonNull(identifier);
     }

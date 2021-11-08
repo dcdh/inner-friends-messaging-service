@@ -9,16 +9,13 @@ public final class OpenANewConversationCommand implements OpenANewConversation, 
 
     private final OpenedBy openedBy;
     private final List<ParticipantIdentifier> participantsIdentifier;
-    private final OpenedAt openedAt;
     private final Content content;
 
     public OpenANewConversationCommand(final OpenedBy openedBy,
                                        final List<ParticipantIdentifier> participantsIdentifier,
-                                       final OpenedAt openedAt,
                                        final Content content) {
         this.openedBy = Objects.requireNonNull(openedBy);
         this.participantsIdentifier = Objects.requireNonNull(participantsIdentifier);
-        this.openedAt = Objects.requireNonNull(openedAt);
         this.content = Objects.requireNonNull(content);
     }
 
@@ -38,11 +35,6 @@ public final class OpenANewConversationCommand implements OpenANewConversation, 
     }
 
     @Override
-    public OpenedAt startedAt() {
-        return openedAt;
-    }
-
-    @Override
     public Content content() {
         return content;
     }
@@ -54,12 +46,11 @@ public final class OpenANewConversationCommand implements OpenANewConversation, 
         final OpenANewConversationCommand that = (OpenANewConversationCommand) o;
         return Objects.equals(openedBy, that.openedBy) &&
                 Objects.equals(participantsIdentifier, that.participantsIdentifier) &&
-                Objects.equals(openedAt, that.openedAt) &&
                 Objects.equals(content, that.content);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(openedBy, participantsIdentifier, openedAt, content);
+        return Objects.hash(openedBy, participantsIdentifier, content);
     }
 }

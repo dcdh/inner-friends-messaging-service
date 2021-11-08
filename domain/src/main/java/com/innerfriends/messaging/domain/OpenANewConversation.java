@@ -8,8 +8,6 @@ public interface OpenANewConversation {
 
     List<ParticipantIdentifier> participantsIdentifier();
 
-    OpenedAt startedAt();
-
     Content content();
 
 }

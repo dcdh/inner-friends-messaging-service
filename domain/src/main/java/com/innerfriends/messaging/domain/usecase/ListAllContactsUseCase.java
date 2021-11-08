@@ -1,13 +1,12 @@
 package com.innerfriends.messaging.domain.usecase;
 
 import com.innerfriends.messaging.domain.ContactBookRepository;
-import com.innerfriends.messaging.domain.ContactIdentifier;
+import com.innerfriends.messaging.domain.ListAllContactInContactBook;
 import com.innerfriends.messaging.domain.UseCase;
 
-import java.util.List;
 import java.util.Objects;
 
-public class ListAllContactsUseCase implements UseCase<List<ContactIdentifier>, ListAllContactsCommand> {
+public class ListAllContactsUseCase implements UseCase<ListAllContactInContactBook, ListAllContactsCommand> {
 
     private final ContactBookRepository contactBookRepository;
 
@@ -16,8 +15,8 @@ public class ListAllContactsUseCase implements UseCase<List<ContactIdentifier>, 
     }
 
     @Override
-    public List<ContactIdentifier> execute(final ListAllContactsCommand command) {
-        return this.contactBookRepository.getByOwner(command.owner()).allContacts();
+    public ListAllContactInContactBook execute(final ListAllContactsCommand command) {
+        return new ListAllContactInContactBook(this.contactBookRepository.getByOwner(command.owner()));
     }
 
 }

@@ -10,6 +10,10 @@ public final class Owner {
         this.identifier = Objects.requireNonNull(contactIdentifier);
     }
 
+    public Owner(final String identifier) {
+        this(new ContactIdentifier(identifier));
+    }
+
     public Owner(final OpenedBy openedBy) {
         this(new ContactIdentifier(openedBy.identifier().identifier()));
     }

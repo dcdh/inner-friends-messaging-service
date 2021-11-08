@@ -12,13 +12,16 @@ public class OpenANewConversationUseCase implements UseCase<Conversation, OpenAN
     private final ConversationRepository conversationRepository;
     private final ContactBookRepository contactBookRepository;
     private final ConversationIdentifierProvider conversationIdentifierProvider;
+    private final PostedAtProvider postedAtProvider;
 
     public OpenANewConversationUseCase(final ConversationRepository conversationRepository,
                                        final ContactBookRepository contactBookRepository,
-                                       final ConversationIdentifierProvider conversationIdentifierProvider) {
+                                       final ConversationIdentifierProvider conversationIdentifierProvider,
+                                       final PostedAtProvider postedAtProvider) {
         this.conversationRepository = Objects.requireNonNull(conversationRepository);
         this.contactBookRepository = Objects.requireNonNull(contactBookRepository);
         this.conversationIdentifierProvider = Objects.requireNonNull(conversationIdentifierProvider);
+        this.postedAtProvider = Objects.requireNonNull(postedAtProvider);
     }
 
     @Override
@@ -39,7 +42,7 @@ public class OpenANewConversationUseCase implements UseCase<Conversation, OpenAN
         final Conversation conversation = new Conversation(conversationIdentifier,
                 new Message(
                         new From(command.openedBy()),
-                        new PostedAt(command.startedAt()),
+                        postedAtProvider.now(),
                         command.content()),
                 participantIdentifiers);
         this.conversationRepository.createConversation(conversation);

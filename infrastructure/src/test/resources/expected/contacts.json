@@ -1,0 +1,117 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema",
+  "$id": "http://example.com/example.json",
+  "type": "object",
+  "title": "The root schema",
+  "description": "The root schema comprises the entire JSON document.",
+  "default": {},
+  "examples": [
+    {
+      "owner": "Mario",
+      "contacts": [
+        {
+          "contactIdentifier": "Luigi",
+          "addedAt": "2021-10-03T00:00:00+02:00"
+        },
+        {
+          "contactIdentifier": "Peach",
+          "addedAt": "2021-10-02T00:00:00+02:00"
+        }
+      ],
+      "version": 2
+    }
+  ],
+  "required": [
+    "owner",
+    "contacts",
+    "version"
+  ],
+  "properties": {
+    "owner": {
+      "$id": "#/properties/owner",
+      "type": "string",
+      "title": "The owner schema",
+      "description": "An explanation about the purpose of this instance.",
+      "default": "",
+      "examples": [
+        "Mario"
+      ]
+    },
+    "contacts": {
+      "$id": "#/properties/contacts",
+      "type": "array",
+      "title": "The contacts schema",
+      "description": "An explanation about the purpose of this instance.",
+      "default": [],
+      "examples": [
+        [
+          {
+            "contactIdentifier": "Luigi",
+            "addedAt": "2021-10-03T00:00:00+02:00"
+          },
+          {
+            "contactIdentifier": "Peach",
+            "addedAt": "2021-10-02T00:00:00+02:00"
+          }
+        ]
+      ],
+      "additionalItems": true,
+      "items": {
+        "$id": "#/properties/contacts/items",
+        "anyOf": [
+          {
+            "$id": "#/properties/contacts/items/anyOf/0",
+            "type": "object",
+            "title": "The first anyOf schema",
+            "description": "An explanation about the purpose of this instance.",
+            "default": {},
+            "examples": [
+              {
+                "contactIdentifier": "Luigi",
+                "addedAt": "2021-10-03T00:00:00+02:00"
+              }
+            ],
+            "required": [
+              "contactIdentifier",
+              "addedAt"
+            ],
+            "properties": {
+              "contactIdentifier": {
+                "$id": "#/properties/contacts/items/anyOf/0/properties/contactIdentifier",
+                "type": "string",
+                "title": "The contactIdentifier schema",
+                "description": "An explanation about the purpose of this instance.",
+                "default": "",
+                "examples": [
+                  "Luigi"
+                ]
+              },
+              "addedAt": {
+                "$id": "#/properties/contacts/items/anyOf/0/properties/addedAt",
+                "type": "string",
+                "title": "The addedAt schema",
+                "description": "An explanation about the purpose of this instance.",
+                "default": "",
+                "examples": [
+                  "2021-10-03T00:00:00+02:00"
+                ]
+              }
+            },
+            "additionalProperties": false
+          }
+        ]
+      }
+    },
+    "version": {
+      "$id": "#/properties/version",
+      "type": "integer",
+      "title": "The version schema",
+      "description": "An explanation about the purpose of this instance.",
+      "default": 0,
+      "examples": [
+        2
+      ]
+    }
+  },
+  "additionalProperties": false
+}

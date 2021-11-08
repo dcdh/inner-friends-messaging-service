@@ -27,22 +27,22 @@ public class ListConversationsUseCaseTest {
                 new Conversation(
                         conversationIdentifier1,
                         List.of(
-                                new Message(new From(new ParticipantIdentifier("Mario")), buildPostedAt(1), new TestContent("Hello Luigi")),
-                                new Message(new From(new ParticipantIdentifier("Luigi")), buildPostedAt(2), new TestContent("Hi Mario !"))),
+                                new Message(new From("Mario"), buildPostedAt(1), new Content("Hello Luigi")),
+                                new Message(new From("Luigi"), buildPostedAt(2), new Content("Hi Mario !"))),
                         List.of(new ParticipantIdentifier("Mario"), new ParticipantIdentifier("Luigi")),
                         1l
                 ),
                 new Conversation(
                         conversationIdentifier2,
                         List.of(
-                                new Message(new From(new ParticipantIdentifier("Bowser")), buildPostedAt(4), new TestContent("Mario you should run as fast as you can !"))),
+                                new Message(new From("Bowser"), buildPostedAt(4), new Content("Mario you should run as fast as you can !"))),
                         List.of(new ParticipantIdentifier("Mario"), new ParticipantIdentifier("Bowser")),
                         0l
                 ),
                 new Conversation(
                         conversationIdentifier3,
                         List.of(
-                                new Message(new From(new ParticipantIdentifier("Peach")), buildPostedAt(1), new TestContent("I Mario How are you ?"))),
+                                new Message(new From("Peach"), buildPostedAt(1), new Content("Hi Mario How are you ?"))),
                         List.of(new ParticipantIdentifier("Mario"), new ParticipantIdentifier("Peach")),
                         0l
                 )
@@ -58,22 +58,22 @@ public class ListConversationsUseCaseTest {
                 new Conversation(
                         conversationIdentifier2,
                         List.of(
-                                new Message(new From(new ParticipantIdentifier("Bowser")), buildPostedAt(4), new TestContent("Mario you should run as fast as you can !"))),
+                                new Message(new From("Bowser"), buildPostedAt(4), new Content("Mario you should run as fast as you can !"))),
                         List.of(new ParticipantIdentifier("Mario"), new ParticipantIdentifier("Bowser")),
                         0l
                 ),
                 new Conversation(
                         conversationIdentifier1,
                         List.of(
-                                new Message(new From(new ParticipantIdentifier("Mario")), buildPostedAt(1), new TestContent("Hello Luigi")),
-                                new Message(new From(new ParticipantIdentifier("Luigi")), buildPostedAt(2), new TestContent("Hi Mario !"))),
+                                new Message(new From("Mario"), buildPostedAt(1), new Content("Hello Luigi")),
+                                new Message(new From("Luigi"), buildPostedAt(2), new Content("Hi Mario !"))),
                         List.of(new ParticipantIdentifier("Mario"), new ParticipantIdentifier("Luigi")),
                         1l
                 ),
                 new Conversation(
                         conversationIdentifier3,
                         List.of(
-                                new Message(new From(new ParticipantIdentifier("Peach")), buildPostedAt(1), new TestContent("I Mario How are you ?"))),
+                                new Message(new From("Peach"), buildPostedAt(1), new Content("Hi Mario How are you ?"))),
                         List.of(new ParticipantIdentifier("Mario"), new ParticipantIdentifier("Peach")),
                         0l
                 )

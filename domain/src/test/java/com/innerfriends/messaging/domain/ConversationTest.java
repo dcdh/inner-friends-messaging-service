@@ -1,6 +1,5 @@
 package com.innerfriends.messaging.domain;
 
-import com.innerfriends.messaging.domain.usecase.TestContent;
 import nl.jqno.equalsverifier.EqualsVerifier;
 import nl.jqno.equalsverifier.Warning;
 import org.junit.jupiter.api.Test;
@@ -28,7 +27,7 @@ public class ConversationTest {
         final ConversationIdentifier conversationIdentifier = mock(ConversationIdentifier.class);
         final Conversation conversation = new Conversation(
                 conversationIdentifier,
-                new Message(new From(new ParticipantIdentifier("Mario")), buildPostedAt(1), new TestContent("Hello Luigi")),
+                new Message(new From("Mario"), buildPostedAt(1), new Content("Hello Luigi")),
                 List.of(new ParticipantIdentifier("Mario"), new ParticipantIdentifier("Luigi"))
         );
 
@@ -37,7 +36,7 @@ public class ConversationTest {
                 .isEqualTo(new Conversation(
                         conversationIdentifier,
                         List.of(
-                                new Message(new From(new ParticipantIdentifier("Mario")), buildPostedAt(1), new TestContent("Hello Luigi"))),
+                                new Message(new From("Mario"), buildPostedAt(1), new Content("Hello Luigi"))),
                         List.of(new ParticipantIdentifier("Mario"), new ParticipantIdentifier("Luigi")),
                         0l
         ));

@@ -33,10 +33,9 @@ public class ListAllContactsUseCaseTest {
 
         // When && Then
         assertThat(listAllContactsUseCase.execute(listAllContactsCommand))
-                .containsExactly(
-                        new ContactIdentifier("Luigi"),
-                        new ContactIdentifier("Mario"),
-                        new ContactIdentifier("Peach"));
+                .isEqualTo(new ListAllContactInContactBook(
+                        new ContactBook(owner, contacts, 1l)
+                ));
     }
 
     private AddedAt buildAddedAt(final Integer day) {

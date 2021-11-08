@@ -1,0 +1,155 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema",
+  "$id": "http://example.com/example.json",
+  "type": "object",
+  "title": "The root schema",
+  "description": "The root schema comprises the entire JSON document.",
+  "default": {},
+  "examples": [
+    {
+      "conversationIdentifier": "Mario-azerty",
+      "participantsIdentifier": [
+        "Peach"
+      ],
+      "messages": [
+        {
+          "from": "Mario",
+          "postedAt": "2021-10-01T00:00:00+02:00",
+          "content": "Hello Peach !"
+        }
+      ],
+      "version": 0
+    }
+  ],
+  "required": [
+    "conversationIdentifier",
+    "participantsIdentifier",
+    "messages",
+    "version"
+  ],
+  "properties": {
+    "conversationIdentifier": {
+      "$id": "#/properties/conversationIdentifier",
+      "type": "string",
+      "title": "The conversationIdentifier schema",
+      "description": "An explanation about the purpose of this instance.",
+      "default": "",
+      "examples": [
+        "Mario-azerty"
+      ]
+    },
+    "participantsIdentifier": {
+      "$id": "#/properties/participantsIdentifier",
+      "type": "array",
+      "title": "The participantsIdentifier schema",
+      "description": "An explanation about the purpose of this instance.",
+      "default": [],
+      "examples": [
+        [
+          "Peach"
+        ]
+      ],
+      "additionalItems": true,
+      "items": {
+        "$id": "#/properties/participantsIdentifier/items",
+        "anyOf": [
+          {
+            "$id": "#/properties/participantsIdentifier/items/anyOf/0",
+            "type": "string",
+            "title": "The first anyOf schema",
+            "description": "An explanation about the purpose of this instance.",
+            "default": "",
+            "examples": [
+              "Peach"
+            ]
+          }
+        ]
+      }
+    },
+    "messages": {
+      "$id": "#/properties/messages",
+      "type": "array",
+      "title": "The messages schema",
+      "description": "An explanation about the purpose of this instance.",
+      "default": [],
+      "examples": [
+        [
+          {
+            "from": "Mario",
+            "postedAt": "2021-10-01T00:00:00+02:00",
+            "content": "Hello Peach !"
+          }
+        ]
+      ],
+      "additionalItems": true,
+      "items": {
+        "$id": "#/properties/messages/items",
+        "anyOf": [
+          {
+            "$id": "#/properties/messages/items/anyOf/0",
+            "type": "object",
+            "title": "The first anyOf schema",
+            "description": "An explanation about the purpose of this instance.",
+            "default": {},
+            "examples": [
+              {
+                "from": "Mario",
+                "postedAt": "2021-10-01T00:00:00+02:00",
+                "content": "Hello Peach !"
+              }
+            ],
+            "required": [
+              "from",
+              "postedAt",
+              "content"
+            ],
+            "properties": {
+              "from": {
+                "$id": "#/properties/messages/items/anyOf/0/properties/from",
+                "type": "string",
+                "title": "The from schema",
+                "description": "An explanation about the purpose of this instance.",
+                "default": "",
+                "examples": [
+                  "Mario"
+                ]
+              },
+              "postedAt": {
+                "$id": "#/properties/messages/items/anyOf/0/properties/postedAt",
+                "type": "string",
+                "title": "The postedAt schema",
+                "description": "An explanation about the purpose of this instance.",
+                "default": "",
+                "examples": [
+                  "2021-10-01T00:00:00+02:00"
+                ]
+              },
+              "content": {
+                "$id": "#/properties/messages/items/anyOf/0/properties/content",
+                "type": "string",
+                "title": "The content schema",
+                "description": "An explanation about the purpose of this instance.",
+                "default": "",
+                "examples": [
+                  "Hello Peach !"
+                ]
+              }
+            },
+            "additionalProperties": false
+          }
+        ]
+      }
+    },
+    "version": {
+      "$id": "#/properties/version",
+      "type": "integer",
+      "title": "The version schema",
+      "description": "An explanation about the purpose of this instance.",
+      "default": 0,
+      "examples": [
+        0
+      ]
+    }
+  },
+  "additionalProperties": false
+}

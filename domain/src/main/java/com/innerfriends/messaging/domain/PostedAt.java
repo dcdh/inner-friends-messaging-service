@@ -7,10 +7,6 @@ public final class PostedAt {
 
     private final ZonedDateTime at;
 
-    public PostedAt(final OpenedAt openedAt) {
-        this(openedAt.at());
-    }
-
     public PostedAt(final ZonedDateTime at) {
         this.at = Objects.requireNonNull(at);
     }

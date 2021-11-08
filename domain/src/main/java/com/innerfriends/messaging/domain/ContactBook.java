@@ -1,7 +1,7 @@
 package com.innerfriends.messaging.domain;
 
 import java.util.ArrayList;
-import java.util.Comparator;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -36,11 +36,12 @@ public final class ContactBook extends Aggregate {
                 .collect(Collectors.toUnmodifiableList());
     }
 
-    public List<ContactIdentifier> allContacts() {
-        return contacts.stream()
-                .sorted(Comparator.comparing(e -> e.contactIdentifier().identifier()))
-                .map(Contact::contactIdentifier)
-                .collect(Collectors.toUnmodifiableList());
+    public List<Contact> allContacts() {
+        return Collections.unmodifiableList(contacts);
+    }
+
+    public Contact getLastAddedContact() {
+        return contacts.stream().reduce((first, second) -> second).get();
     }
 
     public boolean hasContact(final ParticipantIdentifier participantIdentifier) {

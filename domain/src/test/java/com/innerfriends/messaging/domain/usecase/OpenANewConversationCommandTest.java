@@ -1,7 +1,6 @@
 package com.innerfriends.messaging.domain.usecase;
 
 import com.innerfriends.messaging.domain.Content;
-import com.innerfriends.messaging.domain.OpenedAt;
 import com.innerfriends.messaging.domain.OpenedBy;
 import nl.jqno.equalsverifier.EqualsVerifier;
 import org.junit.jupiter.api.Test;
@@ -20,6 +19,6 @@ public class OpenANewConversationCommandTest {
 
     @Test
     public void should_identifier_return_null() {
-        assertThat(new OpenANewConversationCommand(mock(OpenedBy.class), Collections.emptyList(), mock(OpenedAt.class), mock(Content.class)).identifier()).isNull();
+        assertThat(new OpenANewConversationCommand(mock(OpenedBy.class), Collections.emptyList(), mock(Content.class)).identifier()).isNull();
     }
 }

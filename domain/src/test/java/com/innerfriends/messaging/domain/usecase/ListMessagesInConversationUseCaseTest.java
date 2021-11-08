@@ -26,8 +26,8 @@ public class ListMessagesInConversationUseCaseTest {
         final Conversation conversation = new Conversation(
                 mock(ConversationIdentifier.class),
                 List.of(
-                        new Message(new From(new ParticipantIdentifier("Mario")), buildPostedAt(3), new TestContent("I am fine thanks")),
-                        new Message(new From(new ParticipantIdentifier("Peach")), buildPostedAt(2), new TestContent("I Mario How are you ?"))),
+                        new Message(new From("Mario"), buildPostedAt(3), new Content("I am fine thanks")),
+                        new Message(new From("Peach"), buildPostedAt(2), new Content("Hi Mario How are you ?"))),
                 Collections.emptyList(),
                 1l
         );
@@ -39,8 +39,8 @@ public class ListMessagesInConversationUseCaseTest {
         // When && Then
         assertThat(listMessagesInConversationUseCase.execute(listMessagesInConversationCommand))
                 .containsExactly(
-                        new Message(new From(new ParticipantIdentifier("Peach")), buildPostedAt(2), new TestContent("I Mario How are you ?")),
-                        new Message(new From(new ParticipantIdentifier("Mario")), buildPostedAt(3), new TestContent("I am fine thanks")));
+                        new Message(new From("Peach"), buildPostedAt(2), new Content("Hi Mario How are you ?")),
+                        new Message(new From("Mario"), buildPostedAt(3), new Content("I am fine thanks")));
     }
 
     private PostedAt buildPostedAt(final Integer day) {

@@ -22,12 +22,17 @@ public class OpenANewConversationUseCaseTest {
     private ConversationRepository conversationRepository;
     private ContactBookRepository contactBookRepository;
     private ConversationIdentifierProvider conversationIdentifierProvider;
+    private PostedAtProvider postedAtProvider;
+    private OpenANewConversationUseCase openANewConversationUseCase;
 
     @BeforeEach
     public void setup() {
         conversationRepository = mock(ConversationRepository.class);
         contactBookRepository = mock(ContactBookRepository.class);
         conversationIdentifierProvider = mock(ConversationIdentifierProvider.class);
+        postedAtProvider = mock(PostedAtProvider.class);
+        openANewConversationUseCase = new OpenANewConversationUseCase(conversationRepository,
+                contactBookRepository, conversationIdentifierProvider, postedAtProvider);
     }
 
     @Test
@@ -42,19 +47,17 @@ public class OpenANewConversationUseCaseTest {
         final OpenANewConversationCommand openANewConversationCommand = new OpenANewConversationCommand(
                 new OpenedBy(new ParticipantIdentifier("Mario")),
                 List.of(new ParticipantIdentifier("Peach"), new ParticipantIdentifier("Luigi")),
-                new OpenedAt(buildAt(2)),
-                new TestContent("Hello Peach !")
+                new Content("Hello Peach !")
         );
         doReturn(contactBook).when(contactBookRepository).getByOwner(owner);
-        doReturn(new TestConversationIdentifier("conversationIdentifier")).when(conversationIdentifierProvider).generate(new OpenedBy(new ParticipantIdentifier("Mario")));
-        final OpenANewConversationUseCase openANewConversationUseCase = new OpenANewConversationUseCase(conversationRepository,
-                contactBookRepository, conversationIdentifierProvider);
+        doReturn(new ConversationIdentifier("conversationIdentifier")).when(conversationIdentifierProvider).generate(new OpenedBy(new ParticipantIdentifier("Mario")));
+        doReturn(buildPostedAt(2)).when(postedAtProvider).now();
 
         // When && Then
         assertThat(openANewConversationUseCase.execute(openANewConversationCommand))
                 .isEqualTo(new Conversation(
-                        new TestConversationIdentifier("conversationIdentifier"),
-                        List.of(new Message(new From(new ParticipantIdentifier("Mario")), new PostedAt(buildAt(2)), new TestContent("Hello Peach !"))),
+                        new ConversationIdentifier("conversationIdentifier"),
+                        List.of(new Message(new From("Mario"), buildPostedAt(2), new Content("Hello Peach !"))),
                         List.of(new ParticipantIdentifier("Mario"), new ParticipantIdentifier("Peach"), new ParticipantIdentifier("Luigi")),
                         0l
                 ));
@@ -70,11 +73,8 @@ public class OpenANewConversationUseCaseTest {
         final OpenANewConversationCommand openANewConversationCommand = new OpenANewConversationCommand(
                 new OpenedBy(new ParticipantIdentifier("Mario")),
                 Collections.singletonList(new ParticipantIdentifier("Peach")),
-                new OpenedAt(buildAt(2)),
-                new TestContent("Hello Peach !")
+                new Content("Hello Peach !")
         );
-        final OpenANewConversationUseCase openANewConversationUseCase = new OpenANewConversationUseCase(conversationRepository,
-                contactBookRepository, conversationIdentifierProvider);
 
         // When && Then
         assertThatThrownBy(() -> openANewConversationUseCase.execute(openANewConversationCommand))
@@ -82,8 +82,9 @@ public class OpenANewConversationUseCaseTest {
                 .hasFieldOrPropertyWithValue("participantIdentifiersNotInContactBook", List.of(new ParticipantIdentifier("Peach")));
     }
 
-    private ZonedDateTime buildAt(final Integer day) {
-        return ZonedDateTime.of(2021, 10, 31, 0, 0, 0, 0, ZoneId.of("Europe/Paris"));
+    private PostedAt buildPostedAt(final Integer day) {
+        return new PostedAt(
+                ZonedDateTime.of(2021, 10, day, 0, 0, 0, 0, ZoneId.of("Europe/Paris")));
     }
 
 }

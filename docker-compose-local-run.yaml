@@ -1,0 +1,92 @@
+version: '3'
+
+services:
+
+  hazelcast:
+    image: hazelcast/hazelcast:4.1.5
+    ports:
+      - 5701:5701
+      - 8088:8080
+
+  jaeger-all-in-one:
+    image: jaegertracing/all-in-one:1.25.0
+    ports:
+      - 16686:16686
+      - 14268:14268
+      - 14250:14250
+
+  otel-collector:
+    image: otel/opentelemetry-collector:0.33.0
+    command: ["--config=/etc/otel-collector-config.yaml"]
+    volumes:
+      - ./otel-collector-config.yaml:/etc/otel-collector-config.yaml
+    ports:
+      - 13133:13133 # Health_check extension
+      - 4317:4317   # OTLP gRPC receiver
+      - 55680:55680 # OTLP gRPC receiver alternative port
+    depends_on:
+      - jaeger-all-in-one
+
+  mutable:
+    image: debezium/postgres:11-alpine
+    ports:
+      - 5432:5432
+    environment:
+      - POSTGRES_DB=mutable
+      - POSTGRES_USER=postgresql
+      - POSTGRES_PASSWORD=postgresql
+
+  kafka:
+    image: debezium/kafka:1.8
+    ports:
+      - 9092
+    environment:
+      - CLUSTER_ID=5Yr1SIgYQz-b-dgRabWx4g
+      - BROKER_ID=1
+      - KAFKA_CONTROLLER_QUORUM_VOTERS=1@kafka:9093
+
+  connect:
+    image: debezium/connect:1.8
+    ports:
+      - 8083:8083
+    environment:
+      - KAFKA_LOG4J_OPTS=-Dlog4j.configuration=file:/opt/kafka/config/connect-log4j.properties
+      - BOOTSTRAP_SERVERS=kafka:9092
+      - KEY_CONVERTER=org.apache.kafka.connect.json.JsonConverter
+      - VALUE_CONVERTER=org.apache.kafka.connect.json.JsonConverter
+      - GROUP_ID=1
+      - CONFIG_STORAGE_TOPIC=my_connect_configs
+      - OFFSET_STORAGE_TOPIC=my_connect_offsets
+      - STATUS_STORAGE_TOPIC=my_connect_statuses
+    depends_on:
+      - mutable
+      - kafka
+
+  inner-friends-messaging-service:
+    image: damdamdeo/inner-friends-messaging-service
+    ports:
+      - 8080:8080
+    environment:
+      - quarkus.http.host=0.0.0.0
+      - mp.messaging.incoming.event-in.bootstrap.servers=kafka:9092
+      - quarkus.datasource.jdbc.url=jdbc:postgresql://mutable:5432/mutable
+      - quarkus.datasource.username=postgresuser
+      - quarkus.datasource.password=postgresql
+      - kafka-connector-api/mp-rest/url=http://connect:8083
+      - connector.mutable.database.hostname=mutable
+      - connector.mutable.database.username=postgresuser
+      - connector.mutable.database.password=postgrespassword
+      - connector.mutable.database.port=5432
+      - connector.mutable.database.dbname=mutable
+      - connector.mutable.nbOfPartitionsInEventTopic=3
+      - quarkus.hazelcast-client.cluster-name=dev
+      - quarkus.hazelcast-client.cluster-members=hazelcast:5701
+      - quarkus.opentelemetry.tracer.exporter.otlp.endpoint=http://otel-collector:55680
+    depends_on:
+      - mutable
+      - hazelcast
+      - jaeger-all-in-one
+      - otel-collector
+#      - kafka
+#      - connect
+    restart: unless-stopped
