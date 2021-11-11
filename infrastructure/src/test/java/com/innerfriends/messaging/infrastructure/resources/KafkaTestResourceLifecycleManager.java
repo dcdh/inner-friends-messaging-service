@@ -19,8 +19,6 @@ public class KafkaTestResourceLifecycleManager implements QuarkusTestResourceLif
 
     private PostgreSQLContainer<?> postgresContainer;
 
-    private GenericContainer<?> zookeeperContainer;
-
     private GenericContainer<?> kafkaContainer;
 
     private GenericContainer<?> debeziumConnectContainer;
@@ -52,9 +50,8 @@ public class KafkaTestResourceLifecycleManager implements QuarkusTestResourceLif
                 .withEnv("BROKER_ID", "1")
                 .withEnv("KAFKA_CONTROLLER_QUORUM_VOTERS", "1@kafka:9093")
                 .waitingFor(Wait.forLogMessage(".*started.*", 1));
-// FIXME
-//        kafkaContainer.start();
-//        kafkaContainer.followOutput(logConsumer);
+        kafkaContainer.start();
+        kafkaContainer.followOutput(logConsumer);
         debeziumConnectContainer = new GenericContainer<>("debezium/connect:1.8")
                 .withNetwork(network)
                 .withExposedPorts(8083)
@@ -67,9 +64,8 @@ public class KafkaTestResourceLifecycleManager implements QuarkusTestResourceLif
                 .withEnv("OFFSET_STORAGE_TOPIC", "my_connect_offsets")
                 .withEnv("STATUS_STORAGE_TOPIC", "my_connect_statuses")
                 .waitingFor(Wait.forLogMessage(".*Finished starting connectors and tasks.*", 1));
-// FIXME
-//        debeziumConnectContainer.start();
-//        debeziumConnectContainer.followOutput(logConsumer);
+        debeziumConnectContainer.start();
+        debeziumConnectContainer.followOutput(logConsumer);
         kafkaUiContainer = new GenericContainer<>("provectuslabs/kafka-ui:0.2.1")
                 .withNetwork(network)
                 .withExposedPorts(8080)
@@ -81,9 +77,8 @@ public class KafkaTestResourceLifecycleManager implements QuarkusTestResourceLif
             put("quarkus.datasource.jdbc.url", postgresContainer.getJdbcUrl());
             put("quarkus.datasource.username", postgresContainer.getUsername());
             put("quarkus.datasource.password", postgresContainer.getPassword());
-// FIXME
-//            put("kafka-connector-api/mp-rest/url",
-//                    String.format("http://%s:%d", "localhost", debeziumConnectContainer.getMappedPort(8083)));
+            put("kafka-connector-api/mp-rest/url",
+                    String.format("http://%s:%d", "localhost", debeziumConnectContainer.getMappedPort(8083)));
             put("connector.mutable.database.hostname", "mutable");
             put("connector.mutable.database.username", postgresContainer.getUsername());
             put("connector.mutable.database.password", postgresContainer.getPassword());
@@ -91,6 +86,7 @@ public class KafkaTestResourceLifecycleManager implements QuarkusTestResourceLif
             put("connector.mutable.database.dbname", postgresContainer.getDatabaseName());
             put("slot.drop.on.stop", "true");
             put("snapshot.mode", "always");
+            put("kafka.exposed.port.9092", kafkaContainer.getMappedPort(9092).toString());
         }};
     }
 
@@ -98,9 +94,6 @@ public class KafkaTestResourceLifecycleManager implements QuarkusTestResourceLif
     public void stop() {
         if (postgresContainer != null) {
             postgresContainer.close();
-        }
-        if (zookeeperContainer != null) {
-            zookeeperContainer.close();
         }
         if (kafkaContainer != null) {
             kafkaContainer.close();

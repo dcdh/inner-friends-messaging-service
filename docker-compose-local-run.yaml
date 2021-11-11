@@ -68,7 +68,6 @@ services:
       - 8080:8080
     environment:
       - quarkus.http.host=0.0.0.0
-      - mp.messaging.incoming.event-in.bootstrap.servers=kafka:9092
       - quarkus.datasource.jdbc.url=jdbc:postgresql://mutable:5432/mutable
       - quarkus.datasource.username=postgresuser
       - quarkus.datasource.password=postgresql
@@ -78,7 +77,6 @@ services:
       - connector.mutable.database.password=postgrespassword
       - connector.mutable.database.port=5432
       - connector.mutable.database.dbname=mutable
-      - connector.mutable.nbOfPartitionsInEventTopic=3
       - quarkus.hazelcast-client.cluster-name=dev
       - quarkus.hazelcast-client.cluster-members=hazelcast:5701
       - quarkus.opentelemetry.tracer.exporter.otlp.endpoint=http://otel-collector:55680
@@ -87,6 +85,6 @@ services:
       - hazelcast
       - jaeger-all-in-one
       - otel-collector
-#      - kafka
-#      - connect
+      - kafka
+      - connect
     restart: unless-stopped

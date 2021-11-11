@@ -1,7 +1,6 @@
 package com.innerfriends.messaging.infrastructure;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.innerfriends.messaging.infrastructure.resources.OpenTelemetryLifecycleManager;
 import io.restassured.http.ContentType;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 
@@ -21,6 +20,9 @@ public class TracesUtils {
 
     @ConfigProperty(name = "quarkus.application.name")
     String serviceName;
+
+    @ConfigProperty(name = "jaeger.exposed.port.16686")
+    Integer jaegerExposedPort16686;
 
     @JsonIgnoreProperties(ignoreUnknown = true)
     public static final class Traces {
@@ -107,7 +109,6 @@ public class TracesUtils {
     }
 
     public Traces getTraces(final String httpTargetValue) throws Exception {
-        final Integer hostPort = OpenTelemetryLifecycleManager.getJaegerRestApiHostPort();
         await().atMost(15, TimeUnit.SECONDS)
                 .pollInterval(Duration.ofSeconds(1l))
                 .until(() -> {
@@ -116,7 +117,7 @@ public class TracesUtils {
                             .queryParam("limit", "1")
                             .queryParam("service", serviceName)
                             .queryParam("tags", "{\"http.target\":\""+httpTargetValue+"\"}")
-                            .get(new URL(String.format("http://localhost:%d/api/traces", hostPort)))
+                            .get(new URL(String.format("http://localhost:%d/api/traces", jaegerExposedPort16686)))
                             .then()
                             .log().all()
                             .contentType(ContentType.JSON)
@@ -133,7 +134,7 @@ public class TracesUtils {
                 .queryParam("limit", "1")
                 .queryParam("service", serviceName)
                 .queryParam("tags", "{\"http.target\":\""+httpTargetValue+"\"}")
-                .get(new URL(String.format("http://localhost:%d/api/traces", hostPort)))
+                .get(new URL(String.format("http://localhost:%d/api/traces", jaegerExposedPort16686)))
                 .then()
                 .log().all()
                 .extract()

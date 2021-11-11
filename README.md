@@ -23,6 +23,51 @@ Messaging domain.
 
 ## Infra
 
-### Known issues
+###  Kafka
 
-https://issues.redhat.com/browse/DBZ-4262
+#### get connector status
+
+> connect to `connect` container
+> 
+> curl http://localhost:8083/connectors/outbox-connector/status
+
+#### list topics
+
+> connect to `connect` container
+> 
+> bin/kafka-topics.sh --list --bootstrap-server kafka:9092
+
+#### get `ContactBook.events` topic info
+
+> connect to `connect` container 
+>
+> bin/kafka-topics.sh --bootstrap-server kafka:9092 --describe --topic ContactBook.events
+> 
+> bin/kafka-configs.sh --bootstrap-server kafka:9092 --describe --all --topic ContactBook.events
+
+#### read `ContactBook.events` topic messages
+
+> connect to `connect` container
+>
+> bin/kafka-console-consumer.sh --bootstrap-server kafka:9092 --property print.key=true --property print.headers=true --property print.timestamp=true --topic ContactBook.events --from-beginning
+
+#### get `Conversation.events` topic info
+
+> connect to `connect` container 
+>
+> bin/kafka-topics.sh --bootstrap-server kafka:9092 --describe --topic Conversation.events
+> 
+> bin/kafka-configs.sh --bootstrap-server kafka:9092 --describe --all --topic Conversation.events
+
+#### read `Conversation.events` topic messages
+
+> connect to `connect` container
+>
+> bin/kafka-console-consumer.sh --bootstrap-server kafka:9092 --property print.key=true --property print.headers=true --property print.timestamp=true --topic Conversation.events --from-beginning
+
+#### Known issues
+
+##### Kafka unable to start image `fixed in 1.8`
+
+- https://issues.redhat.com/browse/DBZ-4262
+- https://issues.redhat.com/browse/DBZ-4160
