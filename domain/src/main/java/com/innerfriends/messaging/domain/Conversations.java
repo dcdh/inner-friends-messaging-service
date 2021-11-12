@@ -11,7 +11,7 @@ public final class Conversations {
     public Conversations(final ParticipantIdentifier participantIdentifier,
                          final List<Conversation> conversations) {
         this.conversations = Objects.requireNonNull(conversations);
-        if (this.conversations.stream()
+        if (this.conversations.size() > 0 && this.conversations.stream()
                 .allMatch(conversation -> !conversation.hasParticipant(participantIdentifier))) {
             throw new IllegalStateException("Conversations does not belong to the participant !");
         }

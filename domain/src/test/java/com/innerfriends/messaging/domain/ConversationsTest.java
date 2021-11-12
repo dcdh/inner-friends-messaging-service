@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test;
 import java.util.Collections;
 import java.util.List;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.mock;
 
@@ -28,5 +29,11 @@ public class ConversationsTest {
         // When && Then
         assertThatThrownBy(() -> new Conversations(new ParticipantIdentifier("Mario"), conversations))
                 .isInstanceOf(IllegalStateException.class);
+    }
+
+    @Test
+    public void should_handle_empty_conversations() {
+        assertThat(new Conversations(mock(ParticipantIdentifier.class), Collections.emptyList()).listByLastInteraction())
+                .isEmpty();
     }
 }
