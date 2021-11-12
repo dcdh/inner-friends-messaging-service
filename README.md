@@ -11,6 +11,7 @@ Messaging domain.
 1. run `mvn compile quarkus:dev -f infrastructure/pom.xml`
 1. access swagger ui via `http://0.0.0.0:8080/q/swagger-ui/`
 1. access jaeger ui via `http://localhost:16686/`
+1. access kafka ui via `http://localhost:8081/`
 
 ## How to build and run
 
@@ -20,6 +21,7 @@ Messaging domain.
 1. run `docker-compose -f docker-compose-local-run.yaml up && docker-compose -f docker-compose-local-run.yaml rm --force` to start the stack and next remove container after
 1. access swagger ui via `http://0.0.0.0:8080/q/swagger-ui/`
 1. access jaeger ui via `http://localhost:16686/`
+1. access kafka ui via `http://localhost:8081/`
 
 ## Infra
 
@@ -77,3 +79,34 @@ Native compilation does not work since version `2.4.0.Final`. Stuck to version `
 
 - https://issues.redhat.com/browse/DBZ-4262
 - https://issues.redhat.com/browse/DBZ-4160
+
+### vectorized/redpanda
+
+- https://hub.docker.com/r/vectorized/redpanda
+- https://vectorized.io/docs/quick-start-docker/#Bring-up-a-docker-compose-file
+- https://vectorized.io/blog/redpanda-debezium/#Quick-tour-on-services
+
+Regarding running redpanda using `testcontainers` we need to inject the container ip into `--advertise-kafka-addr` however the consumer in test would not be able to communicate with redpanda.
+
+- https://github.com/debezium/docker-images/blob/main/kafka/1.8/docker-entrypoint.sh#L67
+- https://github.com/debezium/docker-images/blob/main/kafka/1.8/docker-entrypoint.sh#L99
+- https://github.com/quarkusio/quarkus/blob/2.4/extensions/kafka-client/deployment/src/main/java/io/quarkus/kafka/client/deployment/DevServicesKafkaProcessor.java#L337
+- https://github.com/testcontainers/testcontainers-java/issues/452#issuecomment-331184470
+
+#### list topic
+
+> connect to `redpanda` container
+>
+> rpk topic list
+
+#### read `ContactBook.events` topic messages
+
+> connect to `redpanda` container
+>
+> rpk topic consume ContactBook.events
+
+#### read `Conversation.events` topic messages
+
+> connect to `redpanda` container
+>
+> rpk topic consume Conversation.events

@@ -22,7 +22,7 @@ import java.util.stream.Collectors;
 @TypeDefs({
         @TypeDef(name = "jsonb", typeClass = JsonBinaryType.class)
 })
-public final class ConversationEntity {
+public class ConversationEntity {
 
     @Id
     @NotNull

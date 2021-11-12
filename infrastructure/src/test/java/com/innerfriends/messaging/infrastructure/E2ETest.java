@@ -16,7 +16,6 @@ import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.common.serialization.StringDeserializer;
-import org.assertj.core.api.Assertions;
 import org.awaitility.Awaitility;
 import org.awaitility.Durations;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
@@ -226,7 +225,6 @@ public class E2ETest {
     @Test
     @Order(10)
     public void should_have_produced_kafka_messages_from_outbox() {
-        // TODO use redpanda instead of kafka
         final String bootstrapServers = "localhost:" + kafkaExposedPort9092;
         final List<ConsumerRecord<String, JsonObject>> contactBookEvents = consumeMessages4Topic(bootstrapServers, "ContactBook.events", 2);
         assertThat(contactBookEvents.get(0).key()).matches("\\b[0-9a-f]{8}\\b-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-\\b[0-9a-f]{12}\\b");

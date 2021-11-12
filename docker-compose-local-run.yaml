@@ -36,14 +36,20 @@ services:
       - POSTGRES_USER=postgresql
       - POSTGRES_PASSWORD=postgresql
 
+#  kafka:
+#    image: debezium/kafka:1.8
+#    ports:
+#      - 9092
+#    environment:
+#      - CLUSTER_ID=5Yr1SIgYQz-b-dgRabWx4g
+#      - BROKER_ID=1
+#      - KAFKA_CONTROLLER_QUORUM_VOTERS=1@kafka:9093
+
   kafka:
-    image: debezium/kafka:1.8
+    image: vectorized/redpanda:v21.9.6
     ports:
       - 9092
-    environment:
-      - CLUSTER_ID=5Yr1SIgYQz-b-dgRabWx4g
-      - BROKER_ID=1
-      - KAFKA_CONTROLLER_QUORUM_VOTERS=1@kafka:9093
+    command: redpanda start --smp 1 --reserve-memory 0M --overprovisioned --node-id 0 --kafka-addr PLAINTEXT://0.0.0.0:29092,OUTSIDE://0.0.0.0:9092 --advertise-kafka-addr PLAINTEXT://kafka:29092,OUTSIDE://kafka:9092
 
   connect:
     image: debezium/connect:1.8
@@ -62,6 +68,16 @@ services:
       - mutable
       - kafka
 
+  kafka_ui:
+    image: provectuslabs/kafka-ui:0.2.1
+    ports:
+      - 8081:8080
+    environment:
+      - KAFKA_CLUSTERS_0_NAME=local
+      - KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS=kafka:9092
+    depends_on:
+      - kafka
+
   inner-friends-messaging-service:
     image: damdamdeo/inner-friends-messaging-service
     ports:
@@ -69,12 +85,12 @@ services:
     environment:
       - quarkus.http.host=0.0.0.0
       - quarkus.datasource.jdbc.url=jdbc:postgresql://mutable:5432/mutable
-      - quarkus.datasource.username=postgresuser
+      - quarkus.datasource.username=postgresql
       - quarkus.datasource.password=postgresql
       - kafka-connector-api/mp-rest/url=http://connect:8083
       - connector.mutable.database.hostname=mutable
-      - connector.mutable.database.username=postgresuser
-      - connector.mutable.database.password=postgrespassword
+      - connector.mutable.database.username=postgresql
+      - connector.mutable.database.password=postgresql
       - connector.mutable.database.port=5432
       - connector.mutable.database.dbname=mutable
       - quarkus.hazelcast-client.cluster-name=dev
