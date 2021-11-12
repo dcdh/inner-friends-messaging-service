@@ -5,6 +5,7 @@ import com.innerfriends.messaging.domain.usecase.*;
 import com.innerfriends.messaging.infrastructure.usecase.*;
 
 import javax.ws.rs.*;
+import javax.ws.rs.core.MediaType;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -41,6 +42,7 @@ public class MessagingEndpoint {
 
     @POST
     @Path("/contacts/{owner}/recent")
+    @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
     public List<String> listRecentContacts(@PathParam("owner") final String owner,
                                            @FormParam("nbOfContactToReturn") final Integer nbOfContactToReturn) {
         return managedListRecentContactsUseCase.execute(new ListRecentContactsCommand(
@@ -54,6 +56,7 @@ public class MessagingEndpoint {
 
     @POST
     @Path("/conversations/openANewOne")
+    @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
     public ConversationDTO openANewConversation(@FormParam("from") final String openedBy,
                                                 @FormParam("to") final String to,
                                                 @FormParam("content") final String content) {
@@ -66,6 +69,7 @@ public class MessagingEndpoint {
 
     @POST
     @Path("/conversations/listConversations")
+    @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
     public List<ConversationDTO> listConversations(@FormParam("participantIdentifier") final String participantIdentifier) {
         return managedListConversationsUseCase.execute(new ListConversationsCommand(new ParticipantIdentifier(participantIdentifier)))
                 .stream()
@@ -75,6 +79,7 @@ public class MessagingEndpoint {
 
     @POST
     @Path("/conversations/postNewMessage")
+    @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
     public void postNewMessageToConversation(@FormParam("conversationIdentifier") final String conversationIdentifier,
                                              @FormParam("from") final String from,
                                              @FormParam("content") final String content) {
