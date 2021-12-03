@@ -61,11 +61,12 @@ public class ContactBookEntity {
         if (!(o instanceof ContactBookEntity)) return false;
         final ContactBookEntity that = (ContactBookEntity) o;
         return Objects.equals(owner, that.owner) &&
-                Objects.equals(contacts, that.contacts);
+                Objects.equals(contacts, that.contacts) &&
+                Objects.equals(version, that.version);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(owner, contacts);
+        return Objects.hash(owner, contacts, version);
     }
 }
