@@ -7,6 +7,10 @@ public final class LastInteractionAt {
 
     private final ZonedDateTime at;
 
+    public LastInteractionAt(final EventAt eventAt) {
+        this(eventAt.at());
+    }
+
     public LastInteractionAt(final PostedAt postedAt) {
         this(postedAt.at());
     }

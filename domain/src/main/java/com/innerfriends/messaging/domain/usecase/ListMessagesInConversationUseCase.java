@@ -7,6 +7,7 @@ import com.innerfriends.messaging.domain.UseCase;
 import java.util.List;
 import java.util.Objects;
 
+@Deprecated// should be conversationEvents
 public class ListMessagesInConversationUseCase implements UseCase<List<Message>, ListMessagesInConversationCommand> {
 
     private final ConversationRepository conversationRepository;

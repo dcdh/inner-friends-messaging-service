@@ -16,13 +16,18 @@ public class LastInteractionAtTest {
     }
 
     @Test
-    public void should_return_added_at() {
+    public void should_return_last_interaction_at() {
         assertThat(new LastInteractionAt(buildZonedDateTime()).at()).isEqualTo(buildZonedDateTime());
     }
 
     @Test
-    public void should_return_added_at_from_posted_at() {
+    public void should_return_last_interaction_at_from_posted_at() {
         assertThat(new LastInteractionAt(new PostedAt(buildZonedDateTime())).at()).isEqualTo(buildZonedDateTime());
+    }
+
+    @Test
+    public void should_return_last_interaction_at_from_event_at() {
+        assertThat(new LastInteractionAt(new EventAt(buildZonedDateTime())).at()).isEqualTo(buildZonedDateTime());
     }
 
     private ZonedDateTime buildZonedDateTime() {

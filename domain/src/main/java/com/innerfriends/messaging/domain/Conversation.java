@@ -9,7 +9,7 @@ import java.util.stream.Collectors;
 public final class Conversation extends Aggregate {
 
     private final ConversationIdentifier conversationIdentifier;
-    private final List<Message> messages;
+    private final List<ConversationEvent> events;
     private final List<ParticipantIdentifier> participantsIdentifier;
 
     public Conversation(final ConversationIdentifier conversationIdentifier,
@@ -18,8 +18,9 @@ public final class Conversation extends Aggregate {
                         final Long version) {
         super(version);
         this.conversationIdentifier = Objects.requireNonNull(conversationIdentifier);
-        this.messages = messages.stream()
+        this.events = messages.stream()
                 .sorted(Comparator.comparing(e -> e.postedAt().at()))
+                .map(MessagePostedConversationEvent::new)
                 .collect(Collectors.toList());
         this.participantsIdentifier = Objects.requireNonNull(participantsIdentifier);
     }
@@ -36,17 +37,23 @@ public final class Conversation extends Aggregate {
         if (!this.participantsIdentifier.contains(from.identifier())) {
             throw new YouAreNotAParticipantException(conversationIdentifier, from);
         }
-        this.apply(() -> messages.add(new Message(from, postedAt, content)));
+        this.apply(() -> events.add(new MessagePostedConversationEvent(new Message(from, postedAt, content))));
         return this;
     }
 
+    @Deprecated// should be conversationEvents
     public List<Message> messages() {
-        return messages.stream().collect(Collectors.toUnmodifiableList());
+        return events.stream()
+                .filter(conversationEvent -> ConversationEventType.MESSAGE_POSTED.equals(conversationEvent.conversationEventType()))
+                .map(ConversationEvent::toMessage)
+                .collect(Collectors.toUnmodifiableList());
     }
 
     public Message lastMessage() {
-        return messages.stream()
+        return events.stream()
+                .filter(conversationEvent -> ConversationEventType.MESSAGE_POSTED.equals(conversationEvent.conversationEventType()))
                 .reduce((first, seconde) -> seconde)
+                .map(ConversationEvent::toMessage)
                 .get();
     }
 
@@ -59,9 +66,9 @@ public final class Conversation extends Aggregate {
     }
 
     public LastInteractionAt lastInteractionAt() {
-        return messages.stream()
+        return events.stream()
                 .reduce((first, seconde) -> seconde)
-                .map(Message::postedAt)
+                .map(ConversationEvent::eventAt)
                 .map(LastInteractionAt::new)
                 .get();
     }
@@ -77,20 +84,20 @@ public final class Conversation extends Aggregate {
         if (!super.equals(o)) return false;
         final Conversation that = (Conversation) o;
         return Objects.equals(conversationIdentifier, that.conversationIdentifier) &&
-                Objects.equals(messages, that.messages) &&
+                Objects.equals(events, that.events) &&
                 Objects.equals(participantsIdentifier, that.participantsIdentifier);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(super.hashCode(), conversationIdentifier, messages, participantsIdentifier);
+        return Objects.hash(super.hashCode(), conversationIdentifier, events, participantsIdentifier);
     }
 
     @Override
     public String toString() {
         return "Conversation{" +
                 "conversationIdentifier=" + conversationIdentifier +
-                ", messages=" + messages +
+                ", events=" + events +
                 ", participantsIdentifier=" + participantsIdentifier +
                 "} " + super.toString();
     }
