@@ -11,30 +11,20 @@ import com.innerfriends.messaging.infrastructure.usecase.ManagedAddContactIntoCo
 import com.innerfriends.messaging.infrastructure.usecase.ManagedCreateContactBookUseCase;
 import io.quarkus.test.junit.QuarkusTest;
 import io.vertx.core.json.JsonObject;
-import io.vertx.kafka.client.serialization.JsonObjectDeserializer;
-import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
-import org.apache.kafka.clients.consumer.KafkaConsumer;
-import org.apache.kafka.common.serialization.StringDeserializer;
 import org.awaitility.Awaitility;
 import org.awaitility.Durations;
-import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
-import org.junit.jupiter.api.MethodOrderer;
-import org.junit.jupiter.api.Order;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestMethodOrder;
+import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.transaction.UserTransaction;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.UUID;
 import java.util.concurrent.Callable;
+import java.util.stream.Collectors;
 
 import static io.restassured.RestAssured.given;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -67,16 +57,12 @@ public class E2ETest {
     @Inject
     TracesUtils tracesUtils;
 
-    @ConfigProperty(name = "kafka.exposed.port.9092")
-    Integer kafkaExposedPort9092;
+    @Inject
+    TopicConsumer topicConsumer;
 
-    @Test
-    @Order(1)
-    public void should_start_debezium_connector() {
-        // When
+    @BeforeEach
+    public void setup() {
         outboxConnectorStarter.start();
-
-        // Then
         Awaitility.await()
                 .atMost(Durations.FIVE_SECONDS)
                 .pollInterval(Durations.ONE_HUNDRED_MILLISECONDS)
@@ -85,7 +71,7 @@ public class E2ETest {
     }
 
     @Test
-    @Order(2)
+    @Order(1)
     public void should_create_contact_book() {
         // TODO plug kafka consumer from user domain
         managedCreateContactBookUseCase.execute(new CreateContactBookCommand(new ContactIdentifier("Mario")));
@@ -93,7 +79,7 @@ public class E2ETest {
     }
 
     @Test
-    @Order(3)
+    @Order(2)
     public void should_add_contact_into_contact_book() {
         // TODO plug kafka consumer from user domain
         managedAddContactIntoContactBookUseCase.execute(new AddContactIntoContactBookCommand(new Owner("Mario"),
@@ -102,7 +88,7 @@ public class E2ETest {
     }
 
     @Test
-    @Order(4)
+    @Order(3)
     public void should_list_all_contacts() throws Exception {
         given()
                 .when()
@@ -123,7 +109,7 @@ public class E2ETest {
     }
 
     @Test
-    @Order(5)
+    @Order(4)
     public void should_list_recent_contacts() throws Exception {
         given()
                 .param("nbOfContactToReturn", 2)
@@ -142,7 +128,7 @@ public class E2ETest {
     }
 
     @Test
-    @Order(6)
+    @Order(5)
     public void should_open_a_new_conversation() throws Exception {
         given()
                 .param("from", "Mario")
@@ -163,7 +149,7 @@ public class E2ETest {
     }
 
     @Test
-    @Order(7)
+    @Order(6)
     public void should_post_a_new_message_to_conversation() throws Exception {
         final String conversationIdentifier = getConversationIdentifier().identifier();
         given()
@@ -185,7 +171,7 @@ public class E2ETest {
     }
 
     @Test
-    @Order(8)
+    @Order(7)
     public void should_list_messages_in_conversation() throws Exception {
         final String conversationIdentifier = getConversationIdentifier().identifier();
         given()
@@ -204,7 +190,7 @@ public class E2ETest {
     }
 
     @Test
-    @Order(9)
+    @Order(8)
     public void should_list_participant_conversations() throws Exception {
         given()
                 .param("participantIdentifier", "Mario")
@@ -223,10 +209,11 @@ public class E2ETest {
     }
 
     @Test
-    @Order(10)
+    @Order(9)
     public void should_have_produced_kafka_messages_from_outbox() {
-        final String bootstrapServers = "localhost:" + kafkaExposedPort9092;
-        final List<ConsumerRecord<String, JsonObject>> contactBookEvents = consumeMessages4Topic(bootstrapServers, "ContactBook.events", 2);
+        final List<ConsumerRecord<String, JsonObject>> consumerRecords = topicConsumer.drain(4);
+        final List<ConsumerRecord<String, JsonObject>> contactBookEvents = consumerRecords.stream()
+                .filter(consumerRecord -> "ContactBook.events".equals(consumerRecord.topic())).collect(Collectors.toList());
         assertThat(contactBookEvents.get(0).key()).matches("\\b[0-9a-f]{8}\\b-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-\\b[0-9a-f]{12}\\b");
         assertThat(contactBookEvents.get(0).headers().lastHeader("id").value()).isEqualTo(contactBookEvents.get(0).key().getBytes());
         assertThat(contactBookEvents.get(0).headers().lastHeader("eventType").value()).isEqualTo("ContactBookCreated".getBytes());
@@ -235,7 +222,8 @@ public class E2ETest {
         assertThat(contactBookEvents.get(1).headers().lastHeader("id").value()).isEqualTo(contactBookEvents.get(1).key().getBytes());
         assertThat(contactBookEvents.get(1).headers().lastHeader("eventType").value()).isEqualTo("ContactAddedIntoContactBook".getBytes());
         assertThat(contactBookEvents.get(1).headers().lastHeader("aggregateId").value()).isNotNull();
-        final List<ConsumerRecord<String, JsonObject>> conversationEvents = consumeMessages4Topic(bootstrapServers, "Conversation.events", 2);
+        final List<ConsumerRecord<String, JsonObject>> conversationEvents = consumerRecords.stream()
+                .filter(consumerRecord -> "Conversation.events".equals(consumerRecord.topic())).collect(Collectors.toList());
         assertThat(conversationEvents.get(0).key()).matches("\\b[0-9a-f]{8}\\b-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-\\b[0-9a-f]{12}\\b");
         assertThat(conversationEvents.get(0).headers().lastHeader("id").value()).isEqualTo(conversationEvents.get(0).key().getBytes());
         assertThat(conversationEvents.get(0).headers().lastHeader("eventType").value()).isEqualTo("NewConversationOpened".getBytes());
@@ -252,34 +240,6 @@ public class E2ETest {
                     .getResultList().get(0);
             return new ConversationIdentifier(conversationIdentifier);
         });
-    }
-
-    private List<ConsumerRecord<String, JsonObject>> consumeMessages4Topic(final String bootstrapServers,
-                                                                           final String topic,
-                                                                           final int expectedRecordCount) {
-        final KafkaConsumer kafkaConsumer = new KafkaConsumer<>(
-                Map.of(
-                        ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers,
-                        ConsumerConfig.GROUP_ID_CONFIG, "tc-" + UUID.randomUUID(),
-                        ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest"),
-                new StringDeserializer(),
-                new JsonObjectDeserializer());
-        kafkaConsumer.subscribe(List.of(topic));
-        return drain(kafkaConsumer, expectedRecordCount);
-    }
-
-    private List<ConsumerRecord<String, JsonObject>> drain(final KafkaConsumer<String, JsonObject> consumer,
-                                                           final int expectedRecordCount) {
-        final List<ConsumerRecord<String, JsonObject>> allRecords = new ArrayList<>();
-        Awaitility.await()
-                .atMost(Durations.TEN_SECONDS)
-                .pollInterval(Durations.ONE_HUNDRED_MILLISECONDS).until(() -> {
-            consumer.poll(java.time.Duration.ofMillis(50))
-                    .iterator()
-                    .forEachRemaining(allRecords::add);
-            return allRecords.size() >= expectedRecordCount;
-        });
-        return allRecords;
     }
 
     private <V> V runInTransaction(final Callable<V> callable) throws Exception {
