@@ -2,6 +2,7 @@ package com.innerfriends.messaging.infrastructure.opentelemetry;
 
 import io.opentelemetry.api.trace.Span;
 
+import javax.annotation.Priority;
 import javax.interceptor.AroundInvoke;
 import javax.interceptor.Interceptor;
 import javax.interceptor.InvocationContext;
@@ -9,6 +10,7 @@ import java.util.Objects;
 
 @NewSpan
 @Interceptor
+@Priority(0)
 public class NewSpanExecutionInterceptor {
 
     private final OpenTelemetryTracingService openTelemetryTracingService;
