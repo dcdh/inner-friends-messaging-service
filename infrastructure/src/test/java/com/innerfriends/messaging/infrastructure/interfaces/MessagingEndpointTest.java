@@ -128,9 +128,10 @@ public class MessagingEndpointTest {
         doReturn(List.of(new Conversation(
                 new ConversationIdentifier("Peach-azerty"),
                 List.of(
-                        new Message(new From("Peach"), buildPostedAt(1), new Content("Hi Mario How are you ?")),
-                        new Message(new From("Mario"), buildPostedAt(2), new Content("I am fine thanks"))),
-                List.of(new ParticipantIdentifier("Mario"), new ParticipantIdentifier("Peach")),
+                        new ParticipantAddedConversationEvent(new ParticipantIdentifier("Mario"), buildAddedAt(1)),
+                        new ParticipantAddedConversationEvent(new ParticipantIdentifier("Peach"), buildAddedAt(1)),
+                        new MessagePostedConversationEvent(new Message(new From("Peach"), buildPostedAt(1), new Content("Hi Mario How are you ?"))),
+                        new MessagePostedConversationEvent(new Message(new From("Mario"), buildPostedAt(2), new Content("I am fine thanks")))),
                 1l
         )))
                 .when(managedListConversationsUseCase).execute(new ListConversationsCommand(new ParticipantIdentifier("Mario")));
@@ -161,9 +162,10 @@ public class MessagingEndpointTest {
         doReturn(new Conversation(
                 new ConversationIdentifier("Peach-azerty"),
                 List.of(
-                        new Message(new From("Peach"), buildPostedAt(1), new Content("Hi Mario How are you ?")),
-                        new Message(new From("Mario"), buildPostedAt(2), new Content("I am fine thanks"))),
-                List.of(new ParticipantIdentifier("Mario"), new ParticipantIdentifier("Peach")),
+                        new ParticipantAddedConversationEvent(new ParticipantIdentifier("Mario"), buildAddedAt(1)),
+                        new ParticipantAddedConversationEvent(new ParticipantIdentifier("Peach"), buildAddedAt(1)),
+                        new MessagePostedConversationEvent(new Message(new From("Peach"), buildPostedAt(1), new Content("Hi Mario How are you ?"))),
+                        new MessagePostedConversationEvent(new Message(new From("Mario"), buildPostedAt(2), new Content("I am fine thanks")))),
                 1l
         ))
                 .when(managedPostNewMessageToConversationUseCase).execute(new PostNewMessageToConversationCommand(

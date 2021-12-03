@@ -22,9 +22,9 @@ public class PostNewMessageToConversationUseCaseTest {
         final ConversationIdentifier conversationIdentifier = new ConversationIdentifier("conversation");
         final Conversation conversation = new Conversation(
                 conversationIdentifier,
-                List.of(
-                        new Message(new From("Peach"), buildPostedAt(2), new Content("Hi Mario How are you ?"))),
-                List.of(new ParticipantIdentifier("Peach"), new ParticipantIdentifier("Mario")),
+                List.of(new ParticipantAddedConversationEvent(new ParticipantIdentifier("Peach"), buildAddedAt(2)),
+                        new ParticipantAddedConversationEvent(new ParticipantIdentifier("Mario"), buildAddedAt(2)),
+                        new MessagePostedConversationEvent(new Message(new From("Peach"), buildPostedAt(2), new Content("Hi Mario How are you ?")))),
                 0l
         );
         final ConversationRepository conversationRepository = mock(ConversationRepository.class);
@@ -37,9 +37,10 @@ public class PostNewMessageToConversationUseCaseTest {
         final Conversation expectedConversation = new Conversation(
                 conversationIdentifier,
                 List.of(
-                        new Message(new From("Peach"), buildPostedAt(2), new Content("Hi Mario How are you ?")),
-                        new Message(new From("Mario"), buildPostedAt(3), new Content("I am fine thanks"))),
-                List.of(new ParticipantIdentifier("Peach"), new ParticipantIdentifier("Mario")),
+                        new ParticipantAddedConversationEvent(new ParticipantIdentifier("Peach"), buildAddedAt(2)),
+                        new ParticipantAddedConversationEvent(new ParticipantIdentifier("Mario"), buildAddedAt(2)),
+                        new MessagePostedConversationEvent(new Message(new From("Peach"), buildPostedAt(2), new Content("Hi Mario How are you ?"))),
+                        new MessagePostedConversationEvent(new Message(new From("Mario"), buildPostedAt(3), new Content("I am fine thanks")))),
                 1l
         );
         assertThat(postNewMessageToConversationUseCase.execute(new PostNewMessageToConversationCommand(
@@ -61,8 +62,9 @@ public class PostNewMessageToConversationUseCaseTest {
         final Conversation conversation = new Conversation(
                 conversationIdentifier,
                 List.of(
-                        new Message(new From("Peach"), buildPostedAt(2), new Content("Hi Mario How are you ?"))),
-                List.of(new ParticipantIdentifier("Peach"), new ParticipantIdentifier("Mario")),
+                        new ParticipantAddedConversationEvent(new ParticipantIdentifier("Peach"), buildAddedAt(2)),
+                        new ParticipantAddedConversationEvent(new ParticipantIdentifier("Mario"), buildAddedAt(2)),
+                        new MessagePostedConversationEvent(new Message(new From("Peach"), buildPostedAt(2), new Content("Hi Mario How are you ?")))),
                 0l
         );
         final ConversationRepository conversationRepository = mock(ConversationRepository.class);
@@ -83,6 +85,11 @@ public class PostNewMessageToConversationUseCaseTest {
 
     private PostedAt buildPostedAt(final Integer day) {
         return new PostedAt(
+                ZonedDateTime.of(2021, 10, day, 0, 0, 0, 0, ZoneId.of("Europe/Paris")));
+    }
+
+    private AddedAt buildAddedAt(final Integer day) {
+        return new AddedAt(
                 ZonedDateTime.of(2021, 10, day, 0, 0, 0, 0, ZoneId.of("Europe/Paris")));
     }
 }

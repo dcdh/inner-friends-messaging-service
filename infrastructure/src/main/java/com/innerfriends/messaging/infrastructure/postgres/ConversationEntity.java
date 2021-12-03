@@ -34,7 +34,7 @@ public class ConversationEntity {
 
     @Type(type = "jsonb")
     @Column(columnDefinition = "jsonb", nullable = false)
-    public List<MessageEntity> messages;
+    public List<ConversationEventEntity> events;
 
     @NotNull
     public Long version;
@@ -47,8 +47,8 @@ public class ConversationEntity {
                 .stream()
                 .map(ParticipantIdentifier::identifier)
                 .collect(Collectors.toList());
-        this.messages = conversation.messages().stream()
-                .map(MessageEntity::new)
+        this.events = conversation.events().stream()
+                .map(ConversationEventEntity::new)
                 .collect(Collectors.toList());
         this.version = conversation.version();
     }
@@ -56,12 +56,7 @@ public class ConversationEntity {
     public Conversation toConversation() {
         return new Conversation(
                 new ConversationIdentifier(conversationIdentifier),
-                messages.stream()
-                        .map(MessageEntity::toMessage)
-                        .collect(Collectors.toList()),
-                participantIdentifiers.stream()
-                        .map(ParticipantIdentifier::new)
-                        .collect(Collectors.toList()),
+                events.stream().map(ConversationEventEntity::toConversationEvent).collect(Collectors.toList()),
                 version);
     }
 
@@ -72,12 +67,12 @@ public class ConversationEntity {
         final ConversationEntity that = (ConversationEntity) o;
         return Objects.equals(conversationIdentifier, that.conversationIdentifier) &&
                 Objects.equals(participantIdentifiers, that.participantIdentifiers) &&
-                Objects.equals(messages, that.messages) &&
+                Objects.equals(events, that.events) &&
                 Objects.equals(version, that.version);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(conversationIdentifier, participantIdentifiers, messages, version);
+        return Objects.hash(conversationIdentifier, participantIdentifiers, events, version);
     }
 }

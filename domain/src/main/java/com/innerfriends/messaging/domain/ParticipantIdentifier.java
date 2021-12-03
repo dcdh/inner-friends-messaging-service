@@ -6,6 +6,10 @@ public final class ParticipantIdentifier {
 
     private final String identifier;
 
+    public ParticipantIdentifier(final EventFrom eventFrom) {
+        this(eventFrom.identifier().identifier);
+    }
+
     public ParticipantIdentifier(final String identifier) {
         this.identifier = Objects.requireNonNull(identifier);
     }

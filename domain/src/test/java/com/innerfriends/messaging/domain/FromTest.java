@@ -22,4 +22,22 @@ public class FromTest {
         assertThat(new From(participantIdentifier).identifier()).isEqualTo(participantIdentifier);
     }
 
+    @Test
+    public void should_return_participant_identifier_from_event_from() {
+        // Given
+        final ParticipantIdentifier participantIdentifier = mock(ParticipantIdentifier.class);
+
+        // When && Then
+        assertThat(new From(new EventFrom(participantIdentifier)).identifier()).isEqualTo(participantIdentifier);
+    }
+
+    @Test
+    public void should_return_participant_identifier_from_opened_by() {
+        // Given
+        final ParticipantIdentifier participantIdentifier = mock(ParticipantIdentifier.class);
+
+        // When && Then
+        assertThat(new From(new OpenedBy(participantIdentifier)).identifier()).isEqualTo(participantIdentifier);
+    }
+
 }

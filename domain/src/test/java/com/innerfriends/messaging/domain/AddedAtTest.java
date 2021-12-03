@@ -20,6 +20,16 @@ public class AddedAtTest {
         assertThat(new AddedAt(buildZonedDateTime()).at()).isEqualTo(buildZonedDateTime());
     }
 
+    @Test
+    public void should_return_added_at_from_event_at() {
+        assertThat(new AddedAt(new EventAt(buildZonedDateTime())).at()).isEqualTo(buildZonedDateTime());
+    }
+
+    @Test
+    public void should_return_added_at_from_posted_at() {
+        assertThat(new AddedAt(new PostedAt(buildZonedDateTime())).at()).isEqualTo(buildZonedDateTime());
+    }
+
     private ZonedDateTime buildZonedDateTime() {
         return ZonedDateTime.of(2021, 10, 31, 0, 0, 0, 0, ZoneId.of("Europe/Paris"));
     }

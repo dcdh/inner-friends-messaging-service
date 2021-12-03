@@ -38,7 +38,7 @@ public class PostgresConversationRepositoryTest extends RepositoryTesting {
         // Then
         assertThat(conversation).isEqualTo(
                 new Conversation(
-                        new ConversationIdentifier("Mario-azerty"), Collections.emptyList(), Collections.emptyList(),0l));
+                        new ConversationIdentifier("Mario-azerty"), Collections.emptyList(),0l));
     }
 
     @Test
@@ -52,8 +52,9 @@ public class PostgresConversationRepositoryTest extends RepositoryTesting {
         // Given
         final Conversation conversationToCreate = new Conversation(new ConversationIdentifier("Mario-azerty"),
                 List.of(
-                        new Message(new From("Peach"), buildPostedAt(2), new Content("Hi Mario How are you ?"))),
-                List.of(new ParticipantIdentifier("Peach"), new ParticipantIdentifier("Mario")),
+                        new ParticipantAddedConversationEvent(new ParticipantIdentifier("Peach"), buildAddedAt(1)),
+                        new ParticipantAddedConversationEvent(new ParticipantIdentifier("Mario"), buildAddedAt(1)),
+                        new MessagePostedConversationEvent(new Message(new From("Peach"), buildPostedAt(2), new Content("Hi Mario How are you ?")))),
                 0l);
 
         // When
@@ -70,7 +71,6 @@ public class PostgresConversationRepositoryTest extends RepositoryTesting {
     public void should_create_conversation_fail_when_already_exists() throws Exception {
         // Given
         final Conversation conversationToCreate = new Conversation(new ConversationIdentifier("Mario-azerty"),
-                Collections.emptyList(),
                 Collections.emptyList(),
                 0l);
         runInTransaction(() ->
@@ -95,8 +95,9 @@ public class PostgresConversationRepositoryTest extends RepositoryTesting {
         final Conversation conversationToSave = new Conversation(
                 new ConversationIdentifier("Mario-azerty"),
                 List.of(
-                        new Message(new From("Peach"), buildPostedAt(2), new Content("Hi Mario How are you ?"))),
-                List.of(new ParticipantIdentifier("Peach"), new ParticipantIdentifier("Mario")),
+                        new ParticipantAddedConversationEvent(new ParticipantIdentifier("Peach"), buildAddedAt(2)),
+                        new ParticipantAddedConversationEvent(new ParticipantIdentifier("Mario"), buildAddedAt(2)),
+                        new MessagePostedConversationEvent(new Message(new From("Peach"), buildPostedAt(2), new Content("Hi Mario How are you ?")))),
                 1l
         );
 
@@ -112,8 +113,9 @@ public class PostgresConversationRepositoryTest extends RepositoryTesting {
                 new Conversation(
                         new ConversationIdentifier("Mario-azerty"),
                         List.of(
-                                new Message(new From("Peach"), buildPostedAt(2), new Content("Hi Mario How are you ?"))),
-                        List.of(new ParticipantIdentifier("Peach"), new ParticipantIdentifier("Mario")),
+                                new ParticipantAddedConversationEvent(new ParticipantIdentifier("Peach"), buildAddedAt(2)),
+                                new ParticipantAddedConversationEvent(new ParticipantIdentifier("Mario"), buildAddedAt(2)),
+                                new MessagePostedConversationEvent(new Message(new From("Peach"), buildPostedAt(2), new Content("Hi Mario How are you ?")))),
                         1l));
     }
 
@@ -125,8 +127,9 @@ public class PostgresConversationRepositoryTest extends RepositoryTesting {
         final Conversation conversationToSave = new Conversation(
                 new ConversationIdentifier("Mario-azerty"),
                 List.of(
-                        new Message(new From("Peach"), buildPostedAt(2), new Content("Hi Mario How are you ?"))),
-                List.of(new ParticipantIdentifier("Peach"), new ParticipantIdentifier("Mario")),
+                        new ParticipantAddedConversationEvent(new ParticipantIdentifier("Peach"), buildAddedAt(2)),
+                        new ParticipantAddedConversationEvent(new ParticipantIdentifier("Mario"), buildAddedAt(2)),
+                        new MessagePostedConversationEvent(new Message(new From("Peach"), buildPostedAt(2), new Content("Hi Mario How are you ?")))),
                 2l
         );
 
@@ -191,4 +194,8 @@ public class PostgresConversationRepositoryTest extends RepositoryTesting {
                 ZonedDateTime.of(2021, 10, day, 0, 0, 0, 0, ZoneId.of("Europe/Paris")));
     }
 
+    private AddedAt buildAddedAt(final Integer day) {
+        return new AddedAt(
+                ZonedDateTime.of(2021, 10, day, 0, 0, 0, 0, ZoneId.of("Europe/Paris")));
+    }
 }

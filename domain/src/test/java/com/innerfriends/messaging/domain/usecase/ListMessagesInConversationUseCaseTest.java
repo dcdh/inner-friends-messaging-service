@@ -7,7 +7,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
-import java.util.Collections;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -25,10 +24,10 @@ public class ListMessagesInConversationUseCaseTest {
         final ListMessagesInConversationUseCase listMessagesInConversationUseCase = new ListMessagesInConversationUseCase(conversationRepository);
         final Conversation conversation = new Conversation(
                 mock(ConversationIdentifier.class),
-                List.of(
-                        new Message(new From("Mario"), buildPostedAt(3), new Content("I am fine thanks")),
-                        new Message(new From("Peach"), buildPostedAt(2), new Content("Hi Mario How are you ?"))),
-                Collections.emptyList(),
+                List.of(new ParticipantAddedConversationEvent(new ParticipantIdentifier("Mario"), buildAddedAt(2)),
+                        new ParticipantAddedConversationEvent(new ParticipantIdentifier("Peach"), buildAddedAt(2)),
+                        new MessagePostedConversationEvent(new Message(new From("Peach"), buildPostedAt(2), new Content("Hi Mario How are you ?"))),
+                        new MessagePostedConversationEvent(new Message(new From("Mario"), buildPostedAt(3), new Content("I am fine thanks")))),
                 1l
         );
         final ConversationIdentifier conversationIdentifier = mock(ConversationIdentifier.class);
@@ -45,6 +44,11 @@ public class ListMessagesInConversationUseCaseTest {
 
     private PostedAt buildPostedAt(final Integer day) {
         return new PostedAt(
+                ZonedDateTime.of(2021, 10, day, 0, 0, 0, 0, ZoneId.of("Europe/Paris")));
+    }
+
+    private AddedAt buildAddedAt(final Integer day) {
+        return new AddedAt(
                 ZonedDateTime.of(2021, 10, day, 0, 0, 0, 0, ZoneId.of("Europe/Paris")));
     }
 }

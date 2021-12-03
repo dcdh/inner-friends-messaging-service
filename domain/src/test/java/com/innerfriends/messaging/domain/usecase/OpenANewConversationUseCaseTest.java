@@ -57,8 +57,11 @@ public class OpenANewConversationUseCaseTest {
         assertThat(openANewConversationUseCase.execute(openANewConversationCommand))
                 .isEqualTo(new Conversation(
                         new ConversationIdentifier("conversationIdentifier"),
-                        List.of(new Message(new From("Mario"), buildPostedAt(2), new Content("Hello Peach !"))),
-                        List.of(new ParticipantIdentifier("Mario"), new ParticipantIdentifier("Peach"), new ParticipantIdentifier("Luigi")),
+                        List.of(
+                                new ParticipantAddedConversationEvent(new ParticipantIdentifier("Mario"), buildAddedAt(2)),
+                                new ParticipantAddedConversationEvent(new ParticipantIdentifier("Peach"), buildAddedAt(2)),
+                                new ParticipantAddedConversationEvent(new ParticipantIdentifier("Luigi"), buildAddedAt(2)),
+                                new MessagePostedConversationEvent(new Message(new From("Mario"), buildPostedAt(2), new Content("Hello Peach !")))),
                         0l
                 ));
     }
@@ -87,4 +90,8 @@ public class OpenANewConversationUseCaseTest {
                 ZonedDateTime.of(2021, 10, day, 0, 0, 0, 0, ZoneId.of("Europe/Paris")));
     }
 
+    private AddedAt buildAddedAt(final Integer day) {
+        return new AddedAt(
+                ZonedDateTime.of(2021, 10, day, 0, 0, 0, 0, ZoneId.of("Europe/Paris")));
+    }
 }

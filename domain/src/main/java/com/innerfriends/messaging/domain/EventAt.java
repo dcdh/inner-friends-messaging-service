@@ -7,6 +7,10 @@ public final class EventAt {
 
     private final ZonedDateTime at;
 
+    public EventAt(final AddedAt addedAt) {
+        this(addedAt.at());
+    }
+
     public EventAt(final PostedAt postedAt) {
         this(postedAt.at());
     }

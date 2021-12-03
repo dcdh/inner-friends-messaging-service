@@ -39,7 +39,7 @@ CREATE TRIGGER contactbook_check_version_on_update_trigger
 CREATE TABLE public.T_CONVERSATION (
 conversationidentifier character varying(255) NOT NULL,
 participantidentifiers jsonb NOT NULL,
-messages jsonb NOT NULL,
+events jsonb NOT NULL,
 version bigint NOT NULL
 );
 
