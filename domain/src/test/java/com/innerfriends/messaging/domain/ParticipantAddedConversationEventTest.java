@@ -52,4 +52,10 @@ public class ParticipantAddedConversationEventTest {
         assertThatThrownBy(() -> new ParticipantAddedConversationEvent(new ParticipantIdentifier("Mario"), new AddedAt(ZonedDateTime.now())).toMessage())
                 .isInstanceOf(UnsupportedOperationException.class);
     }
+
+    @Test
+    public void should_return_empty_participant() {
+        assertThat(new ParticipantAddedConversationEvent(new ParticipantIdentifier("Mario"), new AddedAt(ZonedDateTime.now()))
+                .participantsIdentifier()).isEmpty();
+    }
 }

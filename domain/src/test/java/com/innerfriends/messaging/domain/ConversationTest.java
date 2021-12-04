@@ -36,9 +36,9 @@ public class ConversationTest {
                 .isEqualTo(new Conversation(
                         conversationIdentifier,
                         List.of(
-                                new ParticipantAddedConversationEvent(new ParticipantIdentifier("Mario"), buildAddedAt(1)),
-                                new ParticipantAddedConversationEvent(new ParticipantIdentifier("Luigi"), buildAddedAt(1)),
-                                new MessagePostedConversationEvent(new Message(new From("Mario"), buildPostedAt(1), new Content("Hello Luigi")))),
+                                new StartedConversationEvent(
+                                        new Message(new From("Mario"), buildPostedAt(1), new Content("Hello Luigi")),
+                                        List.of(new ParticipantIdentifier("Mario"), new ParticipantIdentifier("Luigi")))),
                         0l
         ));
         assertThat(conversation.version()).isEqualTo(0l);

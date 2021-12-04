@@ -29,4 +29,11 @@ public final class Content {
     public int hashCode() {
         return Objects.hash(content);
     }
+
+    @Override
+    public String toString() {
+        return "Content{" +
+                "content='" + content + '\'' +
+                '}';
+    }
 }

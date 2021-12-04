@@ -22,9 +22,9 @@ public class PostNewMessageToConversationUseCaseTest {
         final ConversationIdentifier conversationIdentifier = new ConversationIdentifier("conversation");
         final Conversation conversation = new Conversation(
                 conversationIdentifier,
-                List.of(new ParticipantAddedConversationEvent(new ParticipantIdentifier("Peach"), buildAddedAt(2)),
-                        new ParticipantAddedConversationEvent(new ParticipantIdentifier("Mario"), buildAddedAt(2)),
-                        new MessagePostedConversationEvent(new Message(new From("Peach"), buildPostedAt(2), new Content("Hi Mario How are you ?")))),
+                List.of(
+                        new StartedConversationEvent(new Message(new From("Peach"), buildPostedAt(2), new Content("Hi Mario How are you ?")),
+                                List.of(new ParticipantIdentifier("Peach"), new ParticipantIdentifier("Mario")))),
                 0l
         );
         final ConversationRepository conversationRepository = mock(ConversationRepository.class);
@@ -37,9 +37,8 @@ public class PostNewMessageToConversationUseCaseTest {
         final Conversation expectedConversation = new Conversation(
                 conversationIdentifier,
                 List.of(
-                        new ParticipantAddedConversationEvent(new ParticipantIdentifier("Peach"), buildAddedAt(2)),
-                        new ParticipantAddedConversationEvent(new ParticipantIdentifier("Mario"), buildAddedAt(2)),
-                        new MessagePostedConversationEvent(new Message(new From("Peach"), buildPostedAt(2), new Content("Hi Mario How are you ?"))),
+                        new StartedConversationEvent(new Message(new From("Peach"), buildPostedAt(2), new Content("Hi Mario How are you ?")),
+                                List.of(new ParticipantIdentifier("Peach"), new ParticipantIdentifier("Mario"))),
                         new MessagePostedConversationEvent(new Message(new From("Mario"), buildPostedAt(3), new Content("I am fine thanks")))),
                 1l
         );
@@ -62,9 +61,8 @@ public class PostNewMessageToConversationUseCaseTest {
         final Conversation conversation = new Conversation(
                 conversationIdentifier,
                 List.of(
-                        new ParticipantAddedConversationEvent(new ParticipantIdentifier("Peach"), buildAddedAt(2)),
-                        new ParticipantAddedConversationEvent(new ParticipantIdentifier("Mario"), buildAddedAt(2)),
-                        new MessagePostedConversationEvent(new Message(new From("Peach"), buildPostedAt(2), new Content("Hi Mario How are you ?")))),
+                        new StartedConversationEvent(new Message(new From("Peach"), buildPostedAt(2), new Content("Hi Mario How are you ?")),
+                                List.of(new ParticipantIdentifier("Peach"), new ParticipantIdentifier("Mario")))),
                 0l
         );
         final ConversationRepository conversationRepository = mock(ConversationRepository.class);

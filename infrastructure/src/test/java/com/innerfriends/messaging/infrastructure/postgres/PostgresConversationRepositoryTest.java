@@ -10,7 +10,6 @@ import org.postgresql.util.PSQLException;
 import javax.inject.Inject;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
-import java.util.Collections;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -20,26 +19,10 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 @ExtendWith(MockitoExtension.class)
 public class PostgresConversationRepositoryTest extends RepositoryTesting {
 
-    private static final String CREATE_CONVERSATION_SQL = "INSERT INTO public.T_CONVERSATION VALUES ('Mario-azerty', '[]', '[]', 0)";
     private static final String COUNT_CONVERSATION_SQL = "SELECT COUNT(*) FROM public.T_CONVERSATION";
 
     @Inject
     PostgresConversationRepository postgresConversationRepository;
-
-    @Test
-    public void should_return_conversation() throws Exception {
-        // Given
-        runInTransaction(() ->
-                entityManager.createNativeQuery(CREATE_CONVERSATION_SQL).executeUpdate());
-
-        // When
-        final Conversation conversation = runInTransaction(() -> postgresConversationRepository.getConversation(new ConversationIdentifier("Mario-azerty")));
-
-        // Then
-        assertThat(conversation).isEqualTo(
-                new Conversation(
-                        new ConversationIdentifier("Mario-azerty"), Collections.emptyList(),0l));
-    }
 
     @Test
     public void should_get_conversion_fail_when_conversation_does_not_exists() {
@@ -52,9 +35,8 @@ public class PostgresConversationRepositoryTest extends RepositoryTesting {
         // Given
         final Conversation conversationToCreate = new Conversation(new ConversationIdentifier("Mario-azerty"),
                 List.of(
-                        new ParticipantAddedConversationEvent(new ParticipantIdentifier("Peach"), buildAddedAt(1)),
-                        new ParticipantAddedConversationEvent(new ParticipantIdentifier("Mario"), buildAddedAt(1)),
-                        new MessagePostedConversationEvent(new Message(new From("Peach"), buildPostedAt(2), new Content("Hi Mario How are you ?")))),
+                        new StartedConversationEvent(new Message(new From("Peach"), buildPostedAt(2), new Content("Hi Mario How are you ?")),
+                                List.of(new ParticipantIdentifier("Peach"), new ParticipantIdentifier("Mario")))),
                 0l);
 
         // When
@@ -71,10 +53,15 @@ public class PostgresConversationRepositoryTest extends RepositoryTesting {
     public void should_create_conversation_fail_when_already_exists() throws Exception {
         // Given
         final Conversation conversationToCreate = new Conversation(new ConversationIdentifier("Mario-azerty"),
-                Collections.emptyList(),
+                List.of(
+                        new StartedConversationEvent(
+                                new Message(new From("Peach"), buildPostedAt(2), new Content("Hi Mario How are you ?")),
+                                List.of(new ParticipantIdentifier("Peach"), new ParticipantIdentifier("Mario")))),
                 0l);
-        runInTransaction(() ->
-                entityManager.createNativeQuery(CREATE_CONVERSATION_SQL).executeUpdate());
+        runInTransaction(() -> {
+            postgresConversationRepository.createConversation(conversationToCreate);
+            return null;
+        });
 
         // When
         assertThatThrownBy(() -> runInTransaction(() -> {
@@ -88,16 +75,39 @@ public class PostgresConversationRepositoryTest extends RepositoryTesting {
     }
 
     @Test
+    public void should_return_conversation() throws Exception {
+        // Given
+        final Conversation conversationToCreate = new Conversation(new ConversationIdentifier("Mario-azerty"),
+                List.of(
+                        new StartedConversationEvent(new Message(new From("Peach"), buildPostedAt(2), new Content("Hi Mario How are you ?")),
+                                List.of(new ParticipantIdentifier("Peach"), new ParticipantIdentifier("Mario")))),
+                0l);
+        runInTransaction(() -> {
+            postgresConversationRepository.createConversation(conversationToCreate);
+            return null;
+        });
+
+        // When
+        final Conversation conversation = runInTransaction(() -> postgresConversationRepository.getConversation(new ConversationIdentifier("Mario-azerty")));
+
+        // Then
+        assertThat(conversation).isEqualTo(
+                new Conversation(new ConversationIdentifier("Mario-azerty"),
+                        List.of(
+                                new StartedConversationEvent(new Message(new From("Peach"), buildPostedAt(2), new Content("Hi Mario How are you ?")),
+                                        List.of(new ParticipantIdentifier("Peach"), new ParticipantIdentifier("Mario")))),
+                        0l));
+    }
+
+    @Test
     public void should_save_conversation() throws Exception {
         // Given
-        runInTransaction(() ->
-                entityManager.createNativeQuery(CREATE_CONVERSATION_SQL).executeUpdate());
         final Conversation conversationToSave = new Conversation(
                 new ConversationIdentifier("Mario-azerty"),
                 List.of(
-                        new ParticipantAddedConversationEvent(new ParticipantIdentifier("Peach"), buildAddedAt(2)),
-                        new ParticipantAddedConversationEvent(new ParticipantIdentifier("Mario"), buildAddedAt(2)),
-                        new MessagePostedConversationEvent(new Message(new From("Peach"), buildPostedAt(2), new Content("Hi Mario How are you ?")))),
+                        new StartedConversationEvent(
+                                new Message(new From("Peach"), buildPostedAt(2), new Content("Hi Mario How are you ?")),
+                                List.of(new ParticipantIdentifier("Peach"), new ParticipantIdentifier("Mario")))),
                 1l
         );
 
@@ -113,23 +123,32 @@ public class PostgresConversationRepositoryTest extends RepositoryTesting {
                 new Conversation(
                         new ConversationIdentifier("Mario-azerty"),
                         List.of(
-                                new ParticipantAddedConversationEvent(new ParticipantIdentifier("Peach"), buildAddedAt(2)),
-                                new ParticipantAddedConversationEvent(new ParticipantIdentifier("Mario"), buildAddedAt(2)),
-                                new MessagePostedConversationEvent(new Message(new From("Peach"), buildPostedAt(2), new Content("Hi Mario How are you ?")))),
+                                new StartedConversationEvent(new Message(new From("Peach"), buildPostedAt(2), new Content("Hi Mario How are you ?")),
+                                        List.of(new ParticipantIdentifier("Peach"), new ParticipantIdentifier("Mario")))),
                         1l));
     }
 
     @Test
     public void should_fail_when_next_version_is_not_incremented_by_one() throws Exception {
         // Given
-        runInTransaction(() ->
-                entityManager.createNativeQuery(CREATE_CONVERSATION_SQL).executeUpdate());
+        final Conversation conversationToCreate = new Conversation(
+                new ConversationIdentifier("Mario-azerty"),
+                List.of(
+                        new StartedConversationEvent(
+                                new Message(new From("Peach"), buildPostedAt(2), new Content("Hi Mario How are you ?")),
+                                List.of(new ParticipantIdentifier("Peach"), new ParticipantIdentifier("Mario")))),
+                0l
+        );
+        runInTransaction(() -> {
+            postgresConversationRepository.saveConversation(conversationToCreate);
+            return null;
+        });
+
         final Conversation conversationToSave = new Conversation(
                 new ConversationIdentifier("Mario-azerty"),
                 List.of(
-                        new ParticipantAddedConversationEvent(new ParticipantIdentifier("Peach"), buildAddedAt(2)),
-                        new ParticipantAddedConversationEvent(new ParticipantIdentifier("Mario"), buildAddedAt(2)),
-                        new MessagePostedConversationEvent(new Message(new From("Peach"), buildPostedAt(2), new Content("Hi Mario How are you ?")))),
+                        new StartedConversationEvent(new Message(new From("Peach"), buildPostedAt(2), new Content("Hi Mario How are you ?")),
+                                List.of(new ParticipantIdentifier("Peach"), new ParticipantIdentifier("Mario")))),
                 2l
         );
 
@@ -194,8 +213,4 @@ public class PostgresConversationRepositoryTest extends RepositoryTesting {
                 ZonedDateTime.of(2021, 10, day, 0, 0, 0, 0, ZoneId.of("Europe/Paris")));
     }
 
-    private AddedAt buildAddedAt(final Integer day) {
-        return new AddedAt(
-                ZonedDateTime.of(2021, 10, day, 0, 0, 0, 0, ZoneId.of("Europe/Paris")));
-    }
 }

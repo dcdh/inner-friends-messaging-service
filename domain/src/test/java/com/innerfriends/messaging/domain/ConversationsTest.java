@@ -3,6 +3,7 @@ package com.innerfriends.messaging.domain;
 import nl.jqno.equalsverifier.EqualsVerifier;
 import org.junit.jupiter.api.Test;
 
+import java.time.ZonedDateTime;
 import java.util.Collections;
 import java.util.List;
 
@@ -22,12 +23,12 @@ public class ConversationsTest {
         // Given
         final List<Conversation> conversations = List.of(
                 new Conversation(
-                        mock(ConversationIdentifier.class),
-                        mock(Message.class),
-                        Collections.emptyList()));
+                        new ConversationIdentifier("conversation"),
+                        new Message(new From("Peach"), new PostedAt(ZonedDateTime.now()), new Content("Hi Mario How are you ?")),
+                        List.of(new ParticipantIdentifier("Mario"), new ParticipantIdentifier("Peach"))));
 
         // When && Then
-        assertThatThrownBy(() -> new Conversations(new ParticipantIdentifier("Mario"), conversations))
+        assertThatThrownBy(() -> new Conversations(new ParticipantIdentifier("Luigi"), conversations))
                 .isInstanceOf(IllegalStateException.class);
     }
 

@@ -30,4 +30,11 @@ public final class ParticipantIdentifier {
     public int hashCode() {
         return Objects.hash(identifier);
     }
+
+    @Override
+    public String toString() {
+        return "ParticipantIdentifier{" +
+                "identifier='" + identifier + '\'' +
+                '}';
+    }
 }

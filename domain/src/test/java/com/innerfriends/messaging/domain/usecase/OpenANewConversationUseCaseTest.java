@@ -58,10 +58,8 @@ public class OpenANewConversationUseCaseTest {
                 .isEqualTo(new Conversation(
                         new ConversationIdentifier("conversationIdentifier"),
                         List.of(
-                                new ParticipantAddedConversationEvent(new ParticipantIdentifier("Mario"), buildAddedAt(2)),
-                                new ParticipantAddedConversationEvent(new ParticipantIdentifier("Peach"), buildAddedAt(2)),
-                                new ParticipantAddedConversationEvent(new ParticipantIdentifier("Luigi"), buildAddedAt(2)),
-                                new MessagePostedConversationEvent(new Message(new From("Mario"), buildPostedAt(2), new Content("Hello Peach !")))),
+                                new StartedConversationEvent(new Message(new From("Mario"), buildPostedAt(2), new Content("Hello Peach !")),
+                                        List.of(new ParticipantIdentifier("Mario"), new ParticipantIdentifier("Peach"), new ParticipantIdentifier("Luigi")))),
                         0l
                 ));
     }

@@ -1,10 +1,10 @@
 package com.innerfriends.messaging.domain;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 public final class Conversation extends Aggregate {
 
@@ -17,18 +17,20 @@ public final class Conversation extends Aggregate {
         super(version);
         this.conversationIdentifier = Objects.requireNonNull(conversationIdentifier);
         this.events = new ArrayList<>(Objects.requireNonNull(events));
-        // TODO le premier event doit être un startedBy et je ne dois en avoir qu'un
+        if (!ConversationEventType.STARTED.equals(this.events.get(0).conversationEventType())) {
+            throw new IllegalStateException("First event must be the started by one !");
+        }
+        if (this.events.stream().filter(event -> ConversationEventType.STARTED.equals(event.conversationEventType())).count() > 1) {
+            throw new IllegalStateException("Only one started by event is expected !");
+        }
+        // Je devrais checker que c'est bien sorted by date ...
     }
 
     public Conversation(final ConversationIdentifier conversationIdentifier,
                         final Message message,
                         final List<ParticipantIdentifier> participantsIdentifier) {
         this(conversationIdentifier,
-                Stream.concat(
-                        participantsIdentifier.stream()
-                                .map(participantIdentifier -> new ParticipantAddedConversationEvent(participantIdentifier,
-                                        new AddedAt(message.postedAt()))),
-                        Stream.of(new MessagePostedConversationEvent(message))).collect(Collectors.toList()),
+                List.of(new StartedConversationEvent(message, participantsIdentifier)),
                 0l);
     }
 
@@ -43,14 +45,16 @@ public final class Conversation extends Aggregate {
     @Deprecated// should be conversationEvents
     public List<Message> messages() {
         return events.stream()
-                .filter(conversationEvent -> ConversationEventType.MESSAGE_POSTED.equals(conversationEvent.conversationEventType()))
+                .filter(conversationEvent -> Arrays.asList(ConversationEventType.STARTED, ConversationEventType.MESSAGE_POSTED)
+                        .contains(conversationEvent.conversationEventType()))
                 .map(ConversationEvent::toMessage)
                 .collect(Collectors.toUnmodifiableList());
     }
 
     public Message lastMessage() {
         return events.stream()
-                .filter(conversationEvent -> ConversationEventType.MESSAGE_POSTED.equals(conversationEvent.conversationEventType()))
+                .filter(conversationEvent -> Arrays.asList(ConversationEventType.STARTED, ConversationEventType.MESSAGE_POSTED)
+                        .contains(conversationEvent.conversationEventType()))
                 .reduce((first, seconde) -> seconde)
                 .map(ConversationEvent::toMessage)
                 .get();
@@ -62,9 +66,7 @@ public final class Conversation extends Aggregate {
 
     public List<ParticipantIdentifier> participants() {
         return events.stream()
-                .filter(conversationEvent -> ConversationEventType.PARTICIPANT_ADDED.equals(conversationEvent.conversationEventType()))
-                .map(ConversationEvent::eventFrom)
-                .map(ParticipantIdentifier::new)
+                .flatMap(event -> event.participantsIdentifier().stream())
                 .collect(Collectors.toList());
     }
 
@@ -78,9 +80,7 @@ public final class Conversation extends Aggregate {
 
     public boolean hasParticipant(final ParticipantIdentifier participantIdentifier) {
         return events.stream()
-                .filter(conversationEvent -> ConversationEventType.PARTICIPANT_ADDED.equals(conversationEvent.conversationEventType()))
-                .map(ConversationEvent::eventFrom)
-                .map(ParticipantIdentifier::new)
+                .flatMap(event -> event.participantsIdentifier().stream())
                 .anyMatch(participantIdentifierInConversation -> participantIdentifierInConversation.equals(participantIdentifier));
     }
 

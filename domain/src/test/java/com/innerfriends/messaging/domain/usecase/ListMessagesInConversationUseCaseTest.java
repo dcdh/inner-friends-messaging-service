@@ -24,9 +24,9 @@ public class ListMessagesInConversationUseCaseTest {
         final ListMessagesInConversationUseCase listMessagesInConversationUseCase = new ListMessagesInConversationUseCase(conversationRepository);
         final Conversation conversation = new Conversation(
                 mock(ConversationIdentifier.class),
-                List.of(new ParticipantAddedConversationEvent(new ParticipantIdentifier("Mario"), buildAddedAt(2)),
-                        new ParticipantAddedConversationEvent(new ParticipantIdentifier("Peach"), buildAddedAt(2)),
-                        new MessagePostedConversationEvent(new Message(new From("Peach"), buildPostedAt(2), new Content("Hi Mario How are you ?"))),
+                List.of(
+                        new StartedConversationEvent(new Message(new From("Peach"), buildPostedAt(2), new Content("Hi Mario How are you ?")),
+                                List.of(new ParticipantIdentifier("Mario"), new ParticipantIdentifier("Peach"))),
                         new MessagePostedConversationEvent(new Message(new From("Mario"), buildPostedAt(3), new Content("I am fine thanks")))),
                 1l
         );

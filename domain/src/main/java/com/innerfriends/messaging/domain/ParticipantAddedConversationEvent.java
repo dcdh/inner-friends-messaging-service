@@ -1,5 +1,7 @@
 package com.innerfriends.messaging.domain;
 
+import java.util.Collections;
+import java.util.List;
 import java.util.Objects;
 
 public final class ParticipantAddedConversationEvent implements ConversationEvent {
@@ -30,6 +32,11 @@ public final class ParticipantAddedConversationEvent implements ConversationEven
     @Override
     public Content content() {
         return new Content("");
+    }
+
+    @Override
+    public List<ParticipantIdentifier> participantsIdentifier() {
+        return Collections.emptyList();
     }
 
     @Override

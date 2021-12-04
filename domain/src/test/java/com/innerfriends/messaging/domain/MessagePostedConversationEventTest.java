@@ -53,4 +53,10 @@ public class MessagePostedConversationEventTest {
                 .isEqualTo(new Message(new From("Mario"), new PostedAt(at), new Content("Hello !")));
     }
 
+    @Test
+    public void should_return_empty_participant() {
+        assertThat(new MessagePostedConversationEvent(new Message(new From("Mario"), new PostedAt(ZonedDateTime.now()), new Content("Hello !")))
+                .participantsIdentifier()).isEmpty();
+    }
+
 }

@@ -27,26 +27,23 @@ public class ListConversationsUseCaseTest {
                 new Conversation(
                         conversationIdentifier1,
                         List.of(
-                                new ParticipantAddedConversationEvent(new ParticipantIdentifier("Mario"), buildAddedAt(1)),
-                                new ParticipantAddedConversationEvent(new ParticipantIdentifier("Luigi"), buildAddedAt(1)),
-                                new MessagePostedConversationEvent(new Message(new From("Mario"), buildPostedAt(1), new Content("Hello Luigi"))),
+                                new StartedConversationEvent(new Message(new From("Mario"), buildPostedAt(1), new Content("Hello Luigi")),
+                                        List.of(new ParticipantIdentifier("Mario"), new ParticipantIdentifier("Luigi"))),
                                 new MessagePostedConversationEvent(new Message(new From("Luigi"), buildPostedAt(2), new Content("Hi Mario !")))),
                         1l
                 ),
                 new Conversation(
                         conversationIdentifier2,
                         List.of(
-                                new ParticipantAddedConversationEvent(new ParticipantIdentifier("Mario"), buildAddedAt(4)),
-                                new ParticipantAddedConversationEvent(new ParticipantIdentifier("Bowser"), buildAddedAt(4)),
-                                new MessagePostedConversationEvent(new Message(new From("Bowser"), buildPostedAt(4), new Content("Mario you should run as fast as you can !")))),
+                                new StartedConversationEvent(new Message(new From("Bowser"), buildPostedAt(4), new Content("Mario you should run as fast as you can !")),
+                                        List.of(new ParticipantIdentifier("Mario"), new ParticipantIdentifier("Bowser")))),
                         0l
                 ),
                 new Conversation(
                         conversationIdentifier3,
                         List.of(
-                                new ParticipantAddedConversationEvent(new ParticipantIdentifier("Mario"), buildAddedAt(1)),
-                                new ParticipantAddedConversationEvent(new ParticipantIdentifier("Peach"), buildAddedAt(1)),
-                                new MessagePostedConversationEvent(new Message(new From("Peach"), buildPostedAt(1), new Content("Hi Mario How are you ?")))),
+                                new StartedConversationEvent(new Message(new From("Peach"), buildPostedAt(1), new Content("Hi Mario How are you ?")),
+                                        List.of(new ParticipantIdentifier("Mario"), new ParticipantIdentifier("Peach")))),
                         0l
                 )
         );
@@ -60,26 +57,24 @@ public class ListConversationsUseCaseTest {
         assertThat(listConversationsUseCase.execute(listConversationsCommand)).containsExactly(
                 new Conversation(
                         conversationIdentifier2,
-                        List.of(new ParticipantAddedConversationEvent(new ParticipantIdentifier("Mario"), buildAddedAt(4)),
-                                new ParticipantAddedConversationEvent(new ParticipantIdentifier("Bowser"), buildAddedAt(4)),
-                                new MessagePostedConversationEvent(new Message(new From("Bowser"), buildPostedAt(4), new Content("Mario you should run as fast as you can !")))),
+                        List.of(
+                                new StartedConversationEvent(new Message(new From("Bowser"), buildPostedAt(4), new Content("Mario you should run as fast as you can !")),
+                                        List.of(new ParticipantIdentifier("Mario"), new ParticipantIdentifier("Bowser")))),
                         0l
                 ),
                 new Conversation(
                         conversationIdentifier1,
                         List.of(
-                                new ParticipantAddedConversationEvent(new ParticipantIdentifier("Mario"), buildAddedAt(1)),
-                                new ParticipantAddedConversationEvent(new ParticipantIdentifier("Luigi"), buildAddedAt(1)),
-                                new MessagePostedConversationEvent(new Message(new From("Mario"), buildPostedAt(1), new Content("Hello Luigi"))),
+                                new StartedConversationEvent(new Message(new From("Mario"), buildPostedAt(1), new Content("Hello Luigi")),
+                                        List.of(new ParticipantIdentifier("Mario"), new ParticipantIdentifier("Luigi"))),
                                 new MessagePostedConversationEvent(new Message(new From("Luigi"), buildPostedAt(2), new Content("Hi Mario !")))),
                         1l
                 ),
                 new Conversation(
                         conversationIdentifier3,
                         List.of(
-                                new ParticipantAddedConversationEvent(new ParticipantIdentifier("Mario"), buildAddedAt(1)),
-                                new ParticipantAddedConversationEvent(new ParticipantIdentifier("Peach"), buildAddedAt(1)),
-                                new MessagePostedConversationEvent(new Message(new From("Peach"), buildPostedAt(1), new Content("Hi Mario How are you ?")))),
+                                new StartedConversationEvent(new Message(new From("Peach"), buildPostedAt(1), new Content("Hi Mario How are you ?")),
+                                        List.of(new ParticipantIdentifier("Mario"), new ParticipantIdentifier("Peach")))),
                         0l
                 )
         );

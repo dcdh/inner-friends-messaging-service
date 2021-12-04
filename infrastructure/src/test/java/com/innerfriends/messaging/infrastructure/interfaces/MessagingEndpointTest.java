@@ -95,7 +95,7 @@ public class MessagingEndpointTest {
         doReturn(new Conversation(
                 new ConversationIdentifier("Mario-azerty"),
                 new Message(new From("Mario"), buildPostedAt(1), new Content("Hello Peach !")),
-                List.of(new ParticipantIdentifier("Peach"))
+                List.of(new ParticipantIdentifier("Peach"), new ParticipantIdentifier("Mario"))
         ))
                 .when(managedOpenANewConversationUseCase)
                 .execute(new OpenANewConversationCommand(
@@ -115,7 +115,7 @@ public class MessagingEndpointTest {
                 .statusCode(200)
                 .body(JsonSchemaValidator.matchesJsonSchemaInClasspath("expected/conversation.json"))
                 .body("conversationIdentifier", equalTo("Mario-azerty"))
-                .body("participantsIdentifier", contains("Peach"))
+                .body("participantsIdentifier", contains("Peach", "Mario"))
                 .body("messages[0].from", equalTo("Mario"))
                 .body("messages[0].postedAt", equalTo("2021-10-01T00:00:00+02:00"))
                 .body("messages[0].content", equalTo("Hello Peach !"))
@@ -128,9 +128,8 @@ public class MessagingEndpointTest {
         doReturn(List.of(new Conversation(
                 new ConversationIdentifier("Peach-azerty"),
                 List.of(
-                        new ParticipantAddedConversationEvent(new ParticipantIdentifier("Mario"), buildAddedAt(1)),
-                        new ParticipantAddedConversationEvent(new ParticipantIdentifier("Peach"), buildAddedAt(1)),
-                        new MessagePostedConversationEvent(new Message(new From("Peach"), buildPostedAt(1), new Content("Hi Mario How are you ?"))),
+                        new StartedConversationEvent(new Message(new From("Peach"), buildPostedAt(1), new Content("Hi Mario How are you ?")),
+                                List.of(new ParticipantIdentifier("Mario"), new ParticipantIdentifier("Peach"))),
                         new MessagePostedConversationEvent(new Message(new From("Mario"), buildPostedAt(2), new Content("I am fine thanks")))),
                 1l
         )))
@@ -162,9 +161,8 @@ public class MessagingEndpointTest {
         doReturn(new Conversation(
                 new ConversationIdentifier("Peach-azerty"),
                 List.of(
-                        new ParticipantAddedConversationEvent(new ParticipantIdentifier("Mario"), buildAddedAt(1)),
-                        new ParticipantAddedConversationEvent(new ParticipantIdentifier("Peach"), buildAddedAt(1)),
-                        new MessagePostedConversationEvent(new Message(new From("Peach"), buildPostedAt(1), new Content("Hi Mario How are you ?"))),
+                        new StartedConversationEvent(new Message(new From("Peach"), buildPostedAt(1), new Content("Hi Mario How are you ?")),
+                                List.of(new ParticipantIdentifier("Mario"), new ParticipantIdentifier("Peach"))),
                         new MessagePostedConversationEvent(new Message(new From("Mario"), buildPostedAt(2), new Content("I am fine thanks")))),
                 1l
         ))

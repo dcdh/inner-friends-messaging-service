@@ -39,9 +39,8 @@ public class ManagedPostNewMessageToConversationUseCaseTest extends ManagedUseCa
         final Conversation conversation = new Conversation(
                 new ConversationIdentifier("Mario-azerty"),
                 List.of(
-                        new ParticipantAddedConversationEvent(new ParticipantIdentifier("Mario"), new AddedAt(ZonedDateTime.now())),
-                        new ParticipantAddedConversationEvent(new ParticipantIdentifier("Peach"), new AddedAt(ZonedDateTime.now())),
-                        new MessagePostedConversationEvent(new Message(new From("Mario"), new PostedAt(ZonedDateTime.now()), new Content("Hi Peach how are you ?"))),
+                        new StartedConversationEvent(new Message(new From("Mario"), new PostedAt(ZonedDateTime.now()), new Content("Hi Peach how are you ?")),
+                                List.of(new ParticipantIdentifier("Mario"), new ParticipantIdentifier("Peach"))),
                         new MessagePostedConversationEvent(new Message(new From("Peach"), new PostedAt(ZonedDateTime.now()), new Content("Fine thanks you !")))),
                 1l);
         doReturn(conversation).when(postNewMessageToConversationUseCase).execute(postNewMessageToConversationCommand);
