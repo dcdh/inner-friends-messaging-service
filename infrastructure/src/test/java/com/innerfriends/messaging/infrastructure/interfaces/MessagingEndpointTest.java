@@ -15,8 +15,7 @@ import java.time.ZonedDateTime;
 import java.util.List;
 
 import static io.restassured.RestAssured.given;
-import static org.hamcrest.Matchers.contains;
-import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.*;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.doThrow;
 
@@ -40,7 +39,7 @@ public class MessagingEndpointTest {
     private ManagedOpenANewConversationUseCase managedOpenANewConversationUseCase;
 
     @InjectMock
-    private ManagedListMessagesInConversationUseCase managedListMessagesInConversationUseCase;
+    private ManagedListConversationEventUseCase managedListConversationEventUseCase;
 
     @Test
     public void should_list_all_contact_by_owner() {
@@ -116,9 +115,11 @@ public class MessagingEndpointTest {
                 .body(JsonSchemaValidator.matchesJsonSchemaInClasspath("expected/conversation.json"))
                 .body("conversationIdentifier", equalTo("Mario-azerty"))
                 .body("participantsIdentifier", contains("Peach", "Mario"))
-                .body("messages[0].from", equalTo("Mario"))
-                .body("messages[0].postedAt", equalTo("2021-10-01T00:00:00+02:00"))
-                .body("messages[0].content", equalTo("Hello Peach !"))
+                .body("events[0].conversationEventType", equalTo("STARTED"))
+                .body("events[0].eventFrom", equalTo("Mario"))
+                .body("events[0].eventAt", equalTo("2021-10-01T00:00:00+02:00"))
+                .body("events[0].content", equalTo("Hello Peach !"))
+                .body("events[0].participantsIdentifier", contains("Peach", "Mario"))
                 .body("version", equalTo(0));
     }
 
@@ -146,12 +147,16 @@ public class MessagingEndpointTest {
                 .body(JsonSchemaValidator.matchesJsonSchemaInClasspath("expected/conversations.json"))
                 .body("[0].conversationIdentifier", equalTo("Peach-azerty"))
                 .body("[0].participantsIdentifier", contains("Mario", "Peach"))
-                .body("[0].messages[0].from", equalTo("Peach"))
-                .body("[0].messages[0].postedAt", equalTo("2021-10-01T00:00:00+02:00"))
-                .body("[0].messages[0].content", equalTo("Hi Mario How are you ?"))
-                .body("[0].messages[1].from", equalTo("Mario"))
-                .body("[0].messages[1].postedAt", equalTo("2021-10-02T00:00:00+02:00"))
-                .body("[0].messages[1].content", equalTo("I am fine thanks"))
+                .body("[0].events[0].conversationEventType", equalTo("STARTED"))
+                .body("[0].events[0].eventFrom", equalTo("Peach"))
+                .body("[0].events[0].eventAt", equalTo("2021-10-01T00:00:00+02:00"))
+                .body("[0].events[0].content", equalTo("Hi Mario How are you ?"))
+                .body("[0].events[0].participantsIdentifier", contains("Mario", "Peach"))
+                .body("[0].events[1].conversationEventType", equalTo("MESSAGE_POSTED"))
+                .body("[0].events[1].eventFrom", equalTo("Mario"))
+                .body("[0].events[1].eventAt", equalTo("2021-10-02T00:00:00+02:00"))
+                .body("[0].events[1].content", equalTo("I am fine thanks"))
+                .body("[0].events[1].participantsIdentifier", empty())
                 .body("[0].version", equalTo(1));
     }
 
@@ -184,21 +189,25 @@ public class MessagingEndpointTest {
     @Test
     public void should_list_messages_in_conversation() {
         // Given
-        doReturn(List.of(new Message(new From("Mario"), buildPostedAt(1), new Content("Hello Peach !"))))
-                .when(managedListMessagesInConversationUseCase)
-                .execute(new ListMessagesInConversationCommand(new ConversationIdentifier("Mario-azerty")));
+        doReturn(List.of(
+                new StartedConversationEvent(new Message(new From("Peach"), buildPostedAt(2), new Content("Hi Mario How are you ?")),
+                        List.of(new ParticipantIdentifier("Mario"), new ParticipantIdentifier("Peach")))))
+                .when(managedListConversationEventUseCase)
+                .execute(new ListConversationEventCommand(new ConversationIdentifier("Mario-azerty")));
 
         // When && Then
         given()
                 .when()
-                .get("/conversations/Mario-azerty/messages")
+                .get("/conversations/Mario-azerty/events")
                 .then()
                 .log().all()
                 .statusCode(200)
-                .body(JsonSchemaValidator.matchesJsonSchemaInClasspath("expected/messages_in_conversation.json"))
-                .body("[0].from", equalTo("Mario"))
-                .body("[0].postedAt", equalTo("2021-10-01T00:00:00+02:00"))
-                .body("[0].content", equalTo("Hello Peach !"));
+                .body(JsonSchemaValidator.matchesJsonSchemaInClasspath("expected/events_in_conversation.json"))
+                .body("[0].conversationEventType", equalTo("STARTED"))
+                .body("[0].eventFrom", equalTo("Peach"))
+                .body("[0].eventAt", equalTo("2021-10-02T00:00:00+02:00"))
+                .body("[0].content", equalTo("Hi Mario How are you ?"))
+                .body("[0].participantsIdentifier", contains("Mario", "Peach"));
     }
 
     @Test

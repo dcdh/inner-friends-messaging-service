@@ -172,18 +172,18 @@ public class E2ETest {
 
     @Test
     @Order(7)
-    public void should_list_messages_in_conversation() throws Exception {
+    public void should_list_events_in_conversation() throws Exception {
         final String conversationIdentifier = getConversationIdentifier().identifier();
         given()
                 .when()
-                .get("/conversations/{conversationIdentifier}/messages", conversationIdentifier)
+                .get("/conversations/{conversationIdentifier}/events", conversationIdentifier)
                 .then()
                 .log().all()
                 .statusCode(200)
                 .body("size()", equalTo(2));
-        final TracesUtils.Traces traces = tracesUtils.getTraces(String.format("/conversations/%s/messages", conversationIdentifier));
+        final TracesUtils.Traces traces = tracesUtils.getTraces(String.format("/conversations/%s/events", conversationIdentifier));
         assertThat(traces.getOperationNames()).containsExactlyInAnyOrder(
-                "conversations/{conversationIdentifier}/messages",
+                "conversations/{conversationIdentifier}/events",
                 "PostgresConversationRepository:getConversation");
         assertThat(traces.getHttpStatus()).containsExactlyInAnyOrder(200);
         assertThat(traces.getOperationNamesInError()).isEmpty();

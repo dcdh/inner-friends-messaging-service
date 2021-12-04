@@ -5,11 +5,11 @@ import com.innerfriends.messaging.domain.UseCaseCommand;
 
 import java.util.Objects;
 
-public final class ListMessagesInConversationCommand implements UseCaseCommand<ConversationIdentifier> {
+public final class ListConversationEventCommand implements UseCaseCommand<ConversationIdentifier> {
 
     private final ConversationIdentifier conversationIdentifier;
 
-    public ListMessagesInConversationCommand(final ConversationIdentifier conversationIdentifier) {
+    public ListConversationEventCommand(final ConversationIdentifier conversationIdentifier) {
         this.conversationIdentifier = Objects.requireNonNull(conversationIdentifier);
     }
 
@@ -25,8 +25,8 @@ public final class ListMessagesInConversationCommand implements UseCaseCommand<C
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof ListMessagesInConversationCommand)) return false;
-        ListMessagesInConversationCommand that = (ListMessagesInConversationCommand) o;
+        if (!(o instanceof ListConversationEventCommand)) return false;
+        ListConversationEventCommand that = (ListConversationEventCommand) o;
         return Objects.equals(conversationIdentifier, that.conversationIdentifier);
     }
 

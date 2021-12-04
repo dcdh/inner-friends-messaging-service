@@ -7,11 +7,11 @@ import org.junit.jupiter.api.Test;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 
-public class ListMessagesInConversationCommandTest {
+public class ListConversationEventCommandTest {
 
     @Test
     public void should_verify_equality() {
-        EqualsVerifier.forClass(ListMessagesInConversationCommand.class).verify();
+        EqualsVerifier.forClass(ListConversationEventCommand.class).verify();
     }
 
     @Test
@@ -20,6 +20,6 @@ public class ListMessagesInConversationCommandTest {
         final ConversationIdentifier conversationIdentifier = mock(ConversationIdentifier.class);
 
         // When && Then
-        assertThat(new ListMessagesInConversationCommand(conversationIdentifier).identifier()).isEqualTo(conversationIdentifier);
+        assertThat(new ListConversationEventCommand(conversationIdentifier).identifier()).isEqualTo(conversationIdentifier);
     }
 }

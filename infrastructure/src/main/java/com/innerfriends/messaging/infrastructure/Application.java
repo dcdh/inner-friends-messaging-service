@@ -65,8 +65,8 @@ public class Application {
 
     @Produces
     @ApplicationScoped
-    public ListMessagesInConversationUseCase listMessagesInConversationUseCaseProducer(final ConversationRepository conversationRepository) {
-        return new ListMessagesInConversationUseCase(conversationRepository);
+    public ListConversationEventUseCase listConversationEventUseCaseProducer(final ConversationRepository conversationRepository) {
+        return new ListConversationEventUseCase(conversationRepository);
     }
 
     @Produces

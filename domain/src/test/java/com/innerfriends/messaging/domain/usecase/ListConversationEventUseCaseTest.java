@@ -14,14 +14,14 @@ import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 
 @ExtendWith(MockitoExtension.class)
-public class ListMessagesInConversationUseCaseTest {
+public class ListConversationEventUseCaseTest {
 
     @Test
     public void should_list_messages_in_conversation() {
         // Given
         final ConversationRepository conversationRepository = mock(ConversationRepository.class);
 
-        final ListMessagesInConversationUseCase listMessagesInConversationUseCase = new ListMessagesInConversationUseCase(conversationRepository);
+        final ListConversationEventUseCase listConversationEventUseCase = new ListConversationEventUseCase(conversationRepository);
         final Conversation conversation = new Conversation(
                 mock(ConversationIdentifier.class),
                 List.of(
@@ -32,14 +32,15 @@ public class ListMessagesInConversationUseCaseTest {
         );
         final ConversationIdentifier conversationIdentifier = mock(ConversationIdentifier.class);
         doReturn(conversation).when(conversationRepository).getConversation(conversationIdentifier);
-        final ListMessagesInConversationCommand listMessagesInConversationCommand = new ListMessagesInConversationCommand(
+        final ListConversationEventCommand listConversationEventCommand = new ListConversationEventCommand(
                 conversationIdentifier);
 
         // When && Then
-        assertThat(listMessagesInConversationUseCase.execute(listMessagesInConversationCommand))
+        assertThat(listConversationEventUseCase.execute(listConversationEventCommand))
                 .containsExactly(
-                        new Message(new From("Peach"), buildPostedAt(2), new Content("Hi Mario How are you ?")),
-                        new Message(new From("Mario"), buildPostedAt(3), new Content("I am fine thanks")));
+                        new StartedConversationEvent(new Message(new From("Peach"), buildPostedAt(2), new Content("Hi Mario How are you ?")),
+                                List.of(new ParticipantIdentifier("Mario"), new ParticipantIdentifier("Peach"))),
+                        new MessagePostedConversationEvent(new Message(new From("Mario"), buildPostedAt(3), new Content("I am fine thanks"))));
     }
 
     private PostedAt buildPostedAt(final Integer day) {

@@ -46,9 +46,10 @@ public class PostNewMessageToConversationUseCaseTest {
                 new From("Mario"),
                 conversationIdentifier,
                 new Content("I am fine thanks")))).isEqualTo(expectedConversation);
-        assertThat(conversation.messages()).containsExactly(
-                new Message(new From("Peach"), buildPostedAt(2), new Content("Hi Mario How are you ?")),
-                new Message(new From("Mario"), buildPostedAt(3), new Content("I am fine thanks")));
+        assertThat(conversation.events()).containsExactly(
+                new StartedConversationEvent(new Message(new From("Peach"), buildPostedAt(2), new Content("Hi Mario How are you ?")),
+                        List.of(new ParticipantIdentifier("Peach"), new ParticipantIdentifier("Mario"))),
+                new MessagePostedConversationEvent(new Message(new From("Mario"), buildPostedAt(3), new Content("I am fine thanks"))));
         assertThat(conversation.lastMessage()).isEqualTo(new Message(new From("Mario"), buildPostedAt(3), new Content("I am fine thanks")));
         assertThat(conversation.lastInteractionAt()).isEqualTo(new LastInteractionAt(buildPostedAt(3)));
         verify(conversationRepository, times(1)).saveConversation(expectedConversation);

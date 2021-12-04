@@ -18,20 +18,20 @@ public class MessagingEndpoint {
     private final ManagedListRecentContactsUseCase managedListRecentContactsUseCase;
     private final ManagedPostNewMessageToConversationUseCase managedPostNewMessageToConversationUseCase;
     private final ManagedOpenANewConversationUseCase managedOpenANewConversationUseCase;
-    private final ManagedListMessagesInConversationUseCase managedListMessagesInConversationUseCase;
+    private final ManagedListConversationEventUseCase managedListConversationEventUseCase;
 
     public MessagingEndpoint(final ManagedListAllContactsUseCase managedListAllContactsUseCase,
                              final ManagedListConversationsUseCase managedListConversationsUseCase,
                              final ManagedListRecentContactsUseCase managedListRecentContactsUseCase,
                              final ManagedPostNewMessageToConversationUseCase managedPostNewMessageToConversationUseCase,
                              final ManagedOpenANewConversationUseCase managedOpenANewConversationUseCase,
-                             final ManagedListMessagesInConversationUseCase managedListMessagesInConversationUseCase) {
+                             final ManagedListConversationEventUseCase managedListConversationEventUseCase) {
         this.managedListAllContactsUseCase = Objects.requireNonNull(managedListAllContactsUseCase);
         this.managedListConversationsUseCase = Objects.requireNonNull(managedListConversationsUseCase);
         this.managedListRecentContactsUseCase = Objects.requireNonNull(managedListRecentContactsUseCase);
         this.managedPostNewMessageToConversationUseCase = Objects.requireNonNull(managedPostNewMessageToConversationUseCase);
         this.managedOpenANewConversationUseCase = Objects.requireNonNull(managedOpenANewConversationUseCase);
-        this.managedListMessagesInConversationUseCase = Objects.requireNonNull(managedListMessagesInConversationUseCase);
+        this.managedListConversationEventUseCase = Objects.requireNonNull(managedListConversationEventUseCase);
     }
 
     @GET
@@ -91,11 +91,11 @@ public class MessagingEndpoint {
     }
 
     @GET
-    @Path("/conversations/{conversationIdentifier}/messages")
-    public List<MessageDTO> listMessagesInConversation(@PathParam("conversationIdentifier") final String conversationIdentifier) {
-        return managedListMessagesInConversationUseCase.execute(new ListMessagesInConversationCommand(
+    @Path("/conversations/{conversationIdentifier}/events")
+    public List<ConversationEventDTO> listEventsInConversation(@PathParam("conversationIdentifier") final String conversationIdentifier) {
+        return managedListConversationEventUseCase.execute(new ListConversationEventCommand(
                 new ConversationIdentifier(conversationIdentifier)))
-                .stream().map(MessageDTO::new)
+                .stream().map(ConversationEventDTO::new)
                 .collect(Collectors.toList());
     }
 

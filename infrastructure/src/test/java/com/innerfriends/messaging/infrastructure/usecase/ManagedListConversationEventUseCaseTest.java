@@ -2,8 +2,8 @@ package com.innerfriends.messaging.infrastructure.usecase;
 
 import com.innerfriends.messaging.domain.ConversationIdentifier;
 import com.innerfriends.messaging.domain.Message;
-import com.innerfriends.messaging.domain.usecase.ListMessagesInConversationCommand;
-import com.innerfriends.messaging.domain.usecase.ListMessagesInConversationUseCase;
+import com.innerfriends.messaging.domain.usecase.ListConversationEventCommand;
+import com.innerfriends.messaging.domain.usecase.ListConversationEventUseCase;
 import io.quarkus.test.junit.QuarkusTest;
 import io.quarkus.test.junit.mockito.InjectMock;
 import org.junit.jupiter.api.Test;
@@ -19,24 +19,24 @@ import static org.mockito.Mockito.mock;
 
 @QuarkusTest
 @ExtendWith(MockitoExtension.class)
-public class ManagedListMessagesInConversationUseCaseTest {
+public class ManagedListConversationEventUseCaseTest {
 
     @Inject
-    ManagedListMessagesInConversationUseCase managedListMessagesInConversationUseCase;
+    ManagedListConversationEventUseCase managedListConversationEventUseCase;
 
     @InjectMock
-    ListMessagesInConversationUseCase listMessagesInConversationUseCase;
+    ListConversationEventUseCase listConversationEventUseCase;
 
     @Test
     public void should_list_messages_in_conversation() {
         // Given
-        final ListMessagesInConversationCommand listMessagesInConversationCommand
-                = new ListMessagesInConversationCommand(new ConversationIdentifier("Mario-azerty"));
+        final ListConversationEventCommand listConversationEventCommand
+                = new ListConversationEventCommand(new ConversationIdentifier("Mario-azerty"));
         final List<Message> messages = List.of(mock(Message.class));
-        doReturn(messages).when(listMessagesInConversationUseCase).execute(listMessagesInConversationCommand);
+        doReturn(messages).when(listConversationEventUseCase).execute(listConversationEventCommand);
 
         // When && Then
-        assertThat(managedListMessagesInConversationUseCase.execute(listMessagesInConversationCommand))
+        assertThat(managedListConversationEventUseCase.execute(listConversationEventCommand))
                 .isEqualTo(messages);
     }
 }

@@ -13,7 +13,7 @@ public final class ConversationDTO {
 
     private final String conversationIdentifier;
     private final List<String> participantsIdentifier;
-    private final List<MessageDTO> messages;
+    private final List<ConversationEventDTO> events;
     private final Long version;
 
     public ConversationDTO(final Conversation conversation) {
@@ -21,7 +21,7 @@ public final class ConversationDTO {
         this.participantsIdentifier = conversation.participants().stream()
                 .map(ParticipantIdentifier::identifier)
                 .collect(Collectors.toList());
-        this.messages = conversation.messages().stream().map(MessageDTO::new).collect(Collectors.toList());
+        this.events = conversation.events().stream().map(ConversationEventDTO::new).collect(Collectors.toList());
         this.version = conversation.version();
     }
 
@@ -33,8 +33,8 @@ public final class ConversationDTO {
         return participantsIdentifier;
     }
 
-    public List<MessageDTO> getMessages() {
-        return messages;
+    public List<ConversationEventDTO> getEvents() {
+        return events;
     }
 
     public Long getVersion() {
@@ -48,12 +48,12 @@ public final class ConversationDTO {
         final ConversationDTO that = (ConversationDTO) o;
         return Objects.equals(conversationIdentifier, that.conversationIdentifier) &&
                 Objects.equals(participantsIdentifier, that.participantsIdentifier) &&
-                Objects.equals(messages, that.messages) &&
+                Objects.equals(events, that.events) &&
                 Objects.equals(version, that.version);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(conversationIdentifier, participantsIdentifier, messages, version);
+        return Objects.hash(conversationIdentifier, participantsIdentifier, events, version);
     }
 }

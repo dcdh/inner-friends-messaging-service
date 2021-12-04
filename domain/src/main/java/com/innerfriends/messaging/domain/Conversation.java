@@ -1,9 +1,6 @@
 package com.innerfriends.messaging.domain;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public final class Conversation extends Aggregate {
@@ -42,15 +39,6 @@ public final class Conversation extends Aggregate {
         return this;
     }
 
-    @Deprecated// should be conversationEvents
-    public List<Message> messages() {
-        return events.stream()
-                .filter(conversationEvent -> Arrays.asList(ConversationEventType.STARTED, ConversationEventType.MESSAGE_POSTED)
-                        .contains(conversationEvent.conversationEventType()))
-                .map(ConversationEvent::toMessage)
-                .collect(Collectors.toUnmodifiableList());
-    }
-
     public Message lastMessage() {
         return events.stream()
                 .filter(conversationEvent -> Arrays.asList(ConversationEventType.STARTED, ConversationEventType.MESSAGE_POSTED)
@@ -85,7 +73,7 @@ public final class Conversation extends Aggregate {
     }
 
     public List<ConversationEvent> events() {
-        return events.stream().collect(Collectors.toUnmodifiableList());
+        return Collections.unmodifiableList(events);
     }
 
     @Override

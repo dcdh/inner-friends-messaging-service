@@ -1,0 +1,127 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema",
+  "$id": "http://example.com/example.json",
+  "type": "array",
+  "title": "The root schema",
+  "description": "The root schema comprises the entire JSON document.",
+  "default": [],
+  "examples": [
+    [
+      {
+        "conversationEventType": "STARTED",
+        "eventFrom": "Peach",
+        "eventAt": "2021-10-02T00:00:00+02:00",
+        "content": "Hi Mario How are you ?",
+        "participantsIdentifier": [
+          "Mario",
+          "Peach"
+        ]
+      }
+    ]
+  ],
+  "additionalItems": true,
+  "items": {
+    "$id": "#/items",
+    "anyOf": [
+      {
+        "$id": "#/items/anyOf/0",
+        "type": "object",
+        "title": "The first anyOf schema",
+        "description": "An explanation about the purpose of this instance.",
+        "default": {},
+        "examples": [
+          {
+            "conversationEventType": "STARTED",
+            "eventFrom": "Peach",
+            "eventAt": "2021-10-02T00:00:00+02:00",
+            "content": "Hi Mario How are you ?",
+            "participantsIdentifier": [
+              "Mario",
+              "Peach"
+            ]
+          }
+        ],
+        "required": [
+          "conversationEventType",
+          "eventFrom",
+          "eventAt",
+          "content",
+          "participantsIdentifier"
+        ],
+        "properties": {
+          "conversationEventType": {
+            "$id": "#/items/anyOf/0/properties/conversationEventType",
+            "type": "string",
+            "title": "The conversationEventType schema",
+            "description": "An explanation about the purpose of this instance.",
+            "default": "",
+            "examples": [
+              "STARTED"
+            ]
+          },
+          "eventFrom": {
+            "$id": "#/items/anyOf/0/properties/eventFrom",
+            "type": "string",
+            "title": "The eventFrom schema",
+            "description": "An explanation about the purpose of this instance.",
+            "default": "",
+            "examples": [
+              "Peach"
+            ]
+          },
+          "eventAt": {
+            "$id": "#/items/anyOf/0/properties/eventAt",
+            "type": "string",
+            "title": "The eventAt schema",
+            "description": "An explanation about the purpose of this instance.",
+            "default": "",
+            "examples": [
+              "2021-10-02T00:00:00+02:00"
+            ]
+          },
+          "content": {
+            "$id": "#/items/anyOf/0/properties/content",
+            "type": "string",
+            "title": "The content schema",
+            "description": "An explanation about the purpose of this instance.",
+            "default": "",
+            "examples": [
+              "Hi Mario How are you ?"
+            ]
+          },
+          "participantsIdentifier": {
+            "$id": "#/items/anyOf/0/properties/participantsIdentifier",
+            "type": "array",
+            "title": "The participantsIdentifier schema",
+            "description": "An explanation about the purpose of this instance.",
+            "default": [],
+            "examples": [
+              [
+                "Mario",
+                "Peach"
+              ]
+            ],
+            "additionalItems": true,
+            "items": {
+              "$id": "#/items/anyOf/0/properties/participantsIdentifier/items",
+              "anyOf": [
+                {
+                  "$id": "#/items/anyOf/0/properties/participantsIdentifier/items/anyOf/0",
+                  "type": "string",
+                  "title": "The first anyOf schema",
+                  "description": "An explanation about the purpose of this instance.",
+                  "default": "",
+                  "examples": [
+                    "Mario",
+                    "Peach"
+                  ]
+                }
+              ]
+            }
+          }
+        },
+        "additionalProperties": false
+      }
+    ]
+  }
+}
