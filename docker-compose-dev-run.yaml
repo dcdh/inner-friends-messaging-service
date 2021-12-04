@@ -27,7 +27,7 @@ services:
     depends_on:
       - jaeger-all-in-one
 
-  mutable:
+  mutable-messaging:
     image: debezium/postgres:11-alpine
     ports:
       - 5432:5432
@@ -36,22 +36,13 @@ services:
       - POSTGRES_USER=postgresql
       - POSTGRES_PASSWORD=postgresql
 
-#  kafka:
-#    image: debezium/kafka:1.8
-#    ports:
-#      - 9092
-#    environment:
-#      - CLUSTER_ID=5Yr1SIgYQz-b-dgRabWx4g
-#      - BROKER_ID=1
-#      - KAFKA_CONTROLLER_QUORUM_VOTERS=1@kafka:9093
-
   kafka:
     image: vectorized/redpanda:v21.9.6
     ports:
       - 9092
     command: redpanda start --smp 1 --reserve-memory 0M --overprovisioned --node-id 0 --kafka-addr PLAINTEXT://0.0.0.0:29092,OUTSIDE://0.0.0.0:9092 --advertise-kafka-addr PLAINTEXT://kafka:29092,OUTSIDE://kafka:9092
 
-  connect:
+  connect-messaging:
     image: debezium/connect:1.8
     ports:
       - 8083:8083
@@ -65,7 +56,7 @@ services:
       - OFFSET_STORAGE_TOPIC=my_connect_offsets
       - STATUS_STORAGE_TOPIC=my_connect_statuses
     depends_on:
-      - mutable
+      - mutable-messaging
       - kafka
 
   kafka_ui:
@@ -77,3 +68,66 @@ services:
       - KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS=kafka:9092
     depends_on:
       - kafka
+
+  arangodb-friends:
+    image: arangodb:3.8.3
+    ports:
+      - 8529:8529
+    environment:
+      - ARANGO_ROOT_PASSWORD=password
+      - ARANGODB_OVERRIDE_DETECTED_TOTAL_MEMORY=100m
+
+  mutable-friends:
+    image: debezium/postgres:11-alpine
+    ports:
+      - 5433:5432
+    environment:
+      - POSTGRES_DB=mutable
+      - POSTGRES_USER=postgresql
+      - POSTGRES_PASSWORD=postgresql
+
+  connect-friends:
+    image: debezium/connect:1.8
+    ports:
+      - 8084:8083
+    environment:
+      - KAFKA_LOG4J_OPTS=-Dlog4j.configuration=file:/opt/kafka/config/connect-log4j.properties
+      - BOOTSTRAP_SERVERS=kafka:9092
+      - KEY_CONVERTER=org.apache.kafka.connect.json.JsonConverter
+      - VALUE_CONVERTER=org.apache.kafka.connect.json.JsonConverter
+      - GROUP_ID=1
+      - CONFIG_STORAGE_TOPIC=my_connect_configs
+      - OFFSET_STORAGE_TOPIC=my_connect_offsets
+      - STATUS_STORAGE_TOPIC=my_connect_statuses
+    depends_on:
+      - mutable-friends
+      - kafka
+
+  inner-friends-friends-service:
+    image: damdamdeo/inner-friends-friends-service
+    ports:
+      - 8082:8080
+    environment:
+      - quarkus.http.host=0.0.0.0
+      - quarkus.datasource.jdbc.url=jdbc:postgresql://mutable-friends:5432/mutable
+      - quarkus.datasource.username=postgresql
+      - quarkus.datasource.password=postgresql
+      - kafka-connector-api/mp-rest/url=http://connect-friends:8083
+      - connector.mutable.database.hostname=mutable-friends
+      - connector.mutable.database.username=postgresql
+      - connector.mutable.database.password=postgresql
+      - connector.mutable.database.port=5432
+      - connector.mutable.database.dbname=mutable
+      - mp.messaging.incoming.friends-graph-projection.bootstrap.servers=kafka:9092
+      - mp.messaging.incoming.establish-friendship-saga.bootstrap.servers=kafka:9092
+      - arangodb.host=arangodb-friends
+      - arangodb.port=8529
+      - quarkus.opentelemetry.tracer.exporter.otlp.endpoint=http://otel-collector:55680
+    depends_on:
+      - arangodb-friends
+      - mutable-friends
+      - connect-friends
+      - jaeger-all-in-one
+      - otel-collector
+      - kafka
+    restart: unless-stopped

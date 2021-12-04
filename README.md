@@ -9,7 +9,8 @@ Messaging domain.
 ## Dev local env
 1. run `docker-compose -f docker-compose-dev-run.yaml up && docker-compose -f docker-compose-dev-run.yaml rm --force` to start the stack and next remove container after
 1. run `mvn compile quarkus:dev -f infrastructure/pom.xml`
-1. access swagger ui via `http://0.0.0.0:8080/q/swagger-ui/`
+1. access messaging swagger ui via `http://0.0.0.0:8080/q/swagger-ui/`
+1. access friends swagger ui via `http://0.0.0.0:8082/q/swagger-ui/`
 1. access jaeger ui via `http://localhost:16686/`
 1. access kafka ui via `http://localhost:8081/`
 
@@ -19,11 +20,18 @@ Messaging domain.
 1. run `mvn clean install verify -P native` to build everything;
 1. run `docker build -f infrastructure/src/main/docker/Dockerfile.native-distroless -t damdamdeo/inner-friends-messaging-service infrastructure/` to build docker image
 1. run `docker-compose -f docker-compose-local-run.yaml up && docker-compose -f docker-compose-local-run.yaml rm --force` to start the stack and next remove container after
-1. access swagger ui via `http://0.0.0.0:8080/q/swagger-ui/`
+1. access messaging swagger ui via `http://0.0.0.0:8085/q/swagger-ui/`
+1. access friends swagger ui via `http://0.0.0.0:8082/q/swagger-ui/`
 1. access jaeger ui via `http://localhost:16686/`
 1. access kafka ui via `http://localhost:8081/`
 
 ## Infra
+
+### Docker
+
+Stop and remove all containers `docker stop $(docker ps -a -q); docker rm $(docker ps -a -q)`
+
+I do not know why I keep having 8080 already used... should investigate.
 
 ### Quarkus
 
