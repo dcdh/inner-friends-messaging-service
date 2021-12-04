@@ -1,6 +1,5 @@
 package com.innerfriends.messaging.domain;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
@@ -36,7 +35,7 @@ public final class ParticipantAddedConversationEvent implements ConversationEven
 
     @Override
     public List<ParticipantIdentifier> participantsIdentifier() {
-        return Collections.emptyList();
+        return List.of(participantIdentifier);
     }
 
     @Override

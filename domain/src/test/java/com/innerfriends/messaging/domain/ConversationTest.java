@@ -44,6 +44,44 @@ public class ConversationTest {
         assertThat(conversation.version()).isEqualTo(0l);
     }
 
+    @Test
+    public void should_add_participant_into_conversation() {
+        // Given
+        final Conversation conversation = new Conversation(
+                new ConversationIdentifier("conversation"),
+                new Message(new From("Mario"), buildPostedAt(1), new Content("Hello Luigi")),
+                List.of(new ParticipantIdentifier("Mario"), new ParticipantIdentifier("Luigi"))
+        );
+
+        // When && Then
+        assertThat(conversation.addAParticipantIntoConversation(new ParticipantIdentifier("Peach"), buildAddedAt(2)))
+                .isEqualTo(
+                        new Conversation(
+                                new ConversationIdentifier("conversation"),
+                                List.of(
+                                        new StartedConversationEvent(new Message(new From("Mario"), buildPostedAt(1), new Content("Hello Luigi")),
+                                                List.of(new ParticipantIdentifier("Mario"), new ParticipantIdentifier("Luigi"))),
+                                        new ParticipantAddedConversationEvent(new ParticipantIdentifier("Peach"), buildAddedAt(2))
+                                ),
+                                1L));
+    }
+
+    @Test
+    public void should_return_last_added_participant() {
+        // Given
+        final Conversation conversation = new Conversation(
+                new ConversationIdentifier("conversation"),
+                new Message(new From("Mario"), buildPostedAt(1), new Content("Hello Luigi")),
+                List.of(new ParticipantIdentifier("Mario"), new ParticipantIdentifier("Luigi"))
+        );
+        conversation.addAParticipantIntoConversation(new ParticipantIdentifier("Peach"), buildAddedAt(2));
+
+        // When && Then
+        assertThat(conversation.addAParticipantIntoConversation(new ParticipantIdentifier("DonkeyKong"), buildAddedAt(3))
+                .lastAddedParticipant())
+                .isEqualTo(new Participant(new ParticipantIdentifier("DonkeyKong"), buildAddedAt(3)));
+    }
+
     private PostedAt buildPostedAt(final Integer day) {
         return new PostedAt(
                 ZonedDateTime.of(2021, 10, day, 0, 0, 0, 0, ZoneId.of("Europe/Paris")));

@@ -3,11 +3,14 @@ package com.innerfriends.messaging.infrastructure;
 import com.innerfriends.messaging.domain.ContactIdentifier;
 import com.innerfriends.messaging.domain.ConversationIdentifier;
 import com.innerfriends.messaging.domain.Owner;
+import com.innerfriends.messaging.domain.ParticipantIdentifier;
 import com.innerfriends.messaging.domain.usecase.AddContactIntoContactBookCommand;
+import com.innerfriends.messaging.domain.usecase.AddParticipantIntoConversationCommand;
 import com.innerfriends.messaging.domain.usecase.CreateContactBookCommand;
 import com.innerfriends.messaging.infrastructure.bus.producer.KafkaConnectorApi;
 import com.innerfriends.messaging.infrastructure.bus.producer.OutboxConnectorStarter;
 import com.innerfriends.messaging.infrastructure.usecase.ManagedAddContactIntoContactBookUseCase;
+import com.innerfriends.messaging.infrastructure.usecase.ManagedAddParticipantIntoConversationUseCase;
 import com.innerfriends.messaging.infrastructure.usecase.ManagedCreateContactBookUseCase;
 import io.quarkus.test.junit.QuarkusTest;
 import io.vertx.core.json.JsonObject;
@@ -42,6 +45,9 @@ public class E2ETest {
     ManagedAddContactIntoContactBookUseCase managedAddContactIntoContactBookUseCase;
 
     @Inject
+    ManagedAddParticipantIntoConversationUseCase managedAddParticipantIntoConversationUseCase;
+
+    @Inject
     OutboxConnectorStarter outboxConnectorStarter;
 
     @Inject
@@ -73,7 +79,7 @@ public class E2ETest {
     @Test
     @Order(1)
     public void should_create_contact_book() {
-        // TODO plug kafka consumer from user domain
+        // TODO plug kafka consumer from friend domain
         managedCreateContactBookUseCase.execute(new CreateContactBookCommand(new ContactIdentifier("Mario")));
         // TODO tests traces when kafka consumer plugged and traces given from other service
     }
@@ -81,7 +87,7 @@ public class E2ETest {
     @Test
     @Order(2)
     public void should_add_contact_into_contact_book() {
-        // TODO plug kafka consumer from user domain
+        // TODO plug kafka consumer from friend domain
         managedAddContactIntoContactBookUseCase.execute(new AddContactIntoContactBookCommand(new Owner("Mario"),
                 new ContactIdentifier("Peach")));
         // TODO tests traces when kafka consumer plugged and traces given from other service
@@ -210,28 +216,44 @@ public class E2ETest {
 
     @Test
     @Order(9)
-    public void should_have_produced_kafka_messages_from_outbox() {
-        final List<ConsumerRecord<String, JsonObject>> consumerRecords = topicConsumer.drain(4);
+    public void should_add_participant_into_conversation() throws Exception {
+        // TODO plug kafka consumer from friend domain
+        final String conversationIdentifier = getConversationIdentifier().identifier();
+        managedAddParticipantIntoConversationUseCase.execute(
+                new AddParticipantIntoConversationCommand(
+                        new ConversationIdentifier(conversationIdentifier), new ParticipantIdentifier("Luigi")));
+        // TODO tests traces when kafka consumer plugged and traces given from other service
+    }
+
+    @Test
+    @Order(10)
+    public void should_have_produced_kafka_messages_from_outbox() throws Exception {
+        final String conversationIdentifier = getConversationIdentifier().identifier();
+        final List<ConsumerRecord<String, JsonObject>> consumerRecords = topicConsumer.drain(5);
         final List<ConsumerRecord<String, JsonObject>> contactBookEvents = consumerRecords.stream()
                 .filter(consumerRecord -> "ContactBook.events".equals(consumerRecord.topic())).collect(Collectors.toList());
         assertThat(contactBookEvents.get(0).key()).matches("\\b[0-9a-f]{8}\\b-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-\\b[0-9a-f]{12}\\b");
         assertThat(contactBookEvents.get(0).headers().lastHeader("id").value()).isEqualTo(contactBookEvents.get(0).key().getBytes());
         assertThat(contactBookEvents.get(0).headers().lastHeader("eventType").value()).isEqualTo("ContactBookCreated".getBytes());
-        assertThat(contactBookEvents.get(0).headers().lastHeader("aggregateId").value()).isNotNull();
+        assertThat(contactBookEvents.get(0).headers().lastHeader("aggregateId").value()).isEqualTo("Mario".getBytes());
         assertThat(contactBookEvents.get(1).key()).matches("\\b[0-9a-f]{8}\\b-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-\\b[0-9a-f]{12}\\b");
         assertThat(contactBookEvents.get(1).headers().lastHeader("id").value()).isEqualTo(contactBookEvents.get(1).key().getBytes());
         assertThat(contactBookEvents.get(1).headers().lastHeader("eventType").value()).isEqualTo("ContactAddedIntoContactBook".getBytes());
-        assertThat(contactBookEvents.get(1).headers().lastHeader("aggregateId").value()).isNotNull();
+        assertThat(contactBookEvents.get(1).headers().lastHeader("aggregateId").value()).isEqualTo("Mario".getBytes());
         final List<ConsumerRecord<String, JsonObject>> conversationEvents = consumerRecords.stream()
                 .filter(consumerRecord -> "Conversation.events".equals(consumerRecord.topic())).collect(Collectors.toList());
         assertThat(conversationEvents.get(0).key()).matches("\\b[0-9a-f]{8}\\b-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-\\b[0-9a-f]{12}\\b");
         assertThat(conversationEvents.get(0).headers().lastHeader("id").value()).isEqualTo(conversationEvents.get(0).key().getBytes());
         assertThat(conversationEvents.get(0).headers().lastHeader("eventType").value()).isEqualTo("NewConversationOpened".getBytes());
-        assertThat(conversationEvents.get(0).headers().lastHeader("aggregateId").value()).isNotNull();
+        assertThat(conversationEvents.get(0).headers().lastHeader("aggregateId").value()).isEqualTo(conversationIdentifier.getBytes());
         assertThat(conversationEvents.get(1).key()).matches("\\b[0-9a-f]{8}\\b-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-\\b[0-9a-f]{12}\\b");
         assertThat(conversationEvents.get(1).headers().lastHeader("id").value()).isEqualTo(conversationEvents.get(1).key().getBytes());
         assertThat(conversationEvents.get(1).headers().lastHeader("eventType").value()).isEqualTo("NewMessagePostedToConversation".getBytes());
-        assertThat(conversationEvents.get(1).headers().lastHeader("aggregateId").value()).isNotNull();
+        assertThat(conversationEvents.get(1).headers().lastHeader("aggregateId").value()).isEqualTo(conversationIdentifier.getBytes());
+        assertThat(conversationEvents.get(2).key()).matches("\\b[0-9a-f]{8}\\b-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-\\b[0-9a-f]{12}\\b");
+        assertThat(conversationEvents.get(2).headers().lastHeader("id").value()).isEqualTo(conversationEvents.get(2).key().getBytes());
+        assertThat(conversationEvents.get(2).headers().lastHeader("eventType").value()).isEqualTo("ParticipantAddedIntoConversation".getBytes());
+        assertThat(conversationEvents.get(2).headers().lastHeader("aggregateId").value()).isEqualTo(conversationIdentifier.getBytes());
     }
 
     public ConversationIdentifier getConversationIdentifier() throws Exception {

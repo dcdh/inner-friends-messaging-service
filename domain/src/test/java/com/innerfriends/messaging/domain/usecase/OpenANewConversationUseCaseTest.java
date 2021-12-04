@@ -88,8 +88,4 @@ public class OpenANewConversationUseCaseTest {
                 ZonedDateTime.of(2021, 10, day, 0, 0, 0, 0, ZoneId.of("Europe/Paris")));
     }
 
-    private AddedAt buildAddedAt(final Integer day) {
-        return new AddedAt(
-                ZonedDateTime.of(2021, 10, day, 0, 0, 0, 0, ZoneId.of("Europe/Paris")));
-    }
 }

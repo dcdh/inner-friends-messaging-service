@@ -30,6 +30,11 @@ public class LastInteractionAtTest {
         assertThat(new LastInteractionAt(new EventAt(buildZonedDateTime())).at()).isEqualTo(buildZonedDateTime());
     }
 
+    @Test
+    public void should_return_last_interaction_at_from_added_at() {
+        assertThat(new LastInteractionAt(new AddedAt(buildZonedDateTime())).at()).isEqualTo(buildZonedDateTime());
+    }
+
     private ZonedDateTime buildZonedDateTime() {
         return ZonedDateTime.of(2021, 10, 31, 0, 0, 0, 0, ZoneId.of("Europe/Paris"));
     }

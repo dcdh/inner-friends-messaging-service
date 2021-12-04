@@ -91,4 +91,11 @@ public class Application {
         return new OpenANewConversationUseCase(conversationRepository, contactBookRepository, conversationIdentifierProvider, postedAtProvider);
     }
 
+    @Produces
+    @ApplicationScoped
+    public AddParticipantIntoConversationUseCase addAParticipantIntoConversationUseCaseProducer(final ConversationRepository conversationRepository,
+                                                                                                final AddedAtProvider addedAtProvider) {
+        return new AddParticipantIntoConversationUseCase(conversationRepository, addedAtProvider);
+    }
+
 }

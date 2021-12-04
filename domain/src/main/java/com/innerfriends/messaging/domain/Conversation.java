@@ -39,6 +39,20 @@ public final class Conversation extends Aggregate {
         return this;
     }
 
+    public Conversation addAParticipantIntoConversation(final ParticipantIdentifier participantIdentifier,
+                                                        final AddedAt addedAt) {
+        this.apply(() -> events.add(new ParticipantAddedConversationEvent(participantIdentifier, addedAt)));
+        return this;
+    }
+
+    public Participant lastAddedParticipant() {
+        return events.stream()
+                .filter(conversationEvent -> ConversationEventType.PARTICIPANT_ADDED.equals(conversationEvent.conversationEventType()))
+                .reduce((first, seconde) -> seconde)
+                .map(Participant::new)
+                .get();
+    }
+
     public Message lastMessage() {
         return events.stream()
                 .filter(conversationEvent -> Arrays.asList(ConversationEventType.STARTED, ConversationEventType.MESSAGE_POSTED)

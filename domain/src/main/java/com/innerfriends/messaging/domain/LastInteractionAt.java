@@ -11,6 +11,10 @@ public final class LastInteractionAt {
         this(eventAt.at());
     }
 
+    public LastInteractionAt(final AddedAt addedAt) {
+        this(addedAt.at());
+    }
+
     public LastInteractionAt(final PostedAt postedAt) {
         this(postedAt.at());
     }

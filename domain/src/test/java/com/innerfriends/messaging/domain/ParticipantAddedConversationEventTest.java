@@ -56,6 +56,7 @@ public class ParticipantAddedConversationEventTest {
     @Test
     public void should_return_empty_participant() {
         assertThat(new ParticipantAddedConversationEvent(new ParticipantIdentifier("Mario"), new AddedAt(ZonedDateTime.now()))
-                .participantsIdentifier()).isEmpty();
+                .participantsIdentifier())
+                .containsExactly(new ParticipantIdentifier("Mario"));
     }
 }
