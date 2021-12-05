@@ -1,4 +1,8 @@
 {
-  "contactIdentifier": "Peach",
-  "addedAt": "2021-10-02T00:00:00+02:00[Europe/Paris]"
+  "owner": "Mario",
+  "version": 2,
+  "addedContact": {
+    "contactIdentifier": "Peach",
+    "addedAt": "2021-10-02T00:00:00+02:00[Europe/Paris]"
+  }
 }

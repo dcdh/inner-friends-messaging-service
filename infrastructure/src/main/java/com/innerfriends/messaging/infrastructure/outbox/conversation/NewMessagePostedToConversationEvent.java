@@ -30,8 +30,9 @@ public final class NewMessagePostedToConversationEvent implements ConversationEx
         final Message messagePosted = conversation.lastMessage();
         final ObjectNode asJson = objectMapper.createObjectNode()
                 .put("conversationIdentifier", conversation.conversationIdentifier().identifier())
-                .put("version", conversation.version())
-                .putObject("message")
+                .put("version", conversation.version());
+        final ObjectNode message = asJson.putObject("postedMessage");
+        message
                 .put("from", messagePosted.from().identifier().identifier())
                 .put("content", messagePosted.content().content())
                 .put("postedAt", messagePosted.postedAt().at().format(DateTimeFormatter.ISO_ZONED_DATE_TIME));

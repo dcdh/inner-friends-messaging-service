@@ -30,8 +30,9 @@ public final class ContactAddedIntoContactBookEvent implements ContactBookExport
         final Contact lastAddedContact = contactBookWithNewAddedContact.getLastAddedContact();
         final ObjectNode asJson = objectMapper.createObjectNode()
                 .put("owner", contactBookWithNewAddedContact.owner().identifier().identifier())
-                .put("version", contactBookWithNewAddedContact.version())
-                .putObject("addedContact")
+                .put("version", contactBookWithNewAddedContact.version());
+        final ObjectNode addedContact = asJson.putObject("addedContact");
+        addedContact
                 .put("contactIdentifier", lastAddedContact.contactIdentifier().identifier())
                 .put("addedAt", lastAddedContact.addedAt().at().format(DateTimeFormatter.ISO_ZONED_DATE_TIME));
         return new ContactAddedIntoContactBookEvent(contactBookWithNewAddedContact.owner(), asJson, instantProvider.now());
