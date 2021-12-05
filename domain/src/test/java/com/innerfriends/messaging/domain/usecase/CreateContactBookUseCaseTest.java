@@ -18,8 +18,8 @@ public class CreateContactBookUseCaseTest {
     public void should_create_contact_book() {
         // Given
         final ContactBookRepository contactBookRepository = mock(ContactBookRepository.class);
-        final ContactIdentifier contactIdentifier = new ContactIdentifier("Mario");
-        final CreateContactBookCommand createContactBookCommand = new CreateContactBookCommand(contactIdentifier);
+        final Owner owner = new Owner("Mario");
+        final CreateContactBookCommand createContactBookCommand = new CreateContactBookCommand(owner);
         final CreatedAtProvider createdAtProvider = mock(CreatedAtProvider.class);
         doReturn(buildCreatedAt()).when(createdAtProvider).now();
         final CreateContactBookUseCase createContactBookUseCase = new CreateContactBookUseCase(contactBookRepository, createdAtProvider);

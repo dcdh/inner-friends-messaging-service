@@ -18,8 +18,7 @@ public class CreateContactBookUseCase implements UseCase<ContactBook, CreateCont
     @Override
     public ContactBook execute(final CreateContactBookCommand createContactBookCommand) {
         final CreatedAt createdAt = createdAtProvider.now();
-        final ContactBook contactBook = new ContactBook(new Owner(createContactBookCommand.contactIdentifier()),
-                createdAt);
+        final ContactBook contactBook = new ContactBook(createContactBookCommand.owner(), createdAt);
         contactBookRepository.save(contactBook);
         return contactBook;
     }

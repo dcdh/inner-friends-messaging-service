@@ -1,7 +1,6 @@
 package com.innerfriends.messaging.infrastructure.usecase;
 
 import com.innerfriends.messaging.domain.ContactBook;
-import com.innerfriends.messaging.domain.ContactIdentifier;
 import com.innerfriends.messaging.domain.CreatedAt;
 import com.innerfriends.messaging.domain.Owner;
 import com.innerfriends.messaging.domain.usecase.CreateContactBookCommand;
@@ -36,7 +35,7 @@ public class ManagedCreateContactBookUseCaseTest extends ManagedUseCaseTest {
     @Test
     public void should_create_contact_book() {
         // Given
-        final CreateContactBookCommand createContactBookCommand = new CreateContactBookCommand(new ContactIdentifier("Mario"));
+        final CreateContactBookCommand createContactBookCommand = new CreateContactBookCommand(new Owner("Mario"));
         final ContactBook contactBook = new ContactBook(new Owner("Mario"), new CreatedAt(ZonedDateTime.now()));
         doReturn(contactBook).when(createContactBookUseCase).execute(createContactBookCommand);
         doReturn(Instant.ofEpochSecond(1)).when(instantProvider).now();

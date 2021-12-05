@@ -80,7 +80,7 @@ public class E2ETest {
     @Order(1)
     public void should_create_contact_book() {
         // TODO plug kafka consumer from friend domain
-        managedCreateContactBookUseCase.execute(new CreateContactBookCommand(new ContactIdentifier("Mario")));
+        managedCreateContactBookUseCase.execute(new CreateContactBookCommand(new Owner("Mario")));
         // TODO tests traces when kafka consumer plugged and traces given from other service
     }
 
