@@ -84,11 +84,11 @@ public class Application {
 
     @Produces
     @ApplicationScoped
-    public OpenANewConversationUseCase startConversationUseCaseProducer(final ConversationRepository conversationRepository,
-                                                                        final ContactBookRepository contactBookRepository,
-                                                                        final ConversationIdentifierProvider conversationIdentifierProvider,
-                                                                        final PostedAtProvider postedAtProvider) {
-        return new OpenANewConversationUseCase(conversationRepository, contactBookRepository, conversationIdentifierProvider, postedAtProvider);
+    public OpenNewConversationUseCase startConversationUseCaseProducer(final ConversationRepository conversationRepository,
+                                                                       final ContactBookRepository contactBookRepository,
+                                                                       final ConversationIdentifierProvider conversationIdentifierProvider,
+                                                                       final PostedAtProvider postedAtProvider) {
+        return new OpenNewConversationUseCase(conversationRepository, contactBookRepository, conversationIdentifierProvider, postedAtProvider);
     }
 
     @Produces

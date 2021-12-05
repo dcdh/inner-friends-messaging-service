@@ -17,20 +17,20 @@ public class MessagingEndpoint {
     private final ManagedListConversationsUseCase managedListConversationsUseCase;
     private final ManagedListRecentContactsUseCase managedListRecentContactsUseCase;
     private final ManagedPostNewMessageToConversationUseCase managedPostNewMessageToConversationUseCase;
-    private final ManagedOpenANewConversationUseCase managedOpenANewConversationUseCase;
+    private final ManagedOpenNewConversationUseCase managedOpenNewConversationUseCase;
     private final ManagedListConversationEventUseCase managedListConversationEventUseCase;
 
     public MessagingEndpoint(final ManagedListAllContactsUseCase managedListAllContactsUseCase,
                              final ManagedListConversationsUseCase managedListConversationsUseCase,
                              final ManagedListRecentContactsUseCase managedListRecentContactsUseCase,
                              final ManagedPostNewMessageToConversationUseCase managedPostNewMessageToConversationUseCase,
-                             final ManagedOpenANewConversationUseCase managedOpenANewConversationUseCase,
+                             final ManagedOpenNewConversationUseCase managedOpenNewConversationUseCase,
                              final ManagedListConversationEventUseCase managedListConversationEventUseCase) {
         this.managedListAllContactsUseCase = Objects.requireNonNull(managedListAllContactsUseCase);
         this.managedListConversationsUseCase = Objects.requireNonNull(managedListConversationsUseCase);
         this.managedListRecentContactsUseCase = Objects.requireNonNull(managedListRecentContactsUseCase);
         this.managedPostNewMessageToConversationUseCase = Objects.requireNonNull(managedPostNewMessageToConversationUseCase);
-        this.managedOpenANewConversationUseCase = Objects.requireNonNull(managedOpenANewConversationUseCase);
+        this.managedOpenNewConversationUseCase = Objects.requireNonNull(managedOpenNewConversationUseCase);
         this.managedListConversationEventUseCase = Objects.requireNonNull(managedListConversationEventUseCase);
     }
 
@@ -55,12 +55,12 @@ public class MessagingEndpoint {
     }
 
     @POST
-    @Path("/conversations/openANewOne")
+    @Path("/conversations/openNewOne")
     @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
-    public ConversationDTO openANewConversation(@FormParam("openedBy") final String openedBy,
-                                                @FormParam("to") final String to,
-                                                @FormParam("content") final String content) {
-        return new ConversationDTO(managedOpenANewConversationUseCase.execute(new OpenANewConversationCommand(
+    public ConversationDTO openNewConversation(@FormParam("openedBy") final String openedBy,
+                                               @FormParam("to") final String to,
+                                               @FormParam("content") final String content) {
+        return new ConversationDTO(managedOpenNewConversationUseCase.execute(new OpenNewConversationCommand(
                 new OpenedBy(new ParticipantIdentifier(openedBy)),
                 List.of(new ParticipantIdentifier(to)),
                 new Content(content)

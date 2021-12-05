@@ -17,13 +17,13 @@ import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 
 @ExtendWith(MockitoExtension.class)
-public class OpenANewConversationUseCaseTest {
+public class OpenNewConversationUseCaseTest {
 
     private ConversationRepository conversationRepository;
     private ContactBookRepository contactBookRepository;
     private ConversationIdentifierProvider conversationIdentifierProvider;
     private PostedAtProvider postedAtProvider;
-    private OpenANewConversationUseCase openANewConversationUseCase;
+    private OpenNewConversationUseCase openNewConversationUseCase;
 
     @BeforeEach
     public void setup() {
@@ -31,7 +31,7 @@ public class OpenANewConversationUseCaseTest {
         contactBookRepository = mock(ContactBookRepository.class);
         conversationIdentifierProvider = mock(ConversationIdentifierProvider.class);
         postedAtProvider = mock(PostedAtProvider.class);
-        openANewConversationUseCase = new OpenANewConversationUseCase(conversationRepository,
+        openNewConversationUseCase = new OpenNewConversationUseCase(conversationRepository,
                 contactBookRepository, conversationIdentifierProvider, postedAtProvider);
     }
 
@@ -44,7 +44,7 @@ public class OpenANewConversationUseCaseTest {
                 new Contact(new ContactIdentifier("Luigi"), new AddedAt(ZonedDateTime.now()))),
                 2l);
 
-        final OpenANewConversationCommand openANewConversationCommand = new OpenANewConversationCommand(
+        final OpenNewConversationCommand openNewConversationCommand = new OpenNewConversationCommand(
                 new OpenedBy(new ParticipantIdentifier("Mario")),
                 List.of(new ParticipantIdentifier("Peach"), new ParticipantIdentifier("Luigi")),
                 new Content("Hello Peach !")
@@ -54,7 +54,7 @@ public class OpenANewConversationUseCaseTest {
         doReturn(buildPostedAt(2)).when(postedAtProvider).now();
 
         // When && Then
-        assertThat(openANewConversationUseCase.execute(openANewConversationCommand))
+        assertThat(openNewConversationUseCase.execute(openNewConversationCommand))
                 .isEqualTo(new Conversation(
                         new ConversationIdentifier("conversationIdentifier"),
                         List.of(
@@ -71,14 +71,14 @@ public class OpenANewConversationUseCaseTest {
         final ContactBook contactBook = new ContactBook(owner);
         doReturn(contactBook).when(contactBookRepository).getByOwner(owner);
 
-        final OpenANewConversationCommand openANewConversationCommand = new OpenANewConversationCommand(
+        final OpenNewConversationCommand openNewConversationCommand = new OpenNewConversationCommand(
                 new OpenedBy(new ParticipantIdentifier("Mario")),
                 Collections.singletonList(new ParticipantIdentifier("Peach")),
                 new Content("Hello Peach !")
         );
 
         // When && Then
-        assertThatThrownBy(() -> openANewConversationUseCase.execute(openANewConversationCommand))
+        assertThatThrownBy(() -> openNewConversationUseCase.execute(openNewConversationCommand))
                 .isInstanceOf(ParticipantsAreNotInContactBookException.class)
                 .hasFieldOrPropertyWithValue("participantIdentifiersNotInContactBook", List.of(new ParticipantIdentifier("Peach")));
     }

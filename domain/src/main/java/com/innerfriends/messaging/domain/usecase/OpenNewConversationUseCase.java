@@ -7,17 +7,17 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public class OpenANewConversationUseCase implements UseCase<Conversation, OpenANewConversationCommand> {
+public class OpenNewConversationUseCase implements UseCase<Conversation, OpenNewConversationCommand> {
 
     private final ConversationRepository conversationRepository;
     private final ContactBookRepository contactBookRepository;
     private final ConversationIdentifierProvider conversationIdentifierProvider;
     private final PostedAtProvider postedAtProvider;
 
-    public OpenANewConversationUseCase(final ConversationRepository conversationRepository,
-                                       final ContactBookRepository contactBookRepository,
-                                       final ConversationIdentifierProvider conversationIdentifierProvider,
-                                       final PostedAtProvider postedAtProvider) {
+    public OpenNewConversationUseCase(final ConversationRepository conversationRepository,
+                                      final ContactBookRepository contactBookRepository,
+                                      final ConversationIdentifierProvider conversationIdentifierProvider,
+                                      final PostedAtProvider postedAtProvider) {
         this.conversationRepository = Objects.requireNonNull(conversationRepository);
         this.contactBookRepository = Objects.requireNonNull(contactBookRepository);
         this.conversationIdentifierProvider = Objects.requireNonNull(conversationIdentifierProvider);
@@ -25,7 +25,7 @@ public class OpenANewConversationUseCase implements UseCase<Conversation, OpenAN
     }
 
     @Override
-    public Conversation execute(final OpenANewConversationCommand command) {
+    public Conversation execute(final OpenNewConversationCommand command) {
         final ContactBook contactBook = this.contactBookRepository.getByOwner(new Owner(command.openedBy()));
         final List<ParticipantIdentifier> participantIdentifiersNotInContactBook = command.participantsIdentifier()
                 .stream()

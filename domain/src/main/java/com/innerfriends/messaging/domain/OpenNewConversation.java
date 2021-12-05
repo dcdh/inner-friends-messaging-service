@@ -2,7 +2,7 @@ package com.innerfriends.messaging.domain;
 
 import java.util.List;
 
-public interface OpenANewConversation {
+public interface OpenNewConversation {
 
     OpenedBy openedBy();
 

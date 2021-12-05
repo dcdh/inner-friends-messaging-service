@@ -36,7 +36,7 @@ public class MessagingEndpointTest {
     private ManagedPostNewMessageToConversationUseCase managedPostNewMessageToConversationUseCase;
 
     @InjectMock
-    private ManagedOpenANewConversationUseCase managedOpenANewConversationUseCase;
+    private ManagedOpenNewConversationUseCase managedOpenNewConversationUseCase;
 
     @InjectMock
     private ManagedListConversationEventUseCase managedListConversationEventUseCase;
@@ -96,8 +96,8 @@ public class MessagingEndpointTest {
                 new Message(new From("Mario"), buildPostedAt(1), new Content("Hello Peach !")),
                 List.of(new ParticipantIdentifier("Peach"), new ParticipantIdentifier("Mario"))
         ))
-                .when(managedOpenANewConversationUseCase)
-                .execute(new OpenANewConversationCommand(
+                .when(managedOpenNewConversationUseCase)
+                .execute(new OpenNewConversationCommand(
                         new OpenedBy(new ParticipantIdentifier("Mario")),
                         List.of(new ParticipantIdentifier("Peach")),
                         new Content("Hello Peach !")));
@@ -108,7 +108,7 @@ public class MessagingEndpointTest {
                 .param("to", "Peach")
                 .param("content", "Hello Peach !")
                 .when()
-                .post("/conversations/openANewOne")
+                .post("/conversations/openNewOne")
                 .then()
                 .log().all()
                 .statusCode(200)
@@ -230,8 +230,8 @@ public class MessagingEndpointTest {
         // Given
         final List<ParticipantIdentifier> participantIdentifiersNotInContactBook = List.of(new ParticipantIdentifier("Bowser"));
         doThrow(new ParticipantsAreNotInContactBookException(participantIdentifiersNotInContactBook))
-                .when(managedOpenANewConversationUseCase)
-                .execute(new OpenANewConversationCommand(
+                .when(managedOpenNewConversationUseCase)
+                .execute(new OpenNewConversationCommand(
                         new OpenedBy(new ParticipantIdentifier("Mario")),
                         List.of(new ParticipantIdentifier("Bowser")),
                         new Content("Hello Bowser I am gonna kick your ass !")));
@@ -242,7 +242,7 @@ public class MessagingEndpointTest {
                 .param("to", "Bowser")
                 .param("content", "Hello Bowser I am gonna kick your ass !")
                 .when()
-                .post("/conversations/openANewOne")
+                .post("/conversations/openNewOne")
                 .then()
                 .log().all()
                 .statusCode(406);

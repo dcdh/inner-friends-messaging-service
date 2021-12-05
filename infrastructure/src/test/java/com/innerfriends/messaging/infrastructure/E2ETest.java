@@ -141,13 +141,13 @@ public class E2ETest {
                 .param("to", "Peach")
                 .param("content", "Hello Peach how are you ?")
                 .when()
-                .post("/conversations/openANewOne")
+                .post("/conversations/openNewOne")
                 .then()
                 .log().all()
                 .statusCode(200);
-        final TracesUtils.Traces traces = tracesUtils.getTraces("/conversations/openANewOne");
+        final TracesUtils.Traces traces = tracesUtils.getTraces("/conversations/openNewOne");
         assertThat(traces.getOperationNames()).containsExactlyInAnyOrder(
-                "conversations/openANewOne",
+                "conversations/openNewOne",
                 "PostgresConversationRepository:createConversation",
                 "PostgresContactBookRepository:getByOwner");
         assertThat(traces.getHttpStatus()).containsExactlyInAnyOrder(200);
