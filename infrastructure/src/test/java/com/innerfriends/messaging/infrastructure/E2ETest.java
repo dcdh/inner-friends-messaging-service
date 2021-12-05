@@ -137,7 +137,7 @@ public class E2ETest {
     @Order(5)
     public void should_open_a_new_conversation() throws Exception {
         given()
-                .param("from", "Mario")
+                .param("openedBy", "Mario")
                 .param("to", "Peach")
                 .param("content", "Hello Peach how are you ?")
                 .when()

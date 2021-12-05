@@ -104,7 +104,7 @@ public class MessagingEndpointTest {
 
         // When && Then
         given()
-                .param("from", "Mario")
+                .param("openedBy", "Mario")
                 .param("to", "Peach")
                 .param("content", "Hello Peach !")
                 .when()
@@ -238,7 +238,7 @@ public class MessagingEndpointTest {
 
         // When && Then
         given()
-                .param("from", "Mario")
+                .param("openedBy", "Mario")
                 .param("to", "Bowser")
                 .param("content", "Hello Bowser I am gonna kick your ass !")
                 .when()

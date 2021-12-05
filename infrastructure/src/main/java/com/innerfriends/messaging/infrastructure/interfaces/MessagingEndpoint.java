@@ -57,7 +57,7 @@ public class MessagingEndpoint {
     @POST
     @Path("/conversations/openANewOne")
     @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
-    public ConversationDTO openANewConversation(@FormParam("from") final String openedBy,
+    public ConversationDTO openANewConversation(@FormParam("openedBy") final String openedBy,
                                                 @FormParam("to") final String to,
                                                 @FormParam("content") final String content) {
         return new ConversationDTO(managedOpenANewConversationUseCase.execute(new OpenANewConversationCommand(
