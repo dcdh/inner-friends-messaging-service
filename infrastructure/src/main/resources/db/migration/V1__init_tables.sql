@@ -2,6 +2,8 @@
 
 CREATE TABLE public.T_CONTACT_BOOK (
 owner character varying(255) NOT NULL,
+createdat timestamp with time zone,
+zoneid character varying(255) NOT NULL,
 contacts jsonb NOT NULL,
 version bigint NOT NULL
 );

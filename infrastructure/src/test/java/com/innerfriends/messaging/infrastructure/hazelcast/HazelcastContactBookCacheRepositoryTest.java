@@ -2,10 +2,7 @@ package com.innerfriends.messaging.infrastructure.hazelcast;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hazelcast.core.HazelcastInstance;
-import com.innerfriends.messaging.domain.AddedAt;
-import com.innerfriends.messaging.domain.ContactBook;
-import com.innerfriends.messaging.domain.ContactIdentifier;
-import com.innerfriends.messaging.domain.Owner;
+import com.innerfriends.messaging.domain.*;
 import com.innerfriends.messaging.infrastructure.opentelemetry.OpenTelemetryTracingService;
 import io.quarkus.test.junit.QuarkusTest;
 import io.quarkus.test.junit.mockito.InjectMock;
@@ -53,7 +50,7 @@ public class HazelcastContactBookCacheRepositoryTest {
     public void should_get_by_owner() throws Exception {
         // Given
         final Owner owner = new Owner("Mario");
-        final ContactBook contactBook = new ContactBook(owner);
+        final ContactBook contactBook = new ContactBook(owner, buildCreatedAt());
         contactBook.addNewContact(new ContactIdentifier("Peach"), buildAddedAt(2));
         final InOrder inOrder = inOrder(hazelcastContactBookCacheRepository, openTelemetryTracingService);
         hazelcastInstance.getMap(HazelcastContactBookCacheRepository.MAP_NAME).put("Mario",
@@ -85,7 +82,7 @@ public class HazelcastContactBookCacheRepositoryTest {
     public void should_store_contact_identifiers() throws Exception {
         // Given
         final Owner owner = new Owner("Mario");
-        final ContactBook contactBook = new ContactBook(owner);
+        final ContactBook contactBook = new ContactBook(owner, buildCreatedAt());
         contactBook.addNewContact(new ContactIdentifier("Luigi"), buildAddedAt(1));
         contactBook.addNewContact(new ContactIdentifier("Peach"), buildAddedAt(2));
         final InOrder inOrder = inOrder(hazelcastContactBookCacheRepository, openTelemetryTracingService);
@@ -105,7 +102,7 @@ public class HazelcastContactBookCacheRepositoryTest {
     public void should_evict() throws Exception {
         // Given
         final Owner owner = new Owner("Mario");
-        final ContactBook contactBook = new ContactBook(owner);
+        final ContactBook contactBook = new ContactBook(owner, buildCreatedAt());
         contactBook.addNewContact(new ContactIdentifier("Peach"), buildAddedAt(2));
         final InOrder inOrder = inOrder(hazelcastContactBookCacheRepository, openTelemetryTracingService);
         hazelcastInstance.getMap(HazelcastContactBookCacheRepository.MAP_NAME).put("Mario",
@@ -122,6 +119,11 @@ public class HazelcastContactBookCacheRepositoryTest {
 
     private AddedAt buildAddedAt(final Integer day) {
         return new AddedAt(ZonedDateTime.of(2021, 10, day, 0, 0, 0, 0, ZoneId.of("Europe/Paris")));
+    }
+
+    private CreatedAt buildCreatedAt() {
+        return new CreatedAt(
+                ZonedDateTime.of(2021, 10, 1, 0, 0, 0, 0, ZoneId.of("Europe/Paris")));
     }
 
 }

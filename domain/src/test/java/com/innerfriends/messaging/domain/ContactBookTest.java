@@ -23,10 +23,11 @@ public class ContactBookTest {
     public void should_initialize_version_to_zero() {
         // Given
         final Owner owner = mock(Owner.class);
+        final CreatedAt createdAt = mock(CreatedAt.class);
 
         // When && Then
-        assertThat(new ContactBook(owner)).isEqualTo(new ContactBook(owner, Collections.emptyList(), 0l));
-        assertThat(new ContactBook(owner).version()).isEqualTo(0l);
+        assertThat(new ContactBook(owner, createdAt)).isEqualTo(new ContactBook(owner, createdAt, Collections.emptyList(), 0l));
+        assertThat(new ContactBook(owner,createdAt).version()).isEqualTo(0l);
     }
 
 }

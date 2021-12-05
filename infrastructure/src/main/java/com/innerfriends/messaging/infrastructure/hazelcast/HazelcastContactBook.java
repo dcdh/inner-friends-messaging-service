@@ -1,10 +1,12 @@
 package com.innerfriends.messaging.infrastructure.hazelcast;
 
 import com.innerfriends.messaging.domain.ContactBook;
-import com.innerfriends.messaging.domain.ContactIdentifier;
+import com.innerfriends.messaging.domain.CreatedAt;
 import com.innerfriends.messaging.domain.Owner;
 import io.quarkus.runtime.annotations.RegisterForReflection;
 
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -17,6 +19,8 @@ public final class HazelcastContactBook {
 
     public List<HazelcastContact> contacts;
 
+    public String createdAt;
+
     public Long version;
 
     public HazelcastContactBook() {
@@ -25,6 +29,7 @@ public final class HazelcastContactBook {
 
     public HazelcastContactBook(final ContactBook contactBook) {
         this.owner = contactBook.owner().identifier().identifier();
+        this.createdAt = contactBook.createdAt().at().format(DateTimeFormatter.ISO_ZONED_DATE_TIME);
         this.contacts = contactBook.allContacts()
                 .stream()
                 .map(HazelcastContact::new)
@@ -35,6 +40,7 @@ public final class HazelcastContactBook {
     public ContactBook contactBook() {
         return new ContactBook(
                 new Owner(owner),
+                new CreatedAt(ZonedDateTime.parse(createdAt, DateTimeFormatter.ISO_ZONED_DATE_TIME)),
                 contacts.stream().map(HazelcastContact::toContact).collect(Collectors.toList()),
                 version
         );
@@ -47,11 +53,12 @@ public final class HazelcastContactBook {
         final HazelcastContactBook that = (HazelcastContactBook) o;
         return Objects.equals(owner, that.owner) &&
                 Objects.equals(contacts, that.contacts) &&
+                Objects.equals(createdAt, that.createdAt) &&
                 Objects.equals(version, that.version);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(owner, contacts, version);
+        return Objects.hash(owner, contacts, createdAt, version);
     }
 }

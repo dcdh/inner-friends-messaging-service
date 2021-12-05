@@ -32,7 +32,7 @@ public class ListRecentContactsUseCaseTest {
     public void should_list_recent_contacts() {
         // Given
         final Owner owner = mock(Owner.class);
-        final ContactBook contactBook = new ContactBook(owner, contacts, 3l);
+        final ContactBook contactBook = new ContactBook(owner, buildCreatedAt(), contacts, 3l);
         final ContactBookRepository contactBookRepository = mock(ContactBookRepository.class);
         final ListRecentContactsCommand listRecentContactsCommand = new ListRecentContactsCommand(owner, 5);
         doReturn(contactBook).when(contactBookRepository).getByOwner(owner);
@@ -50,7 +50,7 @@ public class ListRecentContactsUseCaseTest {
     public void should_return_expected_number_of_contacts() {
         // Given
         final Owner owner = mock(Owner.class);
-        final ContactBook contactBook = new ContactBook(owner, contacts, 3l);
+        final ContactBook contactBook = new ContactBook(owner, buildCreatedAt(), contacts, 3l);
         final ContactBookRepository contactBookRepository = mock(ContactBookRepository.class);
         final ListRecentContactsCommand listRecentContactsCommand = new ListRecentContactsCommand(owner, 2);
         doReturn(contactBook).when(contactBookRepository).getByOwner(owner);
@@ -65,6 +65,11 @@ public class ListRecentContactsUseCaseTest {
 
     private AddedAt buildAddedAt(final Integer day) {
         return new AddedAt(ZonedDateTime.of(2021, 10, day, 0, 0, 0, 0, ZoneId.of("Europe/Paris")));
+    }
+
+    private CreatedAt buildCreatedAt() {
+        return new CreatedAt(
+                ZonedDateTime.of(2021, 10, 1, 0, 0, 0, 0, ZoneId.of("Europe/Paris")));
     }
 
 }

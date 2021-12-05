@@ -1,10 +1,7 @@
 package com.innerfriends.messaging.infrastructure.outbox.contactbox;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.innerfriends.messaging.domain.AddedAt;
-import com.innerfriends.messaging.domain.ContactBook;
-import com.innerfriends.messaging.domain.ContactIdentifier;
-import com.innerfriends.messaging.domain.Owner;
+import com.innerfriends.messaging.domain.*;
 import com.innerfriends.messaging.infrastructure.InstantProvider;
 import com.innerfriends.messaging.infrastructure.outbox.contactbook.ContactAddedIntoContactBookEvent;
 import org.junit.jupiter.api.BeforeEach;
@@ -37,7 +34,7 @@ public class ContactAddedIntoContactBookEventTest {
     public void should_return_expected_event() {
         // Given
         final Owner owner = new Owner("Mario");
-        final ContactBook contactBook = new ContactBook(owner);
+        final ContactBook contactBook = new ContactBook(owner, buildCreatedAt());
         contactBook.addNewContact(new ContactIdentifier("Luigi"), buildAddedAt(1));
         contactBook.addNewContact(new ContactIdentifier("Peach"), buildAddedAt(2));
         doReturn(Instant.ofEpochSecond(1)).when(instantProvider).now();
@@ -52,6 +49,11 @@ public class ContactAddedIntoContactBookEventTest {
         assertThat(contactAddedIntoContactBookEvent.getTimestamp()).isEqualTo(Instant.ofEpochSecond(1));
         assertThat(contactAddedIntoContactBookEvent.getType()).isEqualTo("ContactAddedIntoContactBook");
         verifyJson(contactAddedIntoContactBookEvent.getPayload().toString());
+    }
+
+    private CreatedAt buildCreatedAt() {
+        return new CreatedAt(
+                ZonedDateTime.of(2021, 10, 1, 0, 0, 0, 0, ZoneId.of("Europe/Paris")));
     }
 
     private AddedAt buildAddedAt(final Integer day) {

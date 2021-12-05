@@ -47,6 +47,7 @@ public class MessagingEndpointTest {
         doReturn(new ListAllContactInContactBook(
                 new ContactBook(
                         new Owner("Mario"),
+                        buildCreatedAt(),
                         List.of(new Contact(new ContactIdentifier("Peach"), buildAddedAt(2)),
                                 new Contact(new ContactIdentifier("Luigi"), buildAddedAt(3))),
                         2l)))
@@ -61,6 +62,7 @@ public class MessagingEndpointTest {
                 .statusCode(200)
                 .body(JsonSchemaValidator.matchesJsonSchemaInClasspath("expected/contacts.json"))
                 .body("owner", equalTo("Mario"))
+                .body("createdAt", equalTo("2021-10-01T00:00:00+02:00[Europe/Paris]"))
                 .body("contacts[0].contactIdentifier", equalTo("Luigi"))
                 .body("contacts[0].addedAt", equalTo("2021-10-03T00:00:00+02:00"))
                 .body("contacts[1].contactIdentifier", equalTo("Peach"))
@@ -295,6 +297,11 @@ public class MessagingEndpointTest {
     private PostedAt buildPostedAt(final Integer day) {
         return new PostedAt(
                 ZonedDateTime.of(2021, 10, day, 0, 0, 0, 0, ZoneId.of("Europe/Paris")));
+    }
+
+    private CreatedAt buildCreatedAt() {
+        return new CreatedAt(
+                ZonedDateTime.of(2021, 10, 1, 0, 0, 0, 0, ZoneId.of("Europe/Paris")));
     }
 
 }

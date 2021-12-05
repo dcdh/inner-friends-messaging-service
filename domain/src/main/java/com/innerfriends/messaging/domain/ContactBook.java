@@ -9,18 +9,21 @@ import java.util.stream.Collectors;
 public final class ContactBook extends Aggregate {
 
     private final Owner owner;
+    private final CreatedAt createdAt;
     private final List<Contact> contacts;
 
     public ContactBook(final Owner owner,
+                       final CreatedAt createdAt,
                        final List<Contact> contacts,
                        final Long version) {
         super(version);
         this.owner = Objects.requireNonNull(owner);
+        this.createdAt = Objects.requireNonNull(createdAt);
         this.contacts = Objects.requireNonNull(contacts);
     }
 
-    public ContactBook(final Owner owner) {
-        this(owner, new ArrayList<>(), 0l);
+    public ContactBook(final Owner owner, final CreatedAt createdAt) {
+        this(owner, createdAt, new ArrayList<>(), 0l);
     }
 
     public ContactBook addNewContact(final ContactIdentifier contactIdentifier, final AddedAt addedAt) {
@@ -53,6 +56,10 @@ public final class ContactBook extends Aggregate {
         return owner;
     }
 
+    public CreatedAt createdAt() {
+        return createdAt;
+    }
+
     @Override
     public boolean equals(final Object o) {
         if (this == o) return true;
@@ -60,18 +67,20 @@ public final class ContactBook extends Aggregate {
         if (!super.equals(o)) return false;
         final ContactBook that = (ContactBook) o;
         return Objects.equals(owner, that.owner) &&
+                Objects.equals(createdAt, that.createdAt) &&
                 Objects.equals(contacts, that.contacts);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(super.hashCode(), owner, contacts);
+        return Objects.hash(super.hashCode(), owner, createdAt, contacts);
     }
 
     @Override
     public String toString() {
         return "ContactBook{" +
                 "owner=" + owner +
+                ", createdAt=" + createdAt +
                 ", contacts=" + contacts +
                 "} " + super.toString();
     }

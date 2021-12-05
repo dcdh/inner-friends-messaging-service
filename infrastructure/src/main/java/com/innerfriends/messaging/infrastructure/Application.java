@@ -40,6 +40,17 @@ public class Application {
 
     @Produces
     @ApplicationScoped
+    public CreatedAtProvider createdAtProvider() {
+        return new CreatedAtProvider() {
+            @Override
+            public CreatedAt now() {
+                return new CreatedAt(ZonedDateTime.now());
+            }
+        };
+    }
+
+    @Produces
+    @ApplicationScoped
     public AddContactIntoContactBookUseCase addContactIntoContactBookUseCaseProducer(final ContactBookRepository contactBookRepository,
                                                                                      final AddedAtProvider addedAtProvider) {
         return new AddContactIntoContactBookUseCase(contactBookRepository, addedAtProvider);
@@ -47,8 +58,9 @@ public class Application {
 
     @Produces
     @ApplicationScoped
-    public CreateContactBookUseCase createContactBookUseCaseProducer(final ContactBookRepository contactBookRepository) {
-        return new CreateContactBookUseCase(contactBookRepository);
+    public CreateContactBookUseCase createContactBookUseCaseProducer(final ContactBookRepository contactBookRepository,
+                                                                     final CreatedAtProvider createdAtProvider) {
+        return new CreateContactBookUseCase(contactBookRepository, createdAtProvider);
     }
 
     @Produces

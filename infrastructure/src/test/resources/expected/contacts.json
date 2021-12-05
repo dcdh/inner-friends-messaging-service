@@ -8,6 +8,7 @@
   "examples": [
     {
       "owner": "Mario",
+      "createdAt": "2021-10-01T00:00:00+02:00[Europe/Paris]",
       "contacts": [
         {
           "contactIdentifier": "Luigi",
@@ -23,6 +24,7 @@
   ],
   "required": [
     "owner",
+    "createdAt",
     "contacts",
     "version"
   ],
@@ -35,6 +37,16 @@
       "default": "",
       "examples": [
         "Mario"
+      ]
+    },
+    "createdAt": {
+      "$id": "#/properties/createdAt",
+      "type": "string",
+      "title": "The createdAt schema",
+      "description": "An explanation about the purpose of this instance.",
+      "default": "",
+      "examples": [
+        "2021-10-03T00:00:00+02:00"
       ]
     },
     "contacts": {

@@ -8,7 +8,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.postgresql.util.PSQLException;
 
 import javax.inject.Inject;
-import javax.transaction.Transactional;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.Collections;
@@ -22,7 +21,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 @ExtendWith(MockitoExtension.class)
 public class PostgresContactBookRepositoryTest extends RepositoryTesting {
 
-    private static final String CREATE_CONTACT_BOOK_SQL = "INSERT INTO public.T_CONTACT_BOOK VALUES ('Mario', '[]', 0)";
+    private static final String CREATE_CONTACT_BOOK_SQL = "INSERT INTO public.T_CONTACT_BOOK VALUES ('Mario', '2021-10-01 00:00:00 +02:00', 'Europe/Paris', '[]', 0)";
     private static final String COUNT_CONTACT_BOOK_SQL = "SELECT COUNT(*) FROM public.T_CONTACT_BOOK";
 
     @Inject
@@ -41,7 +40,7 @@ public class PostgresContactBookRepositoryTest extends RepositoryTesting {
         // Then
         assertThat(contactBook).isEqualTo(
                 new ContactBook(
-                        new Owner("Mario"), Collections.emptyList(), 0l));
+                        new Owner("Mario"), buildCreatedAt(), Collections.emptyList(), 0l));
     }
 
     @Test
@@ -54,10 +53,12 @@ public class PostgresContactBookRepositoryTest extends RepositoryTesting {
     public void should_save_contact_book() throws Exception {
         // When
         runInTransaction(() -> {
-            postgresContactBookRepository.save(new ContactBook(new Owner("Mario"),
-                List.of(
-                        new Contact(new ContactIdentifier("Peach"), buildAddedAt(1))
-                ), 1l));
+            postgresContactBookRepository.save(new ContactBook(
+                    new Owner("Mario"),
+                    buildCreatedAt(),
+                    List.of(
+                        new Contact(new ContactIdentifier("Peach"), buildAddedAt(1))),
+                    1l));
             return null;
         });
 
@@ -75,6 +76,7 @@ public class PostgresContactBookRepositoryTest extends RepositoryTesting {
         runInTransaction(() -> {
             postgresContactBookRepository.save(new ContactBook(
                     new Owner("Mario"),
+                    buildCreatedAt(),
                     List.of(new Contact(new ContactIdentifier("Peach"), buildAddedAt(1))),
                     1l));
             return null;
@@ -84,6 +86,7 @@ public class PostgresContactBookRepositoryTest extends RepositoryTesting {
         final ContactBook contactBook = runInTransaction(() -> postgresContactBookRepository.getByOwner(new Owner("Mario")));
         assertThat(contactBook).isEqualTo(new ContactBook(
                 new Owner("Mario"),
+                buildCreatedAt(),
                 List.of(new Contact(new ContactIdentifier("Peach"), buildAddedAt(1))),
                 1l));
     }
@@ -92,7 +95,7 @@ public class PostgresContactBookRepositoryTest extends RepositoryTesting {
     public void should_fail_when_next_version_is_not_incremented_by_one() throws Exception {
         // Given
         runInTransaction(() -> entityManager.createNativeQuery(CREATE_CONTACT_BOOK_SQL).executeUpdate());
-        final ContactBook contactBook = new ContactBook(new Owner("Mario"), emptyList(), 2l);
+        final ContactBook contactBook = new ContactBook(new Owner("Mario"), buildCreatedAt(), emptyList(), 2l);
 
         // When && Then
         assertThatThrownBy(() -> runInTransaction(() -> {
@@ -103,6 +106,11 @@ public class PostgresContactBookRepositoryTest extends RepositoryTesting {
                 .isInstanceOf(PSQLException.class)
                 .hasMessage("ERROR: ContactBook version unexpected on update for owner Mario - current version 2 - expected version 1\n" +
                         "  Où : PL/pgSQL function contactbook_check_version_on_update() line 6 at RAISE");
+    }
+
+    private CreatedAt buildCreatedAt() {
+        return new CreatedAt(
+                ZonedDateTime.of(2021, 10, 1, 0, 0, 0, 0, ZoneId.of("Europe/Paris")));
     }
 
     private AddedAt buildAddedAt(final Integer day) {

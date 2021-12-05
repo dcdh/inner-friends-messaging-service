@@ -2,6 +2,7 @@ package com.innerfriends.messaging.infrastructure.usecase;
 
 import com.innerfriends.messaging.domain.ContactBook;
 import com.innerfriends.messaging.domain.ContactIdentifier;
+import com.innerfriends.messaging.domain.CreatedAt;
 import com.innerfriends.messaging.domain.Owner;
 import com.innerfriends.messaging.domain.usecase.CreateContactBookCommand;
 import com.innerfriends.messaging.domain.usecase.CreateContactBookUseCase;
@@ -14,6 +15,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import javax.inject.Inject;
 import java.time.Instant;
+import java.time.ZonedDateTime;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.doReturn;
@@ -35,7 +37,7 @@ public class ManagedCreateContactBookUseCaseTest extends ManagedUseCaseTest {
     public void should_create_contact_book() {
         // Given
         final CreateContactBookCommand createContactBookCommand = new CreateContactBookCommand(new ContactIdentifier("Mario"));
-        final ContactBook contactBook = new ContactBook(new Owner("Mario"));
+        final ContactBook contactBook = new ContactBook(new Owner("Mario"), new CreatedAt(ZonedDateTime.now()));
         doReturn(contactBook).when(createContactBookUseCase).execute(createContactBookCommand);
         doReturn(Instant.ofEpochSecond(1)).when(instantProvider).now();
 

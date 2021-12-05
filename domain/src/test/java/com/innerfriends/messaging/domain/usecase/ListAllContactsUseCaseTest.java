@@ -25,7 +25,7 @@ public class ListAllContactsUseCaseTest {
                 new Contact(new ContactIdentifier("Peach"), buildAddedAt(1))
         );
         final Owner owner = mock(Owner.class);
-        final ContactBook contactBook = new ContactBook(owner, contacts, 1l);
+        final ContactBook contactBook = new ContactBook(owner, buildCreatedAt(), contacts, 1l);
         final ContactBookRepository contactBookRepository = mock(ContactBookRepository.class);
         final ListAllContactsCommand listAllContactsCommand = new ListAllContactsCommand(owner);
         doReturn(contactBook).when(contactBookRepository).getByOwner(owner);
@@ -34,12 +34,17 @@ public class ListAllContactsUseCaseTest {
         // When && Then
         assertThat(listAllContactsUseCase.execute(listAllContactsCommand))
                 .isEqualTo(new ListAllContactInContactBook(
-                        new ContactBook(owner, contacts, 1l)
+                        new ContactBook(owner, buildCreatedAt(), contacts, 1l)
                 ));
     }
 
     private AddedAt buildAddedAt(final Integer day) {
         return new AddedAt(ZonedDateTime.of(2021, 10, day, 0, 0, 0, 0, ZoneId.of("Europe/Paris")));
+    }
+
+    private CreatedAt buildCreatedAt() {
+        return new CreatedAt(
+                ZonedDateTime.of(2021, 10, 1, 0, 0, 0, 0, ZoneId.of("Europe/Paris")));
     }
 
 }

@@ -39,7 +39,7 @@ public class OpenNewConversationUseCaseTest {
     public void should_open_a_new_conversation() {
         // Given
         final Owner owner = new Owner(new ContactIdentifier("Mario"));
-        final ContactBook contactBook = new ContactBook(owner, List.of(
+        final ContactBook contactBook = new ContactBook(owner, buildCreatedAt(), List.of(
                 new Contact(new ContactIdentifier("Peach"), new AddedAt(ZonedDateTime.now())),
                 new Contact(new ContactIdentifier("Luigi"), new AddedAt(ZonedDateTime.now()))),
                 2l);
@@ -68,7 +68,7 @@ public class OpenNewConversationUseCaseTest {
     public void should_fail_when_not_in_contact_book() {
         // Given
         final Owner owner = new Owner(new ContactIdentifier("Mario"));
-        final ContactBook contactBook = new ContactBook(owner);
+        final ContactBook contactBook = new ContactBook(owner, buildCreatedAt());
         doReturn(contactBook).when(contactBookRepository).getByOwner(owner);
 
         final OpenNewConversationCommand openNewConversationCommand = new OpenNewConversationCommand(
@@ -86,6 +86,11 @@ public class OpenNewConversationUseCaseTest {
     private PostedAt buildPostedAt(final Integer day) {
         return new PostedAt(
                 ZonedDateTime.of(2021, 10, day, 0, 0, 0, 0, ZoneId.of("Europe/Paris")));
+    }
+
+    private CreatedAt buildCreatedAt() {
+        return new CreatedAt(
+                ZonedDateTime.of(2021, 10, 1, 0, 0, 0, 0, ZoneId.of("Europe/Paris")));
     }
 
 }

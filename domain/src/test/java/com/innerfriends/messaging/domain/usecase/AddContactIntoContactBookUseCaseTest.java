@@ -20,7 +20,8 @@ public class AddContactIntoContactBookUseCaseTest {
         final ContactBookRepository contactBookRepository = mock(ContactBookRepository.class);
         final AddedAtProvider addedAtProvider = mock(AddedAtProvider.class);
         final Owner owner = new Owner(new ContactIdentifier("Mario"));
-        final ContactBook contactBook = new ContactBook(owner);
+        final CreatedAt createdAt = new CreatedAt(ZonedDateTime.now());
+        final ContactBook contactBook = new ContactBook(owner, createdAt);
         final ContactIdentifier contactIdentifier = new ContactIdentifier("Peach");
         doReturn(contactBook).when(contactBookRepository).getByOwner(owner);
         final AddContactIntoContactBookCommand addContactIntoContactBookCommand = new AddContactIntoContactBookCommand(owner, contactIdentifier);
@@ -31,7 +32,7 @@ public class AddContactIntoContactBookUseCaseTest {
 
         // When && Then
         assertThat(addContactIntoContactBookUseCase.execute(addContactIntoContactBookCommand)).isEqualTo(
-                new ContactBook(owner, List.of(new Contact(contactIdentifier, addedAt)), 1l));
+                new ContactBook(owner, createdAt, List.of(new Contact(contactIdentifier, addedAt)), 1l));
         verify(contactBookRepository, times(1)).save(contactBook);
     }
 

@@ -8,6 +8,7 @@ import com.innerfriends.messaging.domain.Owner;
 import com.innerfriends.messaging.infrastructure.InstantProvider;
 
 import java.time.Instant;
+import java.time.format.DateTimeFormatter;
 import java.util.Objects;
 
 public final class ContactBookCreatedEvent implements ContactBookExportedEvent {
@@ -27,6 +28,7 @@ public final class ContactBookCreatedEvent implements ContactBookExportedEvent {
                                              final InstantProvider instantProvider) {
         final ObjectNode asJson = objectMapper.createObjectNode()
                 .put("owner", contactBookNewlyCreated.owner().identifier().identifier())
+                .put("createdAt", contactBookNewlyCreated.createdAt().at().format(DateTimeFormatter.ISO_ZONED_DATE_TIME))
                 .put("version", contactBookNewlyCreated.version());
         return new ContactBookCreatedEvent(contactBookNewlyCreated.owner(), asJson, instantProvider.now());
     }

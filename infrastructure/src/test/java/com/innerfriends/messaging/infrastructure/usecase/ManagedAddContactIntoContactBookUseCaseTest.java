@@ -1,9 +1,6 @@
 package com.innerfriends.messaging.infrastructure.usecase;
 
-import com.innerfriends.messaging.domain.AddedAt;
-import com.innerfriends.messaging.domain.ContactBook;
-import com.innerfriends.messaging.domain.ContactIdentifier;
-import com.innerfriends.messaging.domain.Owner;
+import com.innerfriends.messaging.domain.*;
 import com.innerfriends.messaging.domain.usecase.AddContactIntoContactBookCommand;
 import com.innerfriends.messaging.domain.usecase.AddContactIntoContactBookUseCase;
 import com.innerfriends.messaging.infrastructure.InstantProvider;
@@ -45,7 +42,7 @@ public class ManagedAddContactIntoContactBookUseCaseTest extends ManagedUseCaseT
         final ContactIdentifier contactIdentifier = new ContactIdentifier("Peach");
         final AddContactIntoContactBookCommand addContactIntoContactBookCommand = new AddContactIntoContactBookCommand(owner, contactIdentifier);
         final InOrder inOrder = inOrder(contactBookCacheRepository, addContactIntoContactBookUseCase, instantProvider);
-        final ContactBook contactBook = new ContactBook(owner);
+        final ContactBook contactBook = new ContactBook(owner, new CreatedAt(ZonedDateTime.now()));
         contactBook.addNewContact(new ContactIdentifier("Pach"), new AddedAt(ZonedDateTime.now()));
         doReturn(contactBook).when(addContactIntoContactBookUseCase).execute(addContactIntoContactBookCommand);
         doReturn(Instant.ofEpochSecond(1)).when(instantProvider).now();

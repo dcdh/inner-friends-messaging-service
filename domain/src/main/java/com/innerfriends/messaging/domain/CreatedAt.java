@@ -3,19 +3,11 @@ package com.innerfriends.messaging.domain;
 import java.time.ZonedDateTime;
 import java.util.Objects;
 
-public final class AddedAt {
+public final class CreatedAt {
 
     private final ZonedDateTime at;
 
-    public AddedAt(final EventAt eventAt) {
-        this(eventAt.at());
-    }
-
-    public AddedAt(final PostedAt postedAt) {
-        this(postedAt.at());
-    }
-
-    public AddedAt(final ZonedDateTime at) {
+    public CreatedAt(final ZonedDateTime at) {
         this.at = Objects.requireNonNull(at);
     }
 
@@ -24,11 +16,11 @@ public final class AddedAt {
     }
 
     @Override
-    public boolean equals(Object o) {
+    public boolean equals(final Object o) {
         if (this == o) return true;
-        if (!(o instanceof AddedAt)) return false;
-        AddedAt addedAt = (AddedAt) o;
-        return Objects.equals(at, addedAt.at);
+        if (!(o instanceof CreatedAt)) return false;
+        final CreatedAt createdAt = (CreatedAt) o;
+        return Objects.equals(at, createdAt.at);
     }
 
     @Override
@@ -38,7 +30,7 @@ public final class AddedAt {
 
     @Override
     public String toString() {
-        return "AddedAt{" +
+        return "CreatedAt{" +
                 "at=" + at +
                 '}';
     }

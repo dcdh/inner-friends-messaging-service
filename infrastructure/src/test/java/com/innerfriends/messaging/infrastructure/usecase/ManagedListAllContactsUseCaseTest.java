@@ -1,6 +1,7 @@
 package com.innerfriends.messaging.infrastructure.usecase;
 
 import com.innerfriends.messaging.domain.ContactBook;
+import com.innerfriends.messaging.domain.CreatedAt;
 import com.innerfriends.messaging.domain.ListAllContactInContactBook;
 import com.innerfriends.messaging.domain.Owner;
 import com.innerfriends.messaging.domain.usecase.ListAllContactsCommand;
@@ -14,6 +15,7 @@ import org.mockito.InOrder;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import javax.inject.Inject;
+import java.time.ZonedDateTime;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -36,24 +38,25 @@ public class ManagedListAllContactsUseCaseTest {
     public void should_list_all_contacts_when_not_in_cache() {
         // Given
         final Owner owner = new Owner("Mario");
+        final CreatedAt createdAt = new CreatedAt(ZonedDateTime.now());
         doReturn(Optional.empty()).when(contactBookCacheRepository).getByOwner(owner);
-        doReturn(new ListAllContactInContactBook(new ContactBook(owner)))
+        doReturn(new ListAllContactInContactBook(new ContactBook(owner, createdAt)))
                 .when(listAllContactsUseCase).execute(new ListAllContactsCommand(owner));
         final InOrder inOrder = inOrder(contactBookCacheRepository, listAllContactsUseCase);
 
         //When && Then
         assertThat(managedListAllContactsUseCase.execute(new ListAllContactsCommand(owner)))
-                .isEqualTo(new ListAllContactInContactBook(new ContactBook(owner)));
+                .isEqualTo(new ListAllContactInContactBook(new ContactBook(owner, createdAt)));
         inOrder.verify(contactBookCacheRepository, times(1)).getByOwner(owner);
         inOrder.verify(listAllContactsUseCase, times(1)).execute(new ListAllContactsCommand(owner));
-        inOrder.verify(contactBookCacheRepository, times(1)).store(new ContactBook(owner));
+        inOrder.verify(contactBookCacheRepository, times(1)).store(new ContactBook(owner, createdAt));
     }
 
     @Test
     public void should_return_from_cache_when_in_cache() {
         // Given
         final Owner owner = new Owner("Mario");
-        final ContactBook contactBook = new ContactBook(owner);
+        final ContactBook contactBook = new ContactBook(owner, new CreatedAt(ZonedDateTime.now()));
         doReturn(Optional.of(contactBook)).when(contactBookCacheRepository).getByOwner(owner);
 
         // When && Then

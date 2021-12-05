@@ -21,6 +21,10 @@ public final class ListAllContactInContactBook {
         return contactBook.owner();
     }
 
+    public CreatedAt createdAt() {
+        return contactBook.createdAt();
+    }
+
     public List<Contact> allContacts() {
         return this.contactBook.allContacts()
                 .stream()

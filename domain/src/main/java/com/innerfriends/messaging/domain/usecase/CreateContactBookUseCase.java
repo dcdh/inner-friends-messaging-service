@@ -1,23 +1,25 @@
 package com.innerfriends.messaging.domain.usecase;
 
-import com.innerfriends.messaging.domain.ContactBook;
-import com.innerfriends.messaging.domain.ContactBookRepository;
-import com.innerfriends.messaging.domain.Owner;
-import com.innerfriends.messaging.domain.UseCase;
+import com.innerfriends.messaging.domain.*;
 
 import java.util.Objects;
 
 public class CreateContactBookUseCase implements UseCase<ContactBook, CreateContactBookCommand> {
 
     private final ContactBookRepository contactBookRepository;
+    private final CreatedAtProvider createdAtProvider;
 
-    public CreateContactBookUseCase(final ContactBookRepository contactBookRepository) {
+    public CreateContactBookUseCase(final ContactBookRepository contactBookRepository,
+                                    final CreatedAtProvider createdAtProvider) {
         this.contactBookRepository = Objects.requireNonNull(contactBookRepository);
+        this.createdAtProvider = Objects.requireNonNull(createdAtProvider);
     }
 
     @Override
     public ContactBook execute(final CreateContactBookCommand createContactBookCommand) {
-        final ContactBook contactBook = new ContactBook(new Owner(createContactBookCommand.contactIdentifier()));
+        final CreatedAt createdAt = createdAtProvider.now();
+        final ContactBook contactBook = new ContactBook(new Owner(createContactBookCommand.contactIdentifier()),
+                createdAt);
         contactBookRepository.save(contactBook);
         return contactBook;
     }
