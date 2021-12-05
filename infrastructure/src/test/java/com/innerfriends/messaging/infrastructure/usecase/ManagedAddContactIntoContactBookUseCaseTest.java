@@ -15,6 +15,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import javax.inject.Inject;
 import java.time.Instant;
 import java.time.ZonedDateTime;
+import java.util.Collections;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
@@ -42,7 +43,7 @@ public class ManagedAddContactIntoContactBookUseCaseTest extends ManagedUseCaseT
         final ContactIdentifier contactIdentifier = new ContactIdentifier("Peach");
         final AddContactIntoContactBookCommand addContactIntoContactBookCommand = new AddContactIntoContactBookCommand(owner, contactIdentifier);
         final InOrder inOrder = inOrder(contactBookCacheRepository, addContactIntoContactBookUseCase, instantProvider);
-        final ContactBook contactBook = new ContactBook(owner, new CreatedAt(ZonedDateTime.now()));
+        final ContactBook contactBook = new ContactBook(owner, new CreatedAt(ZonedDateTime.now()), Collections.emptyList());
         contactBook.addNewContact(new ContactIdentifier("Pach"), new AddedAt(ZonedDateTime.now()));
         doReturn(contactBook).when(addContactIntoContactBookUseCase).execute(addContactIntoContactBookCommand);
         doReturn(Instant.ofEpochSecond(1)).when(instantProvider).now();

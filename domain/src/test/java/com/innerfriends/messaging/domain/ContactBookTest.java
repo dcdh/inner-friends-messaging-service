@@ -26,8 +26,9 @@ public class ContactBookTest {
         final CreatedAt createdAt = mock(CreatedAt.class);
 
         // When && Then
-        assertThat(new ContactBook(owner, createdAt)).isEqualTo(new ContactBook(owner, createdAt, Collections.emptyList(), 0l));
-        assertThat(new ContactBook(owner,createdAt).version()).isEqualTo(0l);
+        final ContactBook contactBook = new ContactBook(owner, createdAt, Collections.emptyList());
+        assertThat(contactBook).isEqualTo(new ContactBook(owner, createdAt, Collections.emptyList(), 0l));
+        assertThat(contactBook.version()).isEqualTo(0l);
     }
 
 }

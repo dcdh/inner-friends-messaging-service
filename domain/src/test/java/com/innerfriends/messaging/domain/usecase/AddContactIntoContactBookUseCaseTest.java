@@ -6,6 +6,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.ZonedDateTime;
+import java.util.Collections;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -21,7 +22,7 @@ public class AddContactIntoContactBookUseCaseTest {
         final AddedAtProvider addedAtProvider = mock(AddedAtProvider.class);
         final Owner owner = new Owner(new ContactIdentifier("Mario"));
         final CreatedAt createdAt = new CreatedAt(ZonedDateTime.now());
-        final ContactBook contactBook = new ContactBook(owner, createdAt);
+        final ContactBook contactBook = new ContactBook(owner, createdAt, Collections.emptyList());
         final ContactIdentifier contactIdentifier = new ContactIdentifier("Peach");
         doReturn(contactBook).when(contactBookRepository).getByOwner(owner);
         final AddContactIntoContactBookCommand addContactIntoContactBookCommand = new AddContactIntoContactBookCommand(owner, contactIdentifier);

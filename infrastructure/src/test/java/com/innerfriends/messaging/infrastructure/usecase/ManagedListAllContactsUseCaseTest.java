@@ -16,6 +16,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import javax.inject.Inject;
 import java.time.ZonedDateTime;
+import java.util.Collections;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -40,23 +41,23 @@ public class ManagedListAllContactsUseCaseTest {
         final Owner owner = new Owner("Mario");
         final CreatedAt createdAt = new CreatedAt(ZonedDateTime.now());
         doReturn(Optional.empty()).when(contactBookCacheRepository).getByOwner(owner);
-        doReturn(new ListAllContactInContactBook(new ContactBook(owner, createdAt)))
+        doReturn(new ListAllContactInContactBook(new ContactBook(owner, createdAt, Collections.emptyList())))
                 .when(listAllContactsUseCase).execute(new ListAllContactsCommand(owner));
         final InOrder inOrder = inOrder(contactBookCacheRepository, listAllContactsUseCase);
 
         //When && Then
         assertThat(managedListAllContactsUseCase.execute(new ListAllContactsCommand(owner)))
-                .isEqualTo(new ListAllContactInContactBook(new ContactBook(owner, createdAt)));
+                .isEqualTo(new ListAllContactInContactBook(new ContactBook(owner, createdAt, Collections.emptyList())));
         inOrder.verify(contactBookCacheRepository, times(1)).getByOwner(owner);
         inOrder.verify(listAllContactsUseCase, times(1)).execute(new ListAllContactsCommand(owner));
-        inOrder.verify(contactBookCacheRepository, times(1)).store(new ContactBook(owner, createdAt));
+        inOrder.verify(contactBookCacheRepository, times(1)).store(new ContactBook(owner, createdAt, Collections.emptyList()));
     }
 
     @Test
     public void should_return_from_cache_when_in_cache() {
         // Given
         final Owner owner = new Owner("Mario");
-        final ContactBook contactBook = new ContactBook(owner, new CreatedAt(ZonedDateTime.now()));
+        final ContactBook contactBook = new ContactBook(owner, new CreatedAt(ZonedDateTime.now()), Collections.emptyList());
         doReturn(Optional.of(contactBook)).when(contactBookCacheRepository).getByOwner(owner);
 
         // When && Then

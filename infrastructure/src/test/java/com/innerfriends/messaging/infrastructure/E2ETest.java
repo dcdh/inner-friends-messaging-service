@@ -25,6 +25,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.transaction.UserTransaction;
+import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.stream.Collectors;
@@ -80,7 +81,7 @@ public class E2ETest {
     @Order(1)
     public void should_create_contact_book() {
         // TODO plug kafka consumer from friend domain
-        managedCreateContactBookUseCase.execute(new CreateContactBookCommand(new Owner("Mario")));
+        managedCreateContactBookUseCase.execute(new CreateContactBookCommand(new Owner("Mario"), Collections.emptyList()));
         // TODO tests traces when kafka consumer plugged and traces given from other service
     }
 

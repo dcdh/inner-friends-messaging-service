@@ -17,6 +17,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import javax.inject.Inject;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
+import java.util.Collections;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -50,7 +51,7 @@ public class HazelcastContactBookCacheRepositoryTest {
     public void should_get_by_owner() throws Exception {
         // Given
         final Owner owner = new Owner("Mario");
-        final ContactBook contactBook = new ContactBook(owner, buildCreatedAt());
+        final ContactBook contactBook = new ContactBook(owner, buildCreatedAt(), Collections.emptyList());
         contactBook.addNewContact(new ContactIdentifier("Peach"), buildAddedAt(2));
         final InOrder inOrder = inOrder(hazelcastContactBookCacheRepository, openTelemetryTracingService);
         hazelcastInstance.getMap(HazelcastContactBookCacheRepository.MAP_NAME).put("Mario",
@@ -82,7 +83,7 @@ public class HazelcastContactBookCacheRepositoryTest {
     public void should_store_contact_identifiers() throws Exception {
         // Given
         final Owner owner = new Owner("Mario");
-        final ContactBook contactBook = new ContactBook(owner, buildCreatedAt());
+        final ContactBook contactBook = new ContactBook(owner, buildCreatedAt(), Collections.emptyList());
         contactBook.addNewContact(new ContactIdentifier("Luigi"), buildAddedAt(1));
         contactBook.addNewContact(new ContactIdentifier("Peach"), buildAddedAt(2));
         final InOrder inOrder = inOrder(hazelcastContactBookCacheRepository, openTelemetryTracingService);
@@ -102,7 +103,7 @@ public class HazelcastContactBookCacheRepositoryTest {
     public void should_evict() throws Exception {
         // Given
         final Owner owner = new Owner("Mario");
-        final ContactBook contactBook = new ContactBook(owner, buildCreatedAt());
+        final ContactBook contactBook = new ContactBook(owner, buildCreatedAt(), Collections.emptyList());
         contactBook.addNewContact(new ContactIdentifier("Peach"), buildAddedAt(2));
         final InOrder inOrder = inOrder(hazelcastContactBookCacheRepository, openTelemetryTracingService);
         hazelcastInstance.getMap(HazelcastContactBookCacheRepository.MAP_NAME).put("Mario",

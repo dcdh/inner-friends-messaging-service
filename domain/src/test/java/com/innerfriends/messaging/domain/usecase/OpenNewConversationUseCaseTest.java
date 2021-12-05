@@ -68,7 +68,7 @@ public class OpenNewConversationUseCaseTest {
     public void should_fail_when_not_in_contact_book() {
         // Given
         final Owner owner = new Owner(new ContactIdentifier("Mario"));
-        final ContactBook contactBook = new ContactBook(owner, buildCreatedAt());
+        final ContactBook contactBook = new ContactBook(owner, buildCreatedAt(), Collections.emptyList());
         doReturn(contactBook).when(contactBookRepository).getByOwner(owner);
 
         final OpenNewConversationCommand openNewConversationCommand = new OpenNewConversationCommand(

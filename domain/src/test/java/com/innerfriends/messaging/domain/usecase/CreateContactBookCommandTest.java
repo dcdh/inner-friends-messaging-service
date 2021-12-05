@@ -4,6 +4,8 @@ import com.innerfriends.messaging.domain.Owner;
 import nl.jqno.equalsverifier.EqualsVerifier;
 import org.junit.jupiter.api.Test;
 
+import java.util.Collections;
+
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class CreateContactBookCommandTest {
@@ -15,6 +17,6 @@ public class CreateContactBookCommandTest {
 
     @Test
     public void should_identifier_return_contact_identifier() {
-        assertThat(new CreateContactBookCommand(new Owner("Mario")).identifier()).isEqualTo(new Owner("Mario"));
+        assertThat(new CreateContactBookCommand(new Owner("Mario"), Collections.emptyList()).identifier()).isEqualTo(new Owner("Mario"));
     }
 }

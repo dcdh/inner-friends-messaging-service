@@ -2,6 +2,7 @@ package com.innerfriends.messaging.infrastructure.outbox.contactbook;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.innerfriends.messaging.domain.ContactBook;
 import com.innerfriends.messaging.domain.Owner;
@@ -30,6 +31,12 @@ public final class ContactBookCreatedEvent implements ContactBookExportedEvent {
                 .put("owner", contactBookNewlyCreated.owner().identifier().identifier())
                 .put("createdAt", contactBookNewlyCreated.createdAt().at().format(DateTimeFormatter.ISO_ZONED_DATE_TIME))
                 .put("version", contactBookNewlyCreated.version());
+        final ArrayNode contactsAsJson = asJson.putArray("contacts");
+        contactBookNewlyCreated.allContacts().stream()
+                .forEach(contact -> contactsAsJson.add(objectMapper.createObjectNode()
+                        .put("contactIdentifier", contact.contactIdentifier().identifier())
+                        .put("addedAt", contact.addedAt().at().format(DateTimeFormatter.ISO_ZONED_DATE_TIME)))
+                );
         return new ContactBookCreatedEvent(contactBookNewlyCreated.owner(), asJson, instantProvider.now());
     }
 

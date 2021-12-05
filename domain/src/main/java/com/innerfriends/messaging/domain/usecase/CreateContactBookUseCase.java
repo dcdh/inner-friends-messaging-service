@@ -3,6 +3,7 @@ package com.innerfriends.messaging.domain.usecase;
 import com.innerfriends.messaging.domain.*;
 
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 public class CreateContactBookUseCase implements UseCase<ContactBook, CreateContactBookCommand> {
 
@@ -18,7 +19,11 @@ public class CreateContactBookUseCase implements UseCase<ContactBook, CreateCont
     @Override
     public ContactBook execute(final CreateContactBookCommand createContactBookCommand) {
         final CreatedAt createdAt = createdAtProvider.now();
-        final ContactBook contactBook = new ContactBook(createContactBookCommand.owner(), createdAt);
+        final AddedAt addedAt = new AddedAt(createdAt.at());
+        final ContactBook contactBook = new ContactBook(createContactBookCommand.owner(), createdAt,
+                createContactBookCommand.contactIdentifiers().stream()
+                        .map(contactIdentifier -> new Contact(contactIdentifier, addedAt))
+                        .collect(Collectors.toList()));
         contactBookRepository.save(contactBook);
         return contactBook;
     }

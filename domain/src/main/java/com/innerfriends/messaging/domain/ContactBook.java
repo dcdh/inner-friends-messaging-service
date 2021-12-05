@@ -19,11 +19,11 @@ public final class ContactBook extends Aggregate {
         super(version);
         this.owner = Objects.requireNonNull(owner);
         this.createdAt = Objects.requireNonNull(createdAt);
-        this.contacts = Objects.requireNonNull(contacts);
+        this.contacts = new ArrayList<>(Objects.requireNonNull(contacts));
     }
 
-    public ContactBook(final Owner owner, final CreatedAt createdAt) {
-        this(owner, createdAt, new ArrayList<>(), 0l);
+    public ContactBook(final Owner owner, final CreatedAt createdAt, final List<Contact> contacts) {
+        this(owner, createdAt, contacts, 0l);
     }
 
     public ContactBook addNewContact(final ContactIdentifier contactIdentifier, final AddedAt addedAt) {
