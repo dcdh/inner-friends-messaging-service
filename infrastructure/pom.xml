@@ -155,6 +155,11 @@
             <artifactId>equalsverifier</artifactId>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>com.approvaltests</groupId>
+            <artifactId>approvaltests</artifactId>
+            <version>12.3.1</version>
+        </dependency>
     </dependencies>
     <build>
         <plugins>

@@ -16,6 +16,7 @@ import java.time.Instant;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 
+import static org.approvaltests.Approvals.verifyJson;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
@@ -50,7 +51,7 @@ public class ContactAddedIntoContactBookEventTest {
         assertThat(contactAddedIntoContactBookEvent.getAggregateType()).isEqualTo("ContactBook");
         assertThat(contactAddedIntoContactBookEvent.getTimestamp()).isEqualTo(Instant.ofEpochSecond(1));
         assertThat(contactAddedIntoContactBookEvent.getType()).isEqualTo("ContactAddedIntoContactBook");
-        assertThat(contactAddedIntoContactBookEvent.getPayload().toString()).isEqualTo("{\"contactIdentifier\":\"Peach\",\"addedAt\":\"2021-10-02T00:00:00+02:00[Europe/Paris]\"}");
+        verifyJson(contactAddedIntoContactBookEvent.getPayload().toString());
     }
 
     private AddedAt buildAddedAt(final Integer day) {

@@ -12,6 +12,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.Instant;
 
+import static org.approvaltests.Approvals.verifyJson;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
@@ -43,7 +44,7 @@ public class ContactBookCreatedEventTest {
         assertThat(contactBookCreatedEvent.getAggregateType()).isEqualTo("ContactBook");
         assertThat(contactBookCreatedEvent.getTimestamp()).isEqualTo(Instant.ofEpochSecond(1));
         assertThat(contactBookCreatedEvent.getType()).isEqualTo("ContactBookCreated");
-        assertThat(contactBookCreatedEvent.getPayload().toString()).isEqualTo("{\"owner\":\"Mario\",\"version\":0}");
+        verifyJson(contactBookCreatedEvent.getPayload().toString());
     }
 
 }

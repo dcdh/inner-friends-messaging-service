@@ -13,6 +13,7 @@ import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.List;
 
+import static org.approvaltests.Approvals.verifyJson;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
@@ -46,7 +47,7 @@ public class NewConversationOpenedEventTest {
         assertThat(newConversationOpenedEvent.getAggregateType()).isEqualTo("Conversation");
         assertThat(newConversationOpenedEvent.getTimestamp()).isEqualTo(Instant.ofEpochSecond(1));
         assertThat(newConversationOpenedEvent.getType()).isEqualTo("NewConversationOpened");
-        assertThat(newConversationOpenedEvent.getPayload().toString()).isEqualTo("{\"conversationIdentifier\":\"Mario-azerty\",\"version\":0,\"firstMessage\":{\"from\":\"Mario\",\"content\":\"Hi Peach how are you ?\",\"postedAt\":\"2021-10-02T00:00:00+02:00[Europe/Paris]\"},\"participantsIdentifier\":[\"Mario\",\"Peach\"]}");
+        verifyJson(newConversationOpenedEvent.getPayload().toString());
     }
 
     private PostedAt buildPostedAt(final Integer day) {
