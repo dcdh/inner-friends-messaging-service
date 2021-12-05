@@ -22,7 +22,7 @@ public final class AddParticipantIntoConversationUseCase implements UseCase<Conv
     public Conversation execute(final AddParticipantIntoConversationCommand command) {
         final Conversation conversationToAddNewParticipant = this.conversationRepository.getConversation(command.conversationIdentifier());
         final Conversation conversationToSave = conversationToAddNewParticipant
-                .addAParticipantIntoConversation(command.participantIdentifier(), addedAtProvider.generate());
+                .addAParticipantIntoConversation(command.participantIdentifier(), addedAtProvider.now());
         this.conversationRepository.saveConversation(conversationToSave);
         return conversationToSave;
     }

@@ -21,7 +21,7 @@ public class AddContactIntoContactBookUseCase implements UseCase<ContactBook, Ad
     @Override
     public ContactBook execute(final AddContactIntoContactBookCommand command) {
         final ContactBook contactBook = this.contactBookRepository.getByOwner(command.owner());
-        contactBook.addNewContact(command.contactIdentifier(), addedAtProvider.generate());
+        contactBook.addNewContact(command.contactIdentifier(), addedAtProvider.now());
         this.contactBookRepository.save(contactBook);
         return contactBook;
     }

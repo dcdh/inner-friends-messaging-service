@@ -25,7 +25,7 @@ public class AddContactIntoContactBookUseCaseTest {
         doReturn(contactBook).when(contactBookRepository).getByOwner(owner);
         final AddContactIntoContactBookCommand addContactIntoContactBookCommand = new AddContactIntoContactBookCommand(owner, contactIdentifier);
         final AddedAt addedAt = new AddedAt(ZonedDateTime.now());
-        doReturn(addedAt).when(addedAtProvider).generate();
+        doReturn(addedAt).when(addedAtProvider).now();
         final AddContactIntoContactBookUseCase addContactIntoContactBookUseCase = new AddContactIntoContactBookUseCase(
                 contactBookRepository, addedAtProvider);
 

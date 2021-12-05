@@ -39,7 +39,7 @@ public class AddParticipantIntoConversationUseCaseTest {
                 0l
         );
         doReturn(conversation).when(conversationRepository).getConversation(conversationIdentifier);
-        doReturn(buildAddedAt(3)).when(addedAtProvider).generate();
+        doReturn(buildAddedAt(3)).when(addedAtProvider).now();
 
         // When && Then
         final Conversation expectedConversation = new Conversation(
