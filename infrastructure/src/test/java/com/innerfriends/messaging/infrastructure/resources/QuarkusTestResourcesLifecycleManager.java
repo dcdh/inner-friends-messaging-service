@@ -38,7 +38,8 @@ public class QuarkusTestResourcesLifecycleManager implements QuarkusTestResource
             .waitingFor(Wait.forLogMessage(".*database system is ready to accept connections.*", 1))
             .withLogConsumer(new Slf4jLogConsumer(LOGGER));
 
-    private static final GenericContainer<?> RED_PANDA_CONTAINER = new RedPandaKafkaContainer(NETWORK);
+    private static final GenericContainer<?> RED_PANDA_CONTAINER = new RedPandaKafkaContainer(NETWORK)
+            .withLogConsumer(new Slf4jLogConsumer(LOGGER));
 
     private static final GenericContainer<?> DEBEZIUM_CONNECT_CONTAINER = new GenericContainer<>("debezium/connect:1.8")
             .withExposedPorts(8083)
