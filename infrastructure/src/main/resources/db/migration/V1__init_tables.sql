@@ -89,3 +89,14 @@ ALTER TABLE public.outboxevent OWNER TO postgresql;
 
 ALTER TABLE ONLY public.outboxevent
 ADD CONSTRAINT outboxevent_pkey PRIMARY KEY (id);
+
+-- T_CONSUMED_MESSAGE
+
+CREATE TABLE public.T_CONSUMED_MESSAGE (
+eventid uuid NOT NULL,
+groupid character varying(255) NOT NULL,
+timeofreceiving timestamp without time zone NOT NULL,
+CONSTRAINT consumedmessage_pkey PRIMARY KEY (eventid, groupid)
+);
+
+ALTER TABLE public.T_CONSUMED_MESSAGE OWNER TO postgresql;
