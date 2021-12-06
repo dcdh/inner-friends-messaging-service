@@ -45,7 +45,7 @@ Native compilation does not work since version `2.4.0.Final`. Stuck to version `
 
 > connect to `connect` container
 > 
-> curl http://localhost:8083/connectors/outbox-connector/status
+> curl http://localhost:8083/connectors/messaging-connector/status
 
 #### list topics
 

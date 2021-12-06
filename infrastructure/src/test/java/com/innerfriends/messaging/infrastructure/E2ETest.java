@@ -74,7 +74,7 @@ public class E2ETest {
                 .atMost(Durations.FIVE_SECONDS)
                 .pollInterval(Durations.ONE_HUNDRED_MILLISECONDS)
                 .until(() ->
-                        "RUNNING".equals(kafkaConnectorApi.connectorStatus("outbox-connector").connector.state));
+                        "RUNNING".equals(kafkaConnectorApi.connectorStatus("messaging-connector").connector.state));
     }
 
     @Test
