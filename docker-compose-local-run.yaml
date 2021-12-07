@@ -160,6 +160,7 @@ services:
       - quarkus.hazelcast-client.cluster-name=dev
       - quarkus.hazelcast-client.cluster-members=hazelcast:5701
       - quarkus.opentelemetry.tracer.exporter.otlp.endpoint=http://otel-collector:55680
+      - mp.messaging.incoming.friends.bootstrap.servers=kafka:9092
       - quarkus.oidc.auth-server-url=http://keycloak:8080/auth/realms/public
       - keycloak.admin.adminRealm=master
       - keycloak.admin.clientId=admin-cli
