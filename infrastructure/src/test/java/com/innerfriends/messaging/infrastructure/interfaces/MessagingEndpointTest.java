@@ -174,7 +174,7 @@ public class MessagingEndpointTest {
                 1l
         ))
                 .when(managedPostNewMessageToConversationUseCase).execute(new PostNewMessageToConversationCommand(
-                        new From("Mario"), new ConversationIdentifier("Peach-azerty"), new Content("I am fine thanks")));
+                new From("Mario"), new ConversationIdentifier("Peach-azerty"), new Content("I am fine thanks")));
 
         // When && Then
         given()
@@ -224,7 +224,8 @@ public class MessagingEndpointTest {
                 .get("/contacts/Mario")
                 .then()
                 .log().all()
-                .statusCode(404);
+                .statusCode(404)
+                .body(equalTo("No contact book found"));
     }
 
     @Test
@@ -247,7 +248,8 @@ public class MessagingEndpointTest {
                 .post("/conversations/openNewOne")
                 .then()
                 .log().all()
-                .statusCode(406);
+                .statusCode(406)
+                .body(equalTo("Your are not in the contact book !"));
     }
 
     @Test
@@ -260,13 +262,15 @@ public class MessagingEndpointTest {
 
         // When && Then
         given()
+                .param("conversationIdentifier", "Bowser-azerty")
                 .param("from", "Mario")
                 .param("content", "Hello Bowser I am gonna kick your ass !")
                 .when()
-                .post("/conversations/Bowser-azerty")
+                .post("/conversations/postNewMessage")
                 .then()
                 .log().all()
-                .statusCode(404);
+                .statusCode(404)
+                .body(equalTo("The conversation Bowser-azerty does not exists !"));
     }
 
     @Test
@@ -287,7 +291,8 @@ public class MessagingEndpointTest {
                 .post("/conversations/postNewMessage")
                 .then()
                 .log().all()
-                .statusCode(400);
+                .statusCode(400)
+                .body(equalTo("You are not in the list of participant for this conversation !"));
     }
 
     private AddedAt buildAddedAt(final Integer day) {

@@ -11,7 +11,9 @@ public class ParticipantsAreNotInContactBookExceptionMapper implements Exception
 
     @Override
     public Response toResponse(final ParticipantsAreNotInContactBookException exception) {
-        return Response.status(Response.Status.NOT_ACCEPTABLE).build();
+        return Response.status(Response.Status.NOT_ACCEPTABLE)
+                .entity("Your are not in the contact book !")
+                .build();
     }
 
 }

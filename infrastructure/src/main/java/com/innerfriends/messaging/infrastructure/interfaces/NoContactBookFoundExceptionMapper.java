@@ -11,7 +11,9 @@ public class NoContactBookFoundExceptionMapper implements ExceptionMapper<NoCont
 
     @Override
     public Response toResponse(final NoContactBookFoundException exception) {
-        return Response.status(Response.Status.NOT_FOUND).build();
+        return Response.status(Response.Status.NOT_FOUND)
+                .entity("No contact book found")
+                .build();
     }
 
 }
