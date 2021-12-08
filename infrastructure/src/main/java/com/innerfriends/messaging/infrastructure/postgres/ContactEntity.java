@@ -1,17 +1,22 @@
 package com.innerfriends.messaging.infrastructure.postgres;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.innerfriends.messaging.domain.AddedAt;
 import com.innerfriends.messaging.domain.Contact;
 import com.innerfriends.messaging.domain.ContactIdentifier;
+import io.quarkus.runtime.annotations.RegisterForReflection;
 
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Objects;
 
+@RegisterForReflection
 public final class ContactEntity {
 
+    @JsonProperty("contactIdentifier")
     public String contactIdentifier;
 
+    @JsonProperty("addedAt")
     public String addedAt;
 
     public ContactEntity() {}
@@ -40,5 +45,13 @@ public final class ContactEntity {
     @Override
     public int hashCode() {
         return Objects.hash(contactIdentifier, addedAt);
+    }
+
+    @Override
+    public String toString() {
+        return "ContactEntity{" +
+                "contactIdentifier='" + contactIdentifier + '\'' +
+                ", addedAt='" + addedAt + '\'' +
+                '}';
     }
 }

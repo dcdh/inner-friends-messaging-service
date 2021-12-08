@@ -64,6 +64,13 @@ public class PostgresContactBookRepositoryTest extends RepositoryTesting {
 
         // Then
         assertThat(((Number) entityManager.createNativeQuery(COUNT_CONTACT_BOOK_SQL).getSingleResult()).longValue()).isEqualTo(1l);
+        assertThat(runInTransaction(() -> postgresContactBookRepository.getByOwner(new Owner("Mario"))))
+                .isEqualTo(new ContactBook(
+                        new Owner("Mario"),
+                        buildCreatedAt(),
+                        List.of(
+                                new Contact(new ContactIdentifier("Peach"), buildAddedAt(1))),
+                        1l));
     }
 
     @Test
