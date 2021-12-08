@@ -127,10 +127,6 @@ public class QuarkusTestResourcesLifecycleManager implements QuarkusTestResource
             .withEnv("arangodb.port", "8529")
             .withEnv("quarkus.opentelemetry.tracer.exporter.otlp.endpoint", "http://otel-collector:55680")
             .withEnv("quarkus.oidc.auth-server-url", "http://keycloak:8080/auth/realms/public")
-            .withEnv("keycloak.admin.adminRealm", "master")
-            .withEnv("keycloak.admin.clientId", "admin-cli")
-            .withEnv("keycloak.admin.username", "keycloak")
-            .withEnv("keycloak.admin.password", "keycloak")
             .waitingFor(Wait.forLogMessage(".*started in.*", 1))
             .withLogConsumer(new Slf4jLogConsumer(LOGGER));
 

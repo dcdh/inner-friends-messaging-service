@@ -128,10 +128,6 @@ services:
       - arangodb.port=8529
       - quarkus.opentelemetry.tracer.exporter.otlp.endpoint=http://otel-collector:55680
       - quarkus.oidc.auth-server-url=http://keycloak:8080/auth/realms/public
-      - keycloak.admin.adminRealm=master
-      - keycloak.admin.clientId=admin-cli
-      - keycloak.admin.username=keycloak
-      - keycloak.admin.password=keycloak
     depends_on:
       - arangodb-friends
       - mutable-friends
