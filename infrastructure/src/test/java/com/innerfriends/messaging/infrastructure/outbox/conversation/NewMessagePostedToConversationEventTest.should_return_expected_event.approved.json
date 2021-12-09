@@ -5,5 +5,9 @@
     "from": "Mario",
     "content": "Hi Peach how are you ?",
     "postedAt": "2021-10-02T00:00:00+02:00[Europe/Paris]"
-  }
+  },
+  "participantsIdentifier": [
+    "Mario",
+    "Peach"
+  ]
 }

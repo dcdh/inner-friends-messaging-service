@@ -1,5 +1,6 @@
 package com.innerfriends.messaging.domain;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
@@ -7,10 +8,17 @@ public final class ParticipantAddedConversationEvent implements ConversationEven
 
     private final ParticipantIdentifier participantIdentifier;
     private final AddedAt addedAt;
+    private final List<ParticipantIdentifier> participantsIdentifier;
 
-    public ParticipantAddedConversationEvent(final ParticipantIdentifier participantIdentifier, final AddedAt addedAt) {
+    public ParticipantAddedConversationEvent(final ParticipantIdentifier participantIdentifier,
+                                             final AddedAt addedAt,
+                                             final List<ParticipantIdentifier> participantsIdentifier) {
         this.participantIdentifier = Objects.requireNonNull(participantIdentifier);
         this.addedAt = Objects.requireNonNull(addedAt);
+        this.participantsIdentifier = Objects.requireNonNull(participantsIdentifier);
+        if (!participantsIdentifier.contains(participantIdentifier)) {
+            throw new IllegalStateException("The added participant must be in the list of participants");
+        }
     }
 
     @Override
@@ -35,7 +43,7 @@ public final class ParticipantAddedConversationEvent implements ConversationEven
 
     @Override
     public List<ParticipantIdentifier> participantsIdentifier() {
-        return List.of(participantIdentifier);
+        return Collections.unmodifiableList(participantsIdentifier);
     }
 
     @Override
@@ -49,12 +57,13 @@ public final class ParticipantAddedConversationEvent implements ConversationEven
         if (!(o instanceof ParticipantAddedConversationEvent)) return false;
         final ParticipantAddedConversationEvent that = (ParticipantAddedConversationEvent) o;
         return Objects.equals(participantIdentifier, that.participantIdentifier) &&
-                Objects.equals(addedAt, that.addedAt);
+                Objects.equals(addedAt, that.addedAt) &&
+                Objects.equals(participantsIdentifier, that.participantsIdentifier);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(participantIdentifier, addedAt);
+        return Objects.hash(participantIdentifier, addedAt, participantsIdentifier);
     }
 
     @Override
@@ -62,6 +71,7 @@ public final class ParticipantAddedConversationEvent implements ConversationEven
         return "ParticipantAddedConversationEvent{" +
                 "participantIdentifier=" + participantIdentifier +
                 ", addedAt=" + addedAt +
+                ", participantsIdentifier=" + participantsIdentifier +
                 '}';
     }
 }

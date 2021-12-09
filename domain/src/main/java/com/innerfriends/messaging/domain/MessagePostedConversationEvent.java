@@ -7,9 +7,14 @@ import java.util.Objects;
 public final class MessagePostedConversationEvent implements ConversationEvent {
 
     private final Message message;
+    private final List<ParticipantIdentifier> participantsIdentifier;
 
-    public MessagePostedConversationEvent(final Message message) {
+    public MessagePostedConversationEvent(final Message message, final List<ParticipantIdentifier> participantsIdentifier) {
         this.message = Objects.requireNonNull(message);
+        this.participantsIdentifier = Objects.requireNonNull(participantsIdentifier);
+        if (!participantsIdentifier.contains(message.from().identifier())) {
+            throw new IllegalStateException("from message must be in the list of participants");
+        }
     }
 
     @Override
@@ -34,7 +39,7 @@ public final class MessagePostedConversationEvent implements ConversationEvent {
 
     @Override
     public List<ParticipantIdentifier> participantsIdentifier() {
-        return Collections.emptyList();
+        return Collections.unmodifiableList(participantsIdentifier);
     }
 
     @Override
@@ -47,18 +52,20 @@ public final class MessagePostedConversationEvent implements ConversationEvent {
         if (this == o) return true;
         if (!(o instanceof MessagePostedConversationEvent)) return false;
         final MessagePostedConversationEvent that = (MessagePostedConversationEvent) o;
-        return Objects.equals(message, that.message);
+        return Objects.equals(message, that.message) &&
+                Objects.equals(participantsIdentifier, that.participantsIdentifier);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(message);
+        return Objects.hash(message, participantsIdentifier);
     }
 
     @Override
     public String toString() {
         return "MessagePostedConversationEvent{" +
                 "message=" + message +
+                ", participantsIdentifier=" + participantsIdentifier +
                 '}';
     }
 }

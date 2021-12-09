@@ -1,7 +1,6 @@
 package com.innerfriends.messaging.domain;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 public final class Conversation extends Aggregate {
 
@@ -35,13 +34,17 @@ public final class Conversation extends Aggregate {
         if (!hasParticipant(from.identifier())) {
             throw new YouAreNotAParticipantException(conversationIdentifier, from);
         }
-        this.apply(() -> events.add(new MessagePostedConversationEvent(new Message(from, postedAt, content))));
+        final ConversationEvent previous = events.get(events.size() - 1);
+        this.apply(() -> events.add(new MessagePostedConversationEvent(new Message(from, postedAt, content), previous.participantsIdentifier())));
         return this;
     }
 
     public Conversation addAParticipantIntoConversation(final ParticipantIdentifier participantIdentifier,
                                                         final AddedAt addedAt) {
-        this.apply(() -> events.add(new ParticipantAddedConversationEvent(participantIdentifier, addedAt)));
+        final ConversationEvent previous = events.get(events.size() - 1);
+        final List<ParticipantIdentifier> participantIdentifiers = new ArrayList<>(previous.participantsIdentifier());
+        participantIdentifiers.add(participantIdentifier);
+        this.apply(() -> events.add(new ParticipantAddedConversationEvent(participantIdentifier, addedAt, participantIdentifiers)));
         return this;
     }
 
@@ -66,12 +69,15 @@ public final class Conversation extends Aggregate {
         return conversationIdentifier;
     }
 
+    // TODO remove reducer by getting the n-1 event to increase perf
     public List<ParticipantIdentifier> participants() {
         return events.stream()
-                .flatMap(event -> event.participantsIdentifier().stream())
-                .collect(Collectors.toList());
+                .reduce((first, seconde) -> seconde)
+                .map(ConversationEvent::participantsIdentifier)
+                .get();
     }
 
+    // TODO remove reducer by getting the n-1 event to increase perf
     public LastInteractionAt lastInteractionAt() {
         return events.stream()
                 .reduce((first, seconde) -> seconde)
@@ -81,9 +87,7 @@ public final class Conversation extends Aggregate {
     }
 
     public boolean hasParticipant(final ParticipantIdentifier participantIdentifier) {
-        return events.stream()
-                .flatMap(event -> event.participantsIdentifier().stream())
-                .anyMatch(participantIdentifierInConversation -> participantIdentifierInConversation.equals(participantIdentifier));
+        return participants().contains(participantIdentifier);
     }
 
     public List<ConversationEvent> events() {

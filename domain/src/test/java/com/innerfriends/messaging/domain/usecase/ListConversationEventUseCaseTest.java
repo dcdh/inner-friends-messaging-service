@@ -27,7 +27,8 @@ public class ListConversationEventUseCaseTest {
                 List.of(
                         new StartedConversationEvent(new Message(new From("Peach"), buildPostedAt(2), new Content("Hi Mario How are you ?")),
                                 List.of(new ParticipantIdentifier("Mario"), new ParticipantIdentifier("Peach"))),
-                        new MessagePostedConversationEvent(new Message(new From("Mario"), buildPostedAt(3), new Content("I am fine thanks")))),
+                        new MessagePostedConversationEvent(new Message(new From("Mario"), buildPostedAt(3), new Content("I am fine thanks")),
+                                List.of(new ParticipantIdentifier("Mario"), new ParticipantIdentifier("Peach")))),
                 1l
         );
         final ConversationIdentifier conversationIdentifier = mock(ConversationIdentifier.class);
@@ -40,7 +41,8 @@ public class ListConversationEventUseCaseTest {
                 .containsExactly(
                         new StartedConversationEvent(new Message(new From("Peach"), buildPostedAt(2), new Content("Hi Mario How are you ?")),
                                 List.of(new ParticipantIdentifier("Mario"), new ParticipantIdentifier("Peach"))),
-                        new MessagePostedConversationEvent(new Message(new From("Mario"), buildPostedAt(3), new Content("I am fine thanks"))));
+                        new MessagePostedConversationEvent(new Message(new From("Mario"), buildPostedAt(3), new Content("I am fine thanks")),
+                                List.of(new ParticipantIdentifier("Mario"), new ParticipantIdentifier("Peach"))));
     }
 
     private PostedAt buildPostedAt(final Integer day) {
@@ -48,8 +50,4 @@ public class ListConversationEventUseCaseTest {
                 ZonedDateTime.of(2021, 10, day, 0, 0, 0, 0, ZoneId.of("Europe/Paris")));
     }
 
-    private AddedAt buildAddedAt(final Integer day) {
-        return new AddedAt(
-                ZonedDateTime.of(2021, 10, day, 0, 0, 0, 0, ZoneId.of("Europe/Paris")));
-    }
 }

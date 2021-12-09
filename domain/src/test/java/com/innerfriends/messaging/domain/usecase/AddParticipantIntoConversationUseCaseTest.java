@@ -47,7 +47,8 @@ public class AddParticipantIntoConversationUseCaseTest {
                 List.of(
                         new StartedConversationEvent(new Message(new From("Peach"), buildPostedAt(2), new Content("Hi Mario How are you ?")),
                                 List.of(new ParticipantIdentifier("Peach"), new ParticipantIdentifier("Mario"))),
-                        new ParticipantAddedConversationEvent(new ParticipantIdentifier("Luigi"), buildAddedAt(3))),
+                        new ParticipantAddedConversationEvent(new ParticipantIdentifier("Luigi"), buildAddedAt(3),
+                                List.of(new ParticipantIdentifier("Peach"), new ParticipantIdentifier("Mario"), new ParticipantIdentifier("Luigi")))),
                 1l
         );
         assertThat(addParticipantIntoConversationUseCase.execute(new AddParticipantIntoConversationCommand(conversationIdentifier, new ParticipantIdentifier("Luigi"))))
@@ -55,7 +56,8 @@ public class AddParticipantIntoConversationUseCaseTest {
         assertThat(conversation.events()).containsExactly(
                 new StartedConversationEvent(new Message(new From("Peach"), buildPostedAt(2), new Content("Hi Mario How are you ?")),
                         List.of(new ParticipantIdentifier("Peach"), new ParticipantIdentifier("Mario"))),
-                new ParticipantAddedConversationEvent(new ParticipantIdentifier("Luigi"), buildAddedAt(3)));
+                new ParticipantAddedConversationEvent(new ParticipantIdentifier("Luigi"), buildAddedAt(3),
+                        List.of(new ParticipantIdentifier("Peach"), new ParticipantIdentifier("Mario"), new ParticipantIdentifier("Luigi"))));
         assertThat(conversation.lastInteractionAt()).isEqualTo(new LastInteractionAt(buildAddedAt(3)));
         assertThat(conversation.lastAddedParticipant()).isEqualTo(new Participant(new ParticipantIdentifier("Luigi"), buildAddedAt(3)));
         verify(conversationRepository, times(1)).saveConversation(expectedConversation);

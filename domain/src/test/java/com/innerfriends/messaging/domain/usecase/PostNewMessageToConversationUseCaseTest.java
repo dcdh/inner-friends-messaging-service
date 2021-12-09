@@ -39,7 +39,8 @@ public class PostNewMessageToConversationUseCaseTest {
                 List.of(
                         new StartedConversationEvent(new Message(new From("Peach"), buildPostedAt(2), new Content("Hi Mario How are you ?")),
                                 List.of(new ParticipantIdentifier("Peach"), new ParticipantIdentifier("Mario"))),
-                        new MessagePostedConversationEvent(new Message(new From("Mario"), buildPostedAt(3), new Content("I am fine thanks")))),
+                        new MessagePostedConversationEvent(new Message(new From("Mario"), buildPostedAt(3), new Content("I am fine thanks")),
+                                List.of(new ParticipantIdentifier("Peach"), new ParticipantIdentifier("Mario")))),
                 1l
         );
         assertThat(postNewMessageToConversationUseCase.execute(new PostNewMessageToConversationCommand(
@@ -49,7 +50,8 @@ public class PostNewMessageToConversationUseCaseTest {
         assertThat(conversation.events()).containsExactly(
                 new StartedConversationEvent(new Message(new From("Peach"), buildPostedAt(2), new Content("Hi Mario How are you ?")),
                         List.of(new ParticipantIdentifier("Peach"), new ParticipantIdentifier("Mario"))),
-                new MessagePostedConversationEvent(new Message(new From("Mario"), buildPostedAt(3), new Content("I am fine thanks"))));
+                new MessagePostedConversationEvent(new Message(new From("Mario"), buildPostedAt(3), new Content("I am fine thanks")),
+                        List.of(new ParticipantIdentifier("Peach"), new ParticipantIdentifier("Mario"))));
         assertThat(conversation.lastMessage()).isEqualTo(new Message(new From("Mario"), buildPostedAt(3), new Content("I am fine thanks")));
         assertThat(conversation.lastInteractionAt()).isEqualTo(new LastInteractionAt(buildPostedAt(3)));
         verify(conversationRepository, times(1)).saveConversation(expectedConversation);

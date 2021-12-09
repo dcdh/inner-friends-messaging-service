@@ -61,7 +61,8 @@ public class ConversationTest {
                                 List.of(
                                         new StartedConversationEvent(new Message(new From("Mario"), buildPostedAt(1), new Content("Hello Luigi")),
                                                 List.of(new ParticipantIdentifier("Mario"), new ParticipantIdentifier("Luigi"))),
-                                        new ParticipantAddedConversationEvent(new ParticipantIdentifier("Peach"), buildAddedAt(2))
+                                        new ParticipantAddedConversationEvent(new ParticipantIdentifier("Peach"), buildAddedAt(2),
+                                                List.of(new ParticipantIdentifier("Mario"), new ParticipantIdentifier("Luigi"), new ParticipantIdentifier("Peach")))
                                 ),
                                 1L));
     }

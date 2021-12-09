@@ -15,7 +15,8 @@ import java.time.ZonedDateTime;
 import java.util.List;
 
 import static io.restassured.RestAssured.given;
-import static org.hamcrest.Matchers.*;
+import static org.hamcrest.Matchers.contains;
+import static org.hamcrest.Matchers.equalTo;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.doThrow;
 
@@ -133,7 +134,8 @@ public class MessagingEndpointTest {
                 List.of(
                         new StartedConversationEvent(new Message(new From("Peach"), buildPostedAt(1), new Content("Hi Mario How are you ?")),
                                 List.of(new ParticipantIdentifier("Mario"), new ParticipantIdentifier("Peach"))),
-                        new MessagePostedConversationEvent(new Message(new From("Mario"), buildPostedAt(2), new Content("I am fine thanks")))),
+                        new MessagePostedConversationEvent(new Message(new From("Mario"), buildPostedAt(2), new Content("I am fine thanks")),
+                                List.of(new ParticipantIdentifier("Mario"), new ParticipantIdentifier("Peach")))),
                 1l
         )))
                 .when(managedListConversationsUseCase).execute(new ListConversationsCommand(new ParticipantIdentifier("Mario")));
@@ -158,7 +160,7 @@ public class MessagingEndpointTest {
                 .body("[0].events[1].eventFrom", equalTo("Mario"))
                 .body("[0].events[1].eventAt", equalTo("2021-10-02T00:00:00+02:00"))
                 .body("[0].events[1].content", equalTo("I am fine thanks"))
-                .body("[0].events[1].participantsIdentifier", empty())
+                .body("[0].events[1].participantsIdentifier", contains("Mario", "Peach"))
                 .body("[0].version", equalTo(1));
     }
 
@@ -170,7 +172,8 @@ public class MessagingEndpointTest {
                 List.of(
                         new StartedConversationEvent(new Message(new From("Peach"), buildPostedAt(1), new Content("Hi Mario How are you ?")),
                                 List.of(new ParticipantIdentifier("Mario"), new ParticipantIdentifier("Peach"))),
-                        new MessagePostedConversationEvent(new Message(new From("Mario"), buildPostedAt(2), new Content("I am fine thanks")))),
+                        new MessagePostedConversationEvent(new Message(new From("Mario"), buildPostedAt(2), new Content("I am fine thanks")),
+                                List.of(new ParticipantIdentifier("Mario"), new ParticipantIdentifier("Peach")))),
                 1l
         ))
                 .when(managedPostNewMessageToConversationUseCase).execute(new PostNewMessageToConversationCommand(

@@ -29,7 +29,8 @@ public class ListConversationsUseCaseTest {
                         List.of(
                                 new StartedConversationEvent(new Message(new From("Mario"), buildPostedAt(1), new Content("Hello Luigi")),
                                         List.of(new ParticipantIdentifier("Mario"), new ParticipantIdentifier("Luigi"))),
-                                new MessagePostedConversationEvent(new Message(new From("Luigi"), buildPostedAt(2), new Content("Hi Mario !")))),
+                                new MessagePostedConversationEvent(new Message(new From("Luigi"), buildPostedAt(2), new Content("Hi Mario !")),
+                                        List.of(new ParticipantIdentifier("Mario"), new ParticipantIdentifier("Luigi")))),
                         1l
                 ),
                 new Conversation(
@@ -67,7 +68,8 @@ public class ListConversationsUseCaseTest {
                         List.of(
                                 new StartedConversationEvent(new Message(new From("Mario"), buildPostedAt(1), new Content("Hello Luigi")),
                                         List.of(new ParticipantIdentifier("Mario"), new ParticipantIdentifier("Luigi"))),
-                                new MessagePostedConversationEvent(new Message(new From("Luigi"), buildPostedAt(2), new Content("Hi Mario !")))),
+                                new MessagePostedConversationEvent(new Message(new From("Luigi"), buildPostedAt(2), new Content("Hi Mario !")),
+                                        List.of(new ParticipantIdentifier("Mario"), new ParticipantIdentifier("Luigi")))),
                         1l
                 ),
                 new Conversation(
@@ -82,11 +84,6 @@ public class ListConversationsUseCaseTest {
 
     private PostedAt buildPostedAt(final Integer day) {
         return new PostedAt(
-                ZonedDateTime.of(2021, 10, day, 0, 0, 0, 0, ZoneId.of("Europe/Paris")));
-    }
-
-    private AddedAt buildAddedAt(final Integer day) {
-        return new AddedAt(
                 ZonedDateTime.of(2021, 10, day, 0, 0, 0, 0, ZoneId.of("Europe/Paris")));
     }
 

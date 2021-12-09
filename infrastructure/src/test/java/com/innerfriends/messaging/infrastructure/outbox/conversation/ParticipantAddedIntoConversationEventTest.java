@@ -36,8 +36,10 @@ public class ParticipantAddedIntoConversationEventTest {
         final ConversationIdentifier conversationIdentifier = new ConversationIdentifier("Mario-azerty");
 
         final Conversation conversation = new Conversation(conversationIdentifier,
-                List.of(new StartedConversationEvent(new Message(new From("Mario"), new PostedAt(ZonedDateTime.now()), new Content("Hi Peach how are you ?")), List.of(new ParticipantIdentifier("Mario"), new ParticipantIdentifier("Peach"))),
-                        new ParticipantAddedConversationEvent(new ParticipantIdentifier("Luigi"), buildAddedAt(2))),
+                List.of(new StartedConversationEvent(new Message(new From("Mario"), new PostedAt(ZonedDateTime.now()), new Content("Hi Peach how are you ?")),
+                                List.of(new ParticipantIdentifier("Mario"), new ParticipantIdentifier("Peach"))),
+                        new ParticipantAddedConversationEvent(new ParticipantIdentifier("Luigi"), buildAddedAt(2),
+                                List.of(new ParticipantIdentifier("Mario"), new ParticipantIdentifier("Peach"), new ParticipantIdentifier("Luigi")))),
                 2l);
         doReturn(Instant.ofEpochSecond(1)).when(instantProvider).now();
 

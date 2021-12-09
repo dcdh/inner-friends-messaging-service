@@ -9,7 +9,8 @@ public enum ConversationEventType {
         @Override
         public ConversationEvent toConversationEvent(final EventFrom eventFrom, final EventAt eventAt, final Content content,
                                                      final List<ParticipantIdentifier> participantsIdentifier) {
-            return new MessagePostedConversationEvent(new Message(new From(eventFrom), new PostedAt(eventAt), content));
+            return new MessagePostedConversationEvent(new Message(new From(eventFrom), new PostedAt(eventAt), content),
+                    participantsIdentifier);
         }
 
     },
@@ -19,7 +20,8 @@ public enum ConversationEventType {
         @Override
         public ConversationEvent toConversationEvent(final EventFrom eventFrom, final EventAt eventAt, final Content content,
                                                      final List<ParticipantIdentifier> participantsIdentifier) {
-            return new ParticipantAddedConversationEvent(new ParticipantIdentifier(eventFrom), new AddedAt(eventAt));
+            return new ParticipantAddedConversationEvent(new ParticipantIdentifier(eventFrom), new AddedAt(eventAt),
+                    participantsIdentifier);
         }
 
     },

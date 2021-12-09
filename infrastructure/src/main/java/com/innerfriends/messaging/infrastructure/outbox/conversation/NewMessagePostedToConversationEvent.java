@@ -2,10 +2,12 @@ package com.innerfriends.messaging.infrastructure.outbox.conversation;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.innerfriends.messaging.domain.Conversation;
 import com.innerfriends.messaging.domain.ConversationIdentifier;
 import com.innerfriends.messaging.domain.Message;
+import com.innerfriends.messaging.domain.ParticipantIdentifier;
 import com.innerfriends.messaging.infrastructure.InstantProvider;
 
 import java.time.Instant;
@@ -36,6 +38,11 @@ public final class NewMessagePostedToConversationEvent implements ConversationEx
                 .put("from", messagePosted.from().identifier().identifier())
                 .put("content", messagePosted.content().content())
                 .put("postedAt", messagePosted.postedAt().at().format(DateTimeFormatter.ISO_ZONED_DATE_TIME));
+        final ArrayNode participantsIdentifier = asJson.putArray("participantsIdentifier");
+        conversation.participants()
+                .stream()
+                .map(ParticipantIdentifier::identifier)
+                .forEach(participantIdentifier -> participantsIdentifier.add(participantIdentifier));
         return new NewMessagePostedToConversationEvent(conversation.conversationIdentifier(), asJson, instantProvider.now());
     }
 

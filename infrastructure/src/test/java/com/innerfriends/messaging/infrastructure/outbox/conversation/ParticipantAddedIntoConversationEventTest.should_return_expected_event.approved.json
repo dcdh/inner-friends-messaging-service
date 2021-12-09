@@ -2,5 +2,10 @@
   "conversationIdentifier": "Mario-azerty",
   "participantAddedIntoConversation": "Luigi",
   "addedAt": "2021-10-02T00:00:00+02:00[Europe/Paris]",
-  "version": 2
+  "version": 2,
+  "participantsIdentifier": [
+    "Mario",
+    "Peach",
+    "Luigi"
+  ]
 }
