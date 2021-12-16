@@ -1,5 +1,7 @@
 package com.innerfriends.messaging.infrastructure.postgres;
 
+import com.innerfriends.messaging.infrastructure.opentelemetry.NewSpan;
+
 import javax.enterprise.context.ApplicationScoped;
 import javax.persistence.EntityManager;
 import javax.transaction.Transactional;
@@ -17,11 +19,13 @@ public class MessageLogRepository {
         this.entityManager = Objects.requireNonNull(entityManager);
     }
 
+    @NewSpan
     @Transactional(value=TxType.MANDATORY)
     public void markAsConsumed(final String groupId, final UUID eventId, final Instant instant) {
         entityManager.persist(new ConsumedMessageEntity(groupId, eventId, instant));
     }
 
+    @NewSpan
     @Transactional(value=TxType.MANDATORY)
     public boolean alreadyProcessed(final String groupId, final UUID eventId) {
         return entityManager.createQuery("SELECT CASE WHEN (COUNT(*) > 0) THEN TRUE ELSE FALSE END FROM ConsumedMessageEntity " +
