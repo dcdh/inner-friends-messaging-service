@@ -3,7 +3,9 @@ package com.innerfriends.messaging.infrastructure.interfaces;
 import com.innerfriends.messaging.domain.*;
 import com.innerfriends.messaging.domain.usecase.*;
 import com.innerfriends.messaging.infrastructure.usecase.*;
+import io.quarkus.security.Authenticated;
 
+import javax.enterprise.context.RequestScoped;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import java.util.List;
@@ -11,6 +13,8 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Path("/")
+@RequestScoped
+@Authenticated
 public class MessagingEndpoint {
 
     private final ManagedListAllContactsUseCase managedListAllContactsUseCase;

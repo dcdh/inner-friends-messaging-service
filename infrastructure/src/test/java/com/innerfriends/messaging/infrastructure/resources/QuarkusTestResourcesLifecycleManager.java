@@ -127,6 +127,8 @@ public class QuarkusTestResourcesLifecycleManager implements QuarkusTestResource
             .withEnv("arangodb.port", "8529")
             .withEnv("quarkus.opentelemetry.tracer.exporter.otlp.endpoint", "http://otel-collector:55680")
             .withEnv("quarkus.oidc.auth-server-url", "http://keycloak:8080/auth/realms/public")
+            .withEnv("quarkus.oidc.client-id", "public")
+            .withEnv("quarkus.oidc.credentials.secret", "4d8d4bc6-1eda-433b-ab6b-967a3a4bdd95")
             .waitingFor(Wait.forLogMessage(".*started in.*", 1))
             .withLogConsumer(new Slf4jLogConsumer(LOGGER));
 
@@ -218,10 +220,13 @@ public class QuarkusTestResourcesLifecycleManager implements QuarkusTestResource
             put("mp.messaging.incoming.friends.auto.offset.reset", "earliest");
             // keycloak
             put("quarkus.oidc.auth-server-url", String.format("http://localhost:%d/auth/realms/public", KEYCLOAK_CONTAINER.getMappedPort(8080)));
-            put("keycloak.admin.adminRealm", "master");
+            put("quarkus.oidc.client-id", "public");
+            put("quarkus.oidc.credentials.secret", "4d8d4bc6-1eda-433b-ab6b-967a3a4bdd95");
+            put("keycloak.admin.realm", "master");
             put("keycloak.admin.clientId", "admin-cli");
             put("keycloak.admin.username", KEYCLOAK_CONTAINER.getEnvMap().get("KEYCLOAK_USER"));
             put("keycloak.admin.password", KEYCLOAK_CONTAINER.getEnvMap().get("KEYCLOAK_PASSWORD"));
+            put("keycloak-remote-service/mp-rest/url", String.format("http://localhost:%d/", KEYCLOAK_CONTAINER.getMappedPort(8080)));
             put("friends.external.port", FRIENDS_CONTAINER.getMappedPort(8080).toString());
             // jaeger
             put("jaeger.exposed.port.16686", JAEGER_TRACING_ALL_IN_ONE_CONTAINER.getMappedPort(16686).toString());

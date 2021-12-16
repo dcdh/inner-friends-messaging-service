@@ -128,6 +128,8 @@ services:
       - arangodb.port=8529
       - quarkus.opentelemetry.tracer.exporter.otlp.endpoint=http://otel-collector:55680
       - quarkus.oidc.auth-server-url=http://keycloak:8080/auth/realms/public
+      - quarkus.oidc.client-id=public
+      - quarkus.oidc.credentials.secret=4d8d4bc6-1eda-433b-ab6b-967a3a4bdd95
     depends_on:
       - arangodb-friends
       - mutable-friends
@@ -158,6 +160,8 @@ services:
       - quarkus.opentelemetry.tracer.exporter.otlp.endpoint=http://otel-collector:55680
       - mp.messaging.incoming.friends.bootstrap.servers=kafka:9092
       - quarkus.oidc.auth-server-url=http://keycloak:8080/auth/realms/public
+      - quarkus.oidc.client-id=public
+      - quarkus.oidc.credentials.secret=4d8d4bc6-1eda-433b-ab6b-967a3a4bdd95
     depends_on:
       - mutable-messaging
       - connect

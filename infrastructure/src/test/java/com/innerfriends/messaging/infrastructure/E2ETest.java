@@ -61,7 +61,7 @@ public class E2ETest {
     TopicConsumer topicConsumer;
 
     @Inject
-    KeycloakAdminClient keycloakAdminClient;
+    KeycloakClient keycloakClient;
 
     @ConfigProperty(name = "friends.external.port")
     Integer friendExternalPort;
@@ -80,7 +80,7 @@ public class E2ETest {
     @Order(1)
     public void should_create_mario_contact_book() {
         // When
-        keycloakAdminClient.register("Mario");
+        keycloakClient.registerUserIntoPublicRealm("Mario");
 
         // Then
         waitForContactBookToBeCreated(new Owner("Mario"));
@@ -90,7 +90,7 @@ public class E2ETest {
     @Order(2)
     public void should_create_peach_contact_book() {
         // When
-        keycloakAdminClient.register("Peach");
+        keycloakClient.registerUserIntoPublicRealm("Peach");
 
         // Then
         waitForContactBookToBeCreated(new Owner("Peach"));

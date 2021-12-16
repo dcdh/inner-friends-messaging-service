@@ -100,16 +100,7 @@
         </dependency>
         <dependency>
             <groupId>io.quarkus</groupId>
-            <artifactId>quarkus-oidc</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>io.quarkus</groupId>
-            <artifactId>quarkus-keycloak-authorization</artifactId>
-        </dependency>
-        <!-- https://github.com/quarkusio/quarkus/issues/12913 -->
-        <dependency>
-            <groupId>org.keycloak</groupId>
-            <artifactId>keycloak-admin-client</artifactId>
+            <artifactId>quarkus-oidc-client</artifactId>
         </dependency>
         <dependency>
             <groupId>net.jodah</groupId>
