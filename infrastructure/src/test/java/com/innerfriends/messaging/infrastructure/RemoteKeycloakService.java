@@ -59,6 +59,7 @@ public interface RemoteKeycloakService {
         public final List<CredentialRepresentation> credentials;
         public final Boolean enabled;
         public final Map<String, List<String>> attributes;
+        public final List<String> groups;
 
         public UserRepresentation(final String username) {
             this.username = username;
@@ -66,12 +67,14 @@ public interface RemoteKeycloakService {
             this.credentials = List.of(new CredentialRepresentation());
             this.enabled = true;
             this.attributes = Map.of("friendId", List.of(username));
+            this.groups = List.of("public_friend_roles");
         }
     }
 
     class CredentialRepresentation {
         public final String type = "password";
         public final String value = "password";
+        public final String temporary = "false";
     }
 
 }

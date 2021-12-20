@@ -4,7 +4,9 @@ import com.innerfriends.messaging.domain.*;
 import com.innerfriends.messaging.domain.usecase.*;
 import com.innerfriends.messaging.infrastructure.usecase.*;
 import io.quarkus.security.Authenticated;
+import org.eclipse.microprofile.jwt.Claim;
 
+import javax.annotation.security.RolesAllowed;
 import javax.enterprise.context.RequestScoped;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
@@ -17,6 +19,7 @@ import java.util.stream.Collectors;
 @Authenticated
 public class MessagingEndpoint {
 
+    private final String authenticatedFriendId;
     private final ManagedListAllContactsUseCase managedListAllContactsUseCase;
     private final ManagedListConversationsUseCase managedListConversationsUseCase;
     private final ManagedListRecentContactsUseCase managedListRecentContactsUseCase;
@@ -24,12 +27,14 @@ public class MessagingEndpoint {
     private final ManagedOpenNewConversationUseCase managedOpenNewConversationUseCase;
     private final ManagedListConversationEventUseCase managedListConversationEventUseCase;
 
-    public MessagingEndpoint(final ManagedListAllContactsUseCase managedListAllContactsUseCase,
+    public MessagingEndpoint(@Claim("friendId") final String authenticatedFriendId,
+                             final ManagedListAllContactsUseCase managedListAllContactsUseCase,
                              final ManagedListConversationsUseCase managedListConversationsUseCase,
                              final ManagedListRecentContactsUseCase managedListRecentContactsUseCase,
                              final ManagedPostNewMessageToConversationUseCase managedPostNewMessageToConversationUseCase,
                              final ManagedOpenNewConversationUseCase managedOpenNewConversationUseCase,
                              final ManagedListConversationEventUseCase managedListConversationEventUseCase) {
+        this.authenticatedFriendId = Objects.requireNonNull(authenticatedFriendId);
         this.managedListAllContactsUseCase = Objects.requireNonNull(managedListAllContactsUseCase);
         this.managedListConversationsUseCase = Objects.requireNonNull(managedListConversationsUseCase);
         this.managedListRecentContactsUseCase = Objects.requireNonNull(managedListRecentContactsUseCase);
@@ -39,16 +44,24 @@ public class MessagingEndpoint {
     }
 
     @GET
+    @RolesAllowed({"friend", "admin"})
     @Path("/contacts/{owner}")
     public ContactBookDTO listAllContacts(@PathParam("owner") final String owner) {
+        // TODO if friend next check owner equals authenticated friendId
+        // TODO if admin return always true
+        // I should use executedBy
         return new ContactBookDTO(managedListAllContactsUseCase.execute(new ListAllContactsCommand(new Owner(owner))));
     }
 
     @POST
+    @RolesAllowed({"friend", "admin"})
     @Path("/contacts/{owner}/recent")
     @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
     public List<String> listRecentContacts(@PathParam("owner") final String owner,
                                            @FormParam("nbOfContactToReturn") final Integer nbOfContactToReturn) {
+        // TODO if friend next check owner equals authenticated friendId
+        // TODO if admin return always true
+        // I should use executedBy
         return managedListRecentContactsUseCase.execute(new ListRecentContactsCommand(
                 new Owner(owner),
                 nbOfContactToReturn
@@ -59,22 +72,26 @@ public class MessagingEndpoint {
     }
 
     @POST
+    @RolesAllowed({"friend", "admin"})
     @Path("/conversations/openNewOne")
     @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
-    public ConversationDTO openNewConversation(@FormParam("openedBy") final String openedBy,
-                                               @FormParam("to") final String to,
+    public ConversationDTO openNewConversation(@FormParam("to") final String to,
                                                @FormParam("content") final String content) {
         return new ConversationDTO(managedOpenNewConversationUseCase.execute(new OpenNewConversationCommand(
-                new OpenedBy(new ParticipantIdentifier(openedBy)),
+                new OpenedBy(new ParticipantIdentifier(authenticatedFriendId)),
                 List.of(new ParticipantIdentifier(to)),
                 new Content(content)
         )));
     }
 
     @POST
+    @RolesAllowed({"friend", "admin"})
     @Path("/conversations/listConversations")
     @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
     public List<ConversationDTO> listConversations(@FormParam("participantIdentifier") final String participantIdentifier) {
+        // TODO if friend next authenticated friendId into participants
+        // TODO if admin return always true
+        // I should use executedBy
         return managedListConversationsUseCase.execute(new ListConversationsCommand(new ParticipantIdentifier(participantIdentifier)))
                 .stream()
                 .map(ConversationDTO::new)
@@ -82,21 +99,28 @@ public class MessagingEndpoint {
     }
 
     @POST
+    @RolesAllowed({"friend", "admin"})
     @Path("/conversations/postNewMessage")
     @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
     public void postNewMessageToConversation(@FormParam("conversationIdentifier") final String conversationIdentifier,
-                                             @FormParam("from") final String from,
                                              @FormParam("content") final String content) {
+        // TODO if friend next authenticated friendId into participants
+        // TODO if admin return always true
+        // I should use executedBy
         managedPostNewMessageToConversationUseCase.execute(new PostNewMessageToConversationCommand(
-                new From(from),
+                new From(authenticatedFriendId),
                 new ConversationIdentifier(conversationIdentifier),
                 new Content(content)
         ));
     }
 
     @GET
+    @RolesAllowed({"friend", "admin"})
     @Path("/conversations/{conversationIdentifier}/events")
     public List<ConversationEventDTO> listEventsInConversation(@PathParam("conversationIdentifier") final String conversationIdentifier) {
+        // TODO if friend next authenticated friendId into participants
+        // TODO if admin return always true
+        // I should use executedBy
         return managedListConversationEventUseCase.execute(new ListConversationEventCommand(
                 new ConversationIdentifier(conversationIdentifier)))
                 .stream().map(ConversationEventDTO::new)

@@ -5,6 +5,9 @@ import com.innerfriends.messaging.domain.usecase.*;
 import com.innerfriends.messaging.infrastructure.usecase.*;
 import io.quarkus.test.junit.QuarkusTest;
 import io.quarkus.test.junit.mockito.InjectMock;
+import io.quarkus.test.security.TestSecurity;
+import io.quarkus.test.security.jwt.Claim;
+import io.quarkus.test.security.jwt.JwtSecurity;
 import io.restassured.module.jsv.JsonSchemaValidator;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -43,7 +46,11 @@ public class MessagingEndpointTest {
     private ManagedListConversationEventUseCase managedListConversationEventUseCase;
 
     @Test
-    public void should_list_all_contact_by_owner() {
+    @TestSecurity(user = "mario", roles = "friend")
+    @JwtSecurity(claims = {
+            @Claim(key = "friendId", value = "Mario")
+    })
+    public void should_list_mario_all_contacts() {
         // Given
         doReturn(new ListAllContactInContactBook(
                 new ContactBook(
@@ -72,7 +79,11 @@ public class MessagingEndpointTest {
     }
 
     @Test
-    public void should_list_recent_contacts_by_owner() {
+    @TestSecurity(user = "mario", roles = "friend")
+    @JwtSecurity(claims = {
+            @Claim(key = "friendId", value = "Mario")
+    })
+    public void should_list_mario_recent_contacts() {
         // Given
         doReturn(List.of(
                 new ContactIdentifier("Peach"),
@@ -92,7 +103,11 @@ public class MessagingEndpointTest {
     }
 
     @Test
-    public void should_open_a_new_conversation() {
+    @TestSecurity(user = "mario", roles = "friend")
+    @JwtSecurity(claims = {
+            @Claim(key = "friendId", value = "Mario")
+    })
+    public void should_mario_open_a_new_conversation() {
         // Given
         doReturn(new Conversation(
                 new ConversationIdentifier("Mario-azerty"),
@@ -107,7 +122,6 @@ public class MessagingEndpointTest {
 
         // When && Then
         given()
-                .param("openedBy", "Mario")
                 .param("to", "Peach")
                 .param("content", "Hello Peach !")
                 .when()
@@ -127,7 +141,11 @@ public class MessagingEndpointTest {
     }
 
     @Test
-    public void should_list_conversations_by_participant() {
+    @TestSecurity(user = "peach", roles = "friend")
+    @JwtSecurity(claims = {
+            @Claim(key = "friendId", value = "Peach")
+    })
+    public void should_list_peach_conversations() {
         // Given
         doReturn(List.of(new Conversation(
                 new ConversationIdentifier("Peach-azerty"),
@@ -165,7 +183,11 @@ public class MessagingEndpointTest {
     }
 
     @Test
-    public void should_post_message_to_conversation() {
+    @TestSecurity(user = "mario", roles = "friend")
+    @JwtSecurity(claims = {
+            @Claim(key = "friendId", value = "Mario")
+    })
+    public void should_mario_post_a_new_message_to_conversation() {
         // Given
         doReturn(new Conversation(
                 new ConversationIdentifier("Peach-azerty"),
@@ -182,7 +204,6 @@ public class MessagingEndpointTest {
         // When && Then
         given()
                 .param("conversationIdentifier", "Peach-azerty")
-                .param("from", "Mario")
                 .param("content", "I am fine thanks")
                 .when()
                 .post("/conversations/postNewMessage")
@@ -192,7 +213,11 @@ public class MessagingEndpointTest {
     }
 
     @Test
-    public void should_list_messages_in_conversation() {
+    @TestSecurity(user = "mario", roles = "friend")
+    @JwtSecurity(claims = {
+            @Claim(key = "friendId", value = "Mario")
+    })
+    public void should_list_messages_in_mario_conversation() {
         // Given
         doReturn(List.of(
                 new StartedConversationEvent(new Message(new From("Peach"), buildPostedAt(2), new Content("Hi Mario How are you ?")),
@@ -216,6 +241,10 @@ public class MessagingEndpointTest {
     }
 
     @Test
+    @TestSecurity(user = "mario", roles = "friend")
+    @JwtSecurity(claims = {
+            @Claim(key = "friendId", value = "Mario")
+    })
     public void should_handle_no_contact_book_found() {
         // Given
         doThrow(new NoContactBookFoundException())
@@ -232,6 +261,10 @@ public class MessagingEndpointTest {
     }
 
     @Test
+    @TestSecurity(user = "mario", roles = "friend")
+    @JwtSecurity(claims = {
+            @Claim(key = "friendId", value = "Mario")
+    })
     public void should_handle_participants_are_not_in_contact_book() {
         // Given
         final List<ParticipantIdentifier> participantIdentifiersNotInContactBook = List.of(new ParticipantIdentifier("Bowser"));
@@ -244,7 +277,6 @@ public class MessagingEndpointTest {
 
         // When && Then
         given()
-                .param("openedBy", "Mario")
                 .param("to", "Bowser")
                 .param("content", "Hello Bowser I am gonna kick your ass !")
                 .when()
@@ -256,6 +288,10 @@ public class MessagingEndpointTest {
     }
 
     @Test
+    @TestSecurity(user = "mario", roles = "friend")
+    @JwtSecurity(claims = {
+            @Claim(key = "friendId", value = "Mario")
+    })
     public void should_handle_unknown_conversation() {
         // Given
         final ConversationIdentifier unknownConversationIdentifier = new ConversationIdentifier("Bowser-azerty");
@@ -266,7 +302,6 @@ public class MessagingEndpointTest {
         // When && Then
         given()
                 .param("conversationIdentifier", "Bowser-azerty")
-                .param("from", "Mario")
                 .param("content", "Hello Bowser I am gonna kick your ass !")
                 .when()
                 .post("/conversations/postNewMessage")
@@ -277,6 +312,10 @@ public class MessagingEndpointTest {
     }
 
     @Test
+    @TestSecurity(user = "bowser", roles = "friend")
+    @JwtSecurity(claims = {
+            @Claim(key = "friendId", value = "Bowser")
+    })
     public void should_handle_not_a_participant() {
         // Given
         final ConversationIdentifier conversationIdentifier = new ConversationIdentifier("Mario-azerty");
@@ -288,7 +327,6 @@ public class MessagingEndpointTest {
         // When && Then
         given()
                 .param("conversationIdentifier", "Mario-azerty")
-                .param("from", "Bowser")
                 .param("content", "Ha ha ha Mario !")
                 .when()
                 .post("/conversations/postNewMessage")

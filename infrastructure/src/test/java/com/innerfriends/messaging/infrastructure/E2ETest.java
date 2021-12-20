@@ -30,12 +30,12 @@ import java.util.stream.Collectors;
 
 import static io.restassured.RestAssured.given;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.equalTo;
 
 @QuarkusTest
 @ExtendWith(MockitoExtension.class)
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class E2ETest {
 
     @Inject
@@ -66,6 +66,10 @@ public class E2ETest {
     @ConfigProperty(name = "friends.external.port")
     Integer friendExternalPort;
 
+    private String marioAccessToken;
+
+    private String peachAccessToken;
+
     @BeforeEach
     public void setup() {
         outboxConnectorStarter.start();
@@ -84,6 +88,8 @@ public class E2ETest {
 
         // Then
         waitForContactBookToBeCreated(new Owner("Mario"));
+
+        marioAccessToken = keycloakClient.grantTokenFromPublicRealm("Mario").accessToken;
     }
 
     @Test
@@ -94,14 +100,17 @@ public class E2ETest {
 
         // Then
         waitForContactBookToBeCreated(new Owner("Peach"));
+
+        peachAccessToken = keycloakClient.grantTokenFromPublicRealm("Peach").accessToken;
     }
 
     @Test
     @Order(3)
     public void should_add_peach_into_mario_contact_book() {
         final String marioInvitationCode = given()
+                .auth().oauth2(marioAccessToken)
                 .when()
-                .post(URI.create(String.format("http://localhost:%d/friends/Mario/generateInvitationCode", friendExternalPort)))
+                .post(URI.create(String.format("http://localhost:%d/friends/generateInvitationCode", friendExternalPort)))
                 .then()
                 .log().all()
                 .statusCode(200)
@@ -109,10 +118,10 @@ public class E2ETest {
                 .jsonPath().getString("invitationCode");
 
         given()
+                .auth().oauth2(peachAccessToken)
                 .param("invitationCode", marioInvitationCode)
-                .param("executedBy", "Peach")
                 .when()
-                .post(URI.create(String.format("http://localhost:%d/friends/Peach/establishAFriendship", friendExternalPort)))
+                .post(URI.create(String.format("http://localhost:%d/friends/establishAFriendship", friendExternalPort)))
                 .then()
                 .log().all()
                 .statusCode(200);
@@ -122,6 +131,7 @@ public class E2ETest {
     @Order(4)
     public void should_list_mario_all_contacts() throws Exception {
         given()
+                .auth().oauth2(marioAccessToken)
                 .when()
                 .get("/contacts/Mario")
                 .then()
@@ -143,6 +153,7 @@ public class E2ETest {
     @Order(5)
     public void should_list_mario_recent_contacts() throws Exception {
         given()
+                .auth().oauth2(marioAccessToken)
                 .param("nbOfContactToReturn", 2)
                 .when()
                 .post("/contacts/Mario/recent")
@@ -165,7 +176,7 @@ public class E2ETest {
     @Order(6)
     public void should_mario_open_a_new_conversation_with_peach() throws Exception {
         given()
-                .param("openedBy", "Mario")
+                .auth().oauth2(marioAccessToken)
                 .param("to", "Peach")
                 .param("content", "Hello Peach how are you ?")
                 .when()
@@ -187,8 +198,8 @@ public class E2ETest {
     public void should_peach_post_a_new_message_to_conversation() throws Exception {
         final String conversationIdentifier = getConversationIdentifier(new ParticipantIdentifier("Peach")).identifier();
         given()
+                .auth().oauth2(peachAccessToken)
                 .param("conversationIdentifier", conversationIdentifier)
-                .param("from", "Peach")
                 .param("content", "I am fine thanks")
                 .when()
                 .post("/conversations/postNewMessage")
@@ -209,6 +220,7 @@ public class E2ETest {
     public void should_list_events_in_conversation() throws Exception {
         final String conversationIdentifier = getConversationIdentifier(new ParticipantIdentifier("Mario")).identifier();
         given()
+                .auth().oauth2(marioAccessToken)
                 .when()
                 .get("/conversations/{conversationIdentifier}/events", conversationIdentifier)
                 .then()
@@ -228,6 +240,7 @@ public class E2ETest {
     @Order(9)
     public void should_list_participant_conversations() throws Exception {
         given()
+                .auth().oauth2(marioAccessToken)
                 .param("participantIdentifier", "Mario")
                 .when()
                 .post("/conversations/listConversations")

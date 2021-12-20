@@ -56,6 +56,7 @@ public class QuarkusTestResourcesLifecycleManager implements QuarkusTestResource
 
     private static final GenericContainer<?> KEYCLOAK_CONTAINER = new GenericContainer<>("damdamdeo/inner-friends-keycloack")
             .withNetwork(NETWORK)
+            .withNetworkAliases("keycloak")
             .withExposedPorts(8080)
             .withEnv("KEYCLOAK_USER", "keycloak")
             .withEnv("KEYCLOAK_PASSWORD", "keycloak")
@@ -126,9 +127,8 @@ public class QuarkusTestResourcesLifecycleManager implements QuarkusTestResource
             .withEnv("arangodb.password", "password")
             .withEnv("arangodb.port", "8529")
             .withEnv("quarkus.opentelemetry.tracer.exporter.otlp.endpoint", "http://otel-collector:55680")
-            .withEnv("quarkus.oidc.auth-server-url", "http://keycloak:8080/auth/realms/public")
-            .withEnv("quarkus.oidc.client-id", "public")
-            .withEnv("quarkus.oidc.credentials.secret", "4d8d4bc6-1eda-433b-ab6b-967a3a4bdd95")
+            .withEnv("smallrye.jwt.verify.audience", "public")
+            .withEnv("quarkus.log.category.\"io.quarkus.smallrye.jwt.runtime.auth.MpJwtValidator\".level", "TRACE")
             .waitingFor(Wait.forLogMessage(".*started in.*", 1))
             .withLogConsumer(new Slf4jLogConsumer(LOGGER));
 
@@ -155,8 +155,13 @@ public class QuarkusTestResourcesLifecycleManager implements QuarkusTestResource
                 RED_PANDA_CONTAINER, DEBEZIUM_CONNECT_CONTAINER,
                 ARANGO_DB_CONTAINER, POSTGRES_FRIEND_CONTAINER,
                 JAEGER_TRACING_ALL_IN_ONE_CONTAINER,
-                OTEL_OPENTELEMETRY_COLLECTOR_CONTAINER, FRIENDS_CONTAINER)
-                .forEach(genericContainer -> genericContainer.start());
+                OTEL_OPENTELEMETRY_COLLECTOR_CONTAINER)
+                .forEach(GenericContainer::start);
+        // jwt issuer must have the same hostname. Use ip instead as keycloak network is not available from the running tests.
+        FRIENDS_CONTAINER
+                .withEnv("mp.jwt.verify.publickey.location", String.format("http://%s:8080/auth/realms/public/protocol/openid-connect/certs", getKeycloakContainerIp()))
+                .withEnv("mp.jwt.verify.issuer", String.format("http://%s:8080/auth/realms/public", getKeycloakContainerIp()))
+                .start();
 
         // Start connector on Keycloak
         final String connectorSetup = "{\n" +
@@ -219,20 +224,29 @@ public class QuarkusTestResourcesLifecycleManager implements QuarkusTestResource
                     String.format("%s:%s", "localhost", RED_PANDA_CONTAINER.getMappedPort(9092)));
             put("mp.messaging.incoming.friends.auto.offset.reset", "earliest");
             // keycloak
-            put("quarkus.oidc.auth-server-url", String.format("http://localhost:%d/auth/realms/public", KEYCLOAK_CONTAINER.getMappedPort(8080)));
-            put("quarkus.oidc.client-id", "public");
-            put("quarkus.oidc.credentials.secret", "4d8d4bc6-1eda-433b-ab6b-967a3a4bdd95");
+            put("mp.jwt.verify.publickey.location", String.format("http://%s:8080/auth/realms/public/protocol/openid-connect/certs", getKeycloakContainerIp()));
+            put("mp.jwt.verify.issuer", String.format("http://%s:8080/auth/realms/public", getKeycloakContainerIp()));
+            put("smallrye.jwt.verify.audience", "public");
+            put("keycloak.public.realm", "public");
+            put("keycloak.public.client-id", "public");
+            put("keycloak.public.credentials.secret", "4d8d4bc6-1eda-433b-ab6b-967a3a4bdd95");
             put("keycloak.admin.realm", "master");
             put("keycloak.admin.clientId", "admin-cli");
             put("keycloak.admin.username", KEYCLOAK_CONTAINER.getEnvMap().get("KEYCLOAK_USER"));
             put("keycloak.admin.password", KEYCLOAK_CONTAINER.getEnvMap().get("KEYCLOAK_PASSWORD"));
-            put("keycloak-remote-service/mp-rest/url", String.format("http://localhost:%d/", KEYCLOAK_CONTAINER.getMappedPort(8080)));
+            put("keycloak-remote-service/mp-rest/url", String.format("http://%s:8080/", getKeycloakContainerIp()));
             put("friends.external.port", FRIENDS_CONTAINER.getMappedPort(8080).toString());
             // jaeger
             put("jaeger.exposed.port.16686", JAEGER_TRACING_ALL_IN_ONE_CONTAINER.getMappedPort(16686).toString());
             // opentelemtry
             put("quarkus.opentelemetry.tracer.exporter.otlp.endpoint", String.format("http://localhost:%d", OTEL_OPENTELEMETRY_COLLECTOR_CONTAINER.getMappedPort(55680)));
         }};
+    }
+
+    private String getKeycloakContainerIp() {
+        return KEYCLOAK_CONTAINER.getContainerInfo().getNetworkSettings().getNetworks().values()
+                .iterator().next()
+                .getIpAddress();
     }
 
     @Override

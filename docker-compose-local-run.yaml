@@ -87,7 +87,7 @@ services:
   keycloak:
     image: damdamdeo/inner-friends-keycloack
     ports:
-      - 8084:8080
+      - 8082:8080
     environment:
       - KEYCLOAK_USER=keycloak
       - KEYCLOAK_PASSWORD=keycloak
@@ -96,6 +96,7 @@ services:
       - DB_DATABASE=keycloak
       - DB_USER=keycloak
       - DB_PASSWORD=keycloak
+      - KEYCLOAK_FRONTEND_URL=http://keycloak:8080/auth
 
   mutable-friends:
     image: debezium/postgres:11-alpine
@@ -109,7 +110,7 @@ services:
   inner-friends-friends-service:
     image: damdamdeo/inner-friends-friends-service
     ports:
-      - 8082:8080
+      - 8084:8080
     environment:
       - quarkus.http.host=0.0.0.0
       - quarkus.datasource.jdbc.url=jdbc:postgresql://mutable-friends:5432/mutable
@@ -127,9 +128,10 @@ services:
       - arangodb.host=arangodb-friends
       - arangodb.port=8529
       - quarkus.opentelemetry.tracer.exporter.otlp.endpoint=http://otel-collector:55680
-      - quarkus.oidc.auth-server-url=http://keycloak:8080/auth/realms/public
-      - quarkus.oidc.client-id=public
-      - quarkus.oidc.credentials.secret=4d8d4bc6-1eda-433b-ab6b-967a3a4bdd95
+      - mp.jwt.verify.publickey.location=http://keycloak:8080/auth/realms/public/protocol/openid-connect/certs
+      - mp.jwt.verify.issuer=http://keycloak:8080/auth/realms/public
+      - smallrye.jwt.verify.audience=public
+      - quarkus.log.category."io.quarkus.smallrye.jwt.runtime.auth.MpJwtValidator".level=TRACE
     depends_on:
       - arangodb-friends
       - mutable-friends
@@ -159,9 +161,10 @@ services:
       - quarkus.hazelcast-client.cluster-members=hazelcast:5701
       - quarkus.opentelemetry.tracer.exporter.otlp.endpoint=http://otel-collector:55680
       - mp.messaging.incoming.friends.bootstrap.servers=kafka:9092
-      - quarkus.oidc.auth-server-url=http://keycloak:8080/auth/realms/public
-      - quarkus.oidc.client-id=public
-      - quarkus.oidc.credentials.secret=4d8d4bc6-1eda-433b-ab6b-967a3a4bdd95
+      - mp.jwt.verify.publickey.location=http://keycloak:8080/auth/realms/public/protocol/openid-connect/certs
+      - mp.jwt.verify.issuer=http://keycloak:8080/auth/realms/public
+      - smallrye.jwt.verify.audience=public
+      - quarkus.log.category."io.quarkus.smallrye.jwt.runtime.auth.MpJwtValidator".level=TRACE
     depends_on:
       - mutable-messaging
       - connect
