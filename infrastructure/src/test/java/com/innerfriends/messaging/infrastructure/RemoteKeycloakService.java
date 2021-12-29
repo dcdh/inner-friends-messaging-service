@@ -66,7 +66,7 @@ public interface RemoteKeycloakService {
             this.email = username + "@inner-friends.com";
             this.credentials = List.of(new CredentialRepresentation());
             this.enabled = true;
-            this.attributes = Map.of("friendId", List.of(username));
+            this.attributes = Map.of("pseudo", List.of(username));
             this.groups = List.of("public_friend_roles");
         }
     }

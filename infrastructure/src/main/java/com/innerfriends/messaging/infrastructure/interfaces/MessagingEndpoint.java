@@ -19,7 +19,7 @@ import java.util.stream.Collectors;
 @Authenticated
 public class MessagingEndpoint {
 
-    private final String authenticatedFriendId;
+    private final String authenticatedPseudo;
     private final ManagedListAllContactsUseCase managedListAllContactsUseCase;
     private final ManagedListConversationsUseCase managedListConversationsUseCase;
     private final ManagedListRecentContactsUseCase managedListRecentContactsUseCase;
@@ -27,14 +27,14 @@ public class MessagingEndpoint {
     private final ManagedOpenNewConversationUseCase managedOpenNewConversationUseCase;
     private final ManagedListConversationEventUseCase managedListConversationEventUseCase;
 
-    public MessagingEndpoint(@Claim("friendId") final String authenticatedFriendId,
+    public MessagingEndpoint(@Claim("pseudo") final String authenticatedPseudo,
                              final ManagedListAllContactsUseCase managedListAllContactsUseCase,
                              final ManagedListConversationsUseCase managedListConversationsUseCase,
                              final ManagedListRecentContactsUseCase managedListRecentContactsUseCase,
                              final ManagedPostNewMessageToConversationUseCase managedPostNewMessageToConversationUseCase,
                              final ManagedOpenNewConversationUseCase managedOpenNewConversationUseCase,
                              final ManagedListConversationEventUseCase managedListConversationEventUseCase) {
-        this.authenticatedFriendId = Objects.requireNonNull(authenticatedFriendId);
+        this.authenticatedPseudo = Objects.requireNonNull(authenticatedPseudo);
         this.managedListAllContactsUseCase = Objects.requireNonNull(managedListAllContactsUseCase);
         this.managedListConversationsUseCase = Objects.requireNonNull(managedListConversationsUseCase);
         this.managedListRecentContactsUseCase = Objects.requireNonNull(managedListRecentContactsUseCase);
@@ -78,7 +78,7 @@ public class MessagingEndpoint {
     public ConversationDTO openNewConversation(@FormParam("to") final String to,
                                                @FormParam("content") final String content) {
         return new ConversationDTO(managedOpenNewConversationUseCase.execute(new OpenNewConversationCommand(
-                new OpenedBy(new ParticipantIdentifier(authenticatedFriendId)),
+                new OpenedBy(new ParticipantIdentifier(authenticatedPseudo)),
                 List.of(new ParticipantIdentifier(to)),
                 new Content(content)
         )));
@@ -108,7 +108,7 @@ public class MessagingEndpoint {
         // TODO if admin return always true
         // I should use executedBy
         managedPostNewMessageToConversationUseCase.execute(new PostNewMessageToConversationCommand(
-                new From(authenticatedFriendId),
+                new From(authenticatedPseudo),
                 new ConversationIdentifier(conversationIdentifier),
                 new Content(content)
         ));

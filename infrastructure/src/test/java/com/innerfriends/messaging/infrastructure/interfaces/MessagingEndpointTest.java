@@ -48,7 +48,7 @@ public class MessagingEndpointTest {
     @Test
     @TestSecurity(user = "mario", roles = "friend")
     @JwtSecurity(claims = {
-            @Claim(key = "friendId", value = "Mario")
+            @Claim(key = "pseudo", value = "Mario")
     })
     public void should_list_mario_all_contacts() {
         // Given
@@ -81,7 +81,7 @@ public class MessagingEndpointTest {
     @Test
     @TestSecurity(user = "mario", roles = "friend")
     @JwtSecurity(claims = {
-            @Claim(key = "friendId", value = "Mario")
+            @Claim(key = "pseudo", value = "Mario")
     })
     public void should_list_mario_recent_contacts() {
         // Given
@@ -105,7 +105,7 @@ public class MessagingEndpointTest {
     @Test
     @TestSecurity(user = "mario", roles = "friend")
     @JwtSecurity(claims = {
-            @Claim(key = "friendId", value = "Mario")
+            @Claim(key = "pseudo", value = "Mario")
     })
     public void should_mario_open_a_new_conversation() {
         // Given
@@ -143,7 +143,7 @@ public class MessagingEndpointTest {
     @Test
     @TestSecurity(user = "peach", roles = "friend")
     @JwtSecurity(claims = {
-            @Claim(key = "friendId", value = "Peach")
+            @Claim(key = "pseudo", value = "Peach")
     })
     public void should_list_peach_conversations() {
         // Given
@@ -185,7 +185,7 @@ public class MessagingEndpointTest {
     @Test
     @TestSecurity(user = "mario", roles = "friend")
     @JwtSecurity(claims = {
-            @Claim(key = "friendId", value = "Mario")
+            @Claim(key = "pseudo", value = "Mario")
     })
     public void should_mario_post_a_new_message_to_conversation() {
         // Given
@@ -215,7 +215,7 @@ public class MessagingEndpointTest {
     @Test
     @TestSecurity(user = "mario", roles = "friend")
     @JwtSecurity(claims = {
-            @Claim(key = "friendId", value = "Mario")
+            @Claim(key = "pseudo", value = "Mario")
     })
     public void should_list_messages_in_mario_conversation() {
         // Given
@@ -243,7 +243,7 @@ public class MessagingEndpointTest {
     @Test
     @TestSecurity(user = "mario", roles = "friend")
     @JwtSecurity(claims = {
-            @Claim(key = "friendId", value = "Mario")
+            @Claim(key = "pseudo", value = "Mario")
     })
     public void should_handle_no_contact_book_found() {
         // Given
@@ -263,7 +263,7 @@ public class MessagingEndpointTest {
     @Test
     @TestSecurity(user = "mario", roles = "friend")
     @JwtSecurity(claims = {
-            @Claim(key = "friendId", value = "Mario")
+            @Claim(key = "pseudo", value = "Mario")
     })
     public void should_handle_participants_are_not_in_contact_book() {
         // Given
@@ -290,7 +290,7 @@ public class MessagingEndpointTest {
     @Test
     @TestSecurity(user = "mario", roles = "friend")
     @JwtSecurity(claims = {
-            @Claim(key = "friendId", value = "Mario")
+            @Claim(key = "pseudo", value = "Mario")
     })
     public void should_handle_unknown_conversation() {
         // Given
@@ -314,7 +314,7 @@ public class MessagingEndpointTest {
     @Test
     @TestSecurity(user = "bowser", roles = "friend")
     @JwtSecurity(claims = {
-            @Claim(key = "friendId", value = "Bowser")
+            @Claim(key = "pseudo", value = "Bowser")
     })
     public void should_handle_not_a_participant() {
         // Given
